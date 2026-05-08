@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FinCRM — 보험 에이전트</title>
+<title>FinCRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -14,38 +14,12 @@
   --red:#dc2626;--red2:#fee2e2;
   --purple:#7c3aed;--purple2:#ede9fe;
   --teal:#0d9488;--teal2:#ccfbf1;
-  --g2:#f3f4f6;--g3:#e5e7eb;--g4:#9ca3af;
+  --g2:#f3f4f6;--g3:#e5e7eb;
   --text:#111827;--text2:#4b5563;--text3:#9ca3af;
-  --bg:#f0f2f7;--sur:#ffffff;--r:10px;--rs:6px;
+  --bg:#f0f2f7;--sur:#fff;--r:10px;--rs:6px;
   --sh:0 1px 3px rgba(0,0,0,.08);
 }
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
-
-/* SETUP */
-#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#e8f0fe 0%,#f0f2f7 100%)}
-.sbox{background:var(--sur);border-radius:18px;padding:40px;width:100%;max-width:600px;border:1px solid var(--g3);box-shadow:0 8px 32px rgba(26,86,219,.1)}
-.slogo{font-size:26px;font-weight:800;color:var(--blue);margin-bottom:4px}
-.ssub{font-size:13px;color:var(--text2);margin-bottom:24px}
-.step{background:var(--g2);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px}
-.snum{width:26px;height:26px;background:var(--blue);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.sbody h4{font-size:13px;font-weight:700;margin-bottom:3px}
-.sbody p{font-size:12px;color:var(--text2);line-height:1.7}
-.sbody code{background:var(--sur);border:1px solid var(--g3);border-radius:4px;padding:1px 5px;font-size:11px;font-family:monospace;color:var(--blue)}
-.sbody a{color:var(--blue)}
-.lbl{font-size:12px;font-weight:600;color:var(--text2);margin:14px 0 5px}
-.inp{width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:9px 12px;font-size:13px;color:var(--text);outline:none;transition:.15s;font-family:inherit;background:var(--sur)}
-.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
-.btn-conn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;transition:.15s}
-.btn-conn:hover{background:var(--blue3)}
-.btn-conn:disabled{opacity:.6;cursor:not-allowed}
-.hint{font-size:11px;color:var(--text3);margin-top:8px;text-align:center}
-.hint a{color:var(--blue);cursor:pointer;text-decoration:underline}
-.err-box{background:var(--red2);border:1px solid #fca5a5;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:#991b1b;margin-top:12px;display:none;white-space:pre-line;line-height:1.7}
-.ok-box{background:var(--green2);border:1px solid #6ee7b7;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:#065f46;margin-top:12px;display:none}
-
-/* APP */
-#app{display:none;min-height:100vh;flex-direction:column}
-#app.on{display:flex}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
 
 /* TOPBAR */
 .topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:0 20px;height:54px;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
@@ -54,45 +28,37 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tab:hover{background:var(--g2)}
 .tab.on{background:var(--blue2);color:var(--blue);font-weight:700}
 .tr{margin-left:auto;display:flex;align-items:center;gap:8px}
-.pill{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.pill{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
 .pill.ok{background:var(--green2);color:var(--green)}
 .pill.err{background:var(--red2);color:var(--red)}
 .dot{width:6px;height:6px;border-radius:50%;animation:blink 2s infinite}
-.dot.ok{background:var(--green)}
-.dot.err{background:var(--red)}
+.dot.ok{background:var(--green)}.dot.err{background:var(--red)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* BUTTONS */
 .btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap}
 .btn:hover{background:var(--g2)}
 .btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
 .btn.pri:hover{background:var(--blue3)}
 .btn.sm{padding:5px 10px;font-size:12px}
 .btn.ghost{border:none;background:none;color:var(--text2)}
-.btn.ghost:hover{background:var(--g2)}
 
-/* PAGE */
 .pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%}
 .pg.on{display:block}
 
-/* KPI */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .kpi{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh)}
 .kpi-l{font-size:12px;color:var(--text2);margin-bottom:5px}
 .kpi-v{font-size:26px;font-weight:700}
 .kpi-s{font-size:11px;color:var(--text3);margin-top:3px}
-.kpi-s.ok{color:var(--green)}
-.kpi-s.warn{color:var(--red)}
+.kpi-s.ok{color:var(--green)}.kpi-s.warn{color:var(--red)}
 
-/* SECTION */
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:8px}
 .st{font-size:15px;font-weight:700}
 .sa{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.srch{padding:7px 12px;border:1px solid var(--g3);border-radius:var(--rs);font-size:13px;background:var(--sur);color:var(--text);outline:none;width:220px;transition:.15s;font-family:inherit}
+.srch{padding:7px 12px;border:1px solid var(--g3);border-radius:var(--rs);font-size:13px;background:var(--sur);color:var(--text);outline:none;width:200px;font-family:inherit;transition:.15s}
 .srch:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
 .sf{padding:7px 10px;border:1px solid var(--g3);border-radius:var(--rs);font-size:13px;background:var(--sur);color:var(--text);outline:none;font-family:inherit;cursor:pointer}
 
-/* TABLE */
 .tw{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
 table{width:100%;border-collapse:collapse}
 th{background:var(--g2);padding:9px 13px;text-align:left;font-size:12px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--g3);white-space:nowrap}
@@ -104,27 +70,19 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .spin{width:20px;height:20px;border:2px solid var(--g3);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* BADGE */
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.bbl{background:var(--blue2);color:var(--blue)}
-.bgr{background:var(--green2);color:var(--green)}
-.bam{background:var(--amber2);color:var(--amber)}
-.bre{background:var(--red2);color:var(--red)}
-.bpu{background:var(--purple2);color:var(--purple)}
-.bte{background:var(--teal2);color:var(--teal)}
+.bbl{background:var(--blue2);color:var(--blue)}.bgr{background:var(--green2);color:var(--green)}
+.bam{background:var(--amber2);color:var(--amber)}.bre{background:var(--red2);color:var(--red)}
+.bpu{background:var(--purple2);color:var(--purple)}.bte{background:var(--teal2);color:var(--teal)}
 .bgy{background:var(--g2);color:var(--text2)}
 
-/* AVATAR */
 .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .nc{display:flex;align-items:center;gap:8px}
-
-/* ROW ACTIONS */
 .ra{display:flex;gap:3px}
 .ib{width:28px;height:28px;border:1px solid var(--g3);border-radius:var(--rs);background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
 .ib:hover{background:var(--g2)}
 .ib.del:hover{background:var(--red2);border-color:var(--red)}
 
-/* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
 .ov.on{display:flex}
 .modal{background:var(--sur);border-radius:14px;padding:28px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18)}
@@ -137,31 +95,28 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .fgr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--g3)}
 
-/* DETAIL */
-#detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto;width:100%}
+#detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto}
 #detailPg.on{display:block}
 .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:18px;padding:6px 13px;border:1px solid var(--g3);border-radius:var(--rs);background:var(--sur);font-family:inherit}
 .back:hover{background:var(--g2)}
 .dh{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:22px 26px;margin-bottom:14px;display:flex;align-items:center;gap:18px;box-shadow:var(--sh);flex-wrap:wrap}
-.dh-av{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
-.dh-info h2{font-size:20px;font-weight:700;margin-bottom:3px}
+.dh-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0}
+.dh-info h2{font-size:19px;font-weight:700;margin-bottom:3px}
 .dh-info p{font-size:13px;color:var(--text2)}
 .dh-right{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .dc{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
-.dc h4{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dc h4{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
 .dc.full{grid-column:1/-1}
-.dr{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--g3);font-size:13px;gap:12px}
+.dr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g3);font-size:13px;gap:12px}
 .dr:last-child{border-bottom:none;padding-bottom:0}
 .dr-l{color:var(--text2);flex-shrink:0}
 .dr-v{font-weight:500;text-align:right;word-break:break-word}
-.memo-item{background:var(--g2);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
-.memo-item:last-child{margin-bottom:0}
-.memo-date{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.memo-text{font-size:13px;line-height:1.7}
-.priv-warn{background:#fff8f0;border:1px solid #fed7aa;border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#9a3412;margin-bottom:13px;display:flex;align-items:center;gap:6px}
+.mi{background:var(--g2);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
+.mi:last-child{margin-bottom:0}
+.mi-d{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.mi-t{font-size:13px;line-height:1.7}
 
-/* FOLLOWUP */
 .fu{background:var(--sur);border:1px solid var(--g3);border-left:3px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s;box-shadow:var(--sh)}
 .fu:hover{background:#f8f9ff}
 .fu.urgent{border-left-color:var(--red)}
@@ -171,17 +126,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .fu-name{font-size:14px;font-weight:600;margin-bottom:2px}
 .fu-sub{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* PLAN BAR */
 .ps{margin-bottom:10px}
 .ps-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .ps-bar{height:6px;background:var(--g3);border-radius:3px;overflow:hidden}
 .ps-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .5s}
 
-/* TOAST */
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap}
 #toast.on{opacity:1}
-
-/* LOADING */
 #loadOv{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:300;flex-direction:column;gap:12px;backdrop-filter:blur(2px)}
 #loadOv.on{display:flex}
 #loadOv .spin{width:36px;height:36px;border-width:3px}
@@ -190,165 +141,106 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 </head>
 <body>
 
-<!-- ══════════ SETUP ══════════ -->
-<div id="setup">
-  <div class="sbox">
-    <div class="slogo">🏦 FinCRM</div>
-    <p class="ssub">보험 에이전트 고객관리 · Google Sheets 완전 연동</p>
-
-    <div class="step">
-      <div class="snum">1</div>
-      <div class="sbody">
-        <h4>Google Apps Script 열기</h4>
-        <p><a href="https://script.google.com/home/my" target="_blank">script.google.com</a> → <strong>새 프로젝트</strong> → 프로젝트 이름: <code>FinCRM</code></p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="snum">2</div>
-      <div class="sbody">
-        <h4>Code.gs 붙여넣기</h4>
-        <p>다운로드한 <code>Code.gs</code> 파일 내용을 전부 복사해서 Apps Script 편집기에 붙여넣기</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="snum">3</div>
-      <div class="sbody">
-        <h4>웹 앱으로 배포</h4>
-        <p><strong>배포 → 새 배포 → 웹 앱</strong><br>
-        실행 계정: <strong>나</strong> · 액세스: <strong>모든 사용자</strong> → <strong>배포</strong><br>
-        권한 승인 후 생성된 <strong>URL(/exec)</strong>을 아래에 붙여넣기</p>
-      </div>
-    </div>
-
-    <div class="lbl">Apps Script 웹 앱 URL *</div>
-    <input class="inp" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
-    <div class="err-box" id="errBox"></div>
-    <div class="ok-box" id="okBox"></div>
-    <button class="btn-conn" id="connBtn" onclick="connect()">🔗 연결 및 시작</button>
-    <p class="hint">처음이세요? <a onclick="demoMode()">→ 데모 모드로 먼저 체험하기</a></p>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">🏦 FinCRM</div>
+  <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
+  <button class="tab"    onclick="showTab('clients',this)">👥 고객 목록</button>
+  <button class="tab"    onclick="showTab('schedule',this)">📅 연락일 관리</button>
+  <button class="tab"    onclick="showTab('memos',this)">📝 상담 메모</button>
+  <div class="tr">
+    <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결 중...</span></div>
+    <button class="btn sm" onclick="loadAll()">🔄 새로고침</button>
+    <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
   </div>
 </div>
 
-<!-- ══════════ APP ══════════ -->
-<div id="app">
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="logo">🏦 FinCRM</div>
-    <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
-    <button class="tab"    onclick="showTab('clients',this)">👥 고객 목록</button>
-    <button class="tab"    onclick="showTab('schedule',this)">📅 연락일 관리</button>
-    <button class="tab"    onclick="showTab('memos',this)">📝 상담 메모</button>
-    <div class="tr">
-      <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
-      <button class="btn sm" onclick="loadAll()">🔄 새로고침</button>
-      <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
-    </div>
+<!-- DASHBOARD -->
+<div class="pg on" id="pg-dashboard">
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">👥 전체 고객</div><div class="kpi-v" id="kT">—</div><div class="kpi-s" id="kTs">명</div></div>
+    <div class="kpi"><div class="kpi-l">📋 플랜 있음</div><div class="kpi-v" id="kP">—</div><div class="kpi-s ok" id="kPs">—</div></div>
+    <div class="kpi"><div class="kpi-l">📞 오늘 연락 필요</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs">—</div></div>
+    <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs">—</div></div>
   </div>
-
-  <!-- DASHBOARD -->
-  <div class="pg on" id="pg-dashboard">
-    <div class="kpis">
-      <div class="kpi"><div class="kpi-l">👥 전체 고객</div><div class="kpi-v" id="kT">—</div><div class="kpi-s" id="kTs">명</div></div>
-      <div class="kpi"><div class="kpi-l">📋 플랜 있음</div><div class="kpi-v" id="kP">—</div><div class="kpi-s ok" id="kPs">—</div></div>
-      <div class="kpi"><div class="kpi-l">📞 오늘 연락 필요</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs">—</div></div>
-      <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs">—</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div>
+      <div id="fuList"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div>
-        <div id="fuList"></div>
-      </div>
-      <div>
-        <div class="sh"><div class="st">📊 플랜별 현황</div></div>
-        <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CLIENTS -->
-  <div class="pg" id="pg-clients">
-    <div class="sh">
-      <div class="st">고객 목록 <span id="cntBadge" style="font-size:13px;font-weight:400;color:var(--text3)"></span></div>
-      <div class="sa">
-        <input class="srch" id="cSearch" placeholder="🔍 이름·연락처·메모 검색" oninput="filterClients()">
-        <select class="sf" id="planF" onchange="filterClients()">
-          <option value="">전체 플랜</option>
-          <option>PDP</option><option>MAPD</option><option>MA</option>
-          <option>SNP</option><option>Medigap</option><option>Life</option>
-        </select>
-        <select class="sf" id="refF" onchange="filterClients()">
-          <option value="">전체</option>
-          <option value="TRUE">리퍼만</option>
-          <option value="FALSE">일반만</option>
-        </select>
-        <button class="btn pri" onclick="openAddClient()">+ 고객 등록</button>
-      </div>
-    </div>
-    <div class="tw">
-      <table>
-        <thead><tr>
-          <th>No</th><th>고객명</th><th>연락처</th><th>이메일</th>
-          <th>플랜</th><th>가입 상품</th><th>다음 연락일</th>
-          <th>리퍼</th><th>메모</th><th>관리</th>
-        </tr></thead>
-        <tbody id="cBody"><tr class="spin-row"><td colspan="10"><div class="spin"></div></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- SCHEDULE -->
-  <div class="pg" id="pg-schedule">
-    <div class="sh">
-      <div class="st">📅 다음 연락일 관리</div>
-      <div class="sa">
-        <select class="sf" id="ddF" onchange="renderSchedule()">
-          <option value="">전체</option>
-          <option value="-1">기한 초과</option>
-          <option value="7">D-7 이내</option>
-          <option value="30">D-30 이내</option>
-        </select>
-      </div>
-    </div>
-    <div class="tw">
-      <table>
-        <thead><tr>
-          <th>고객명</th><th>연락처</th><th>플랜</th><th>가입 상품</th>
-          <th>다음 연락일</th><th>D-Day</th><th>메모</th><th>관리</th>
-        </tr></thead>
-        <tbody id="sBody"><tr class="spin-row"><td colspan="8"><div class="spin"></div></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- MEMOS -->
-  <div class="pg" id="pg-memos">
-    <div class="sh">
-      <div class="st">📝 상담 메모 전체</div>
-      <div class="sa">
-        <input class="srch" id="mSearch" placeholder="🔍 고객명·내용 검색" oninput="filterMemos()">
-        <button class="btn pri" onclick="openAddMemo()">+ 메모 추가</button>
-      </div>
-    </div>
-    <div id="memoContainer"><div class="spin-row" style="text-align:center;padding:40px"><div class="spin"></div></div></div>
-  </div>
-
-  <!-- DETAIL PAGE -->
-  <div id="detailPg">
-    <div style="max-width:1100px;margin:0 auto;padding:22px 24px">
-      <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
-      <div class="priv-warn">🔒 이 페이지에는 민감 정보가 포함될 수 있습니다. 화면 공유 시 주의하세요.</div>
-      <div class="dh" id="dHead"></div>
-      <div class="dgrid" id="dGrid"></div>
+    <div>
+      <div class="sh"><div class="st">📊 플랜별 현황</div></div>
+      <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: 고객 등록/수정 -->
+<!-- CLIENTS -->
+<div class="pg" id="pg-clients">
+  <div class="sh">
+    <div class="st">고객 목록 <span id="cntBadge" style="font-size:13px;font-weight:400;color:var(--text3)"></span></div>
+    <div class="sa">
+      <input class="srch" id="cSearch" placeholder="🔍 이름·연락처·메모" oninput="filterClients()">
+      <select class="sf" id="planF" onchange="filterClients()">
+        <option value="">전체 플랜</option>
+        <option>PDP</option><option>MAPD</option><option>MA</option>
+        <option>SNP</option><option>Medigap</option><option>Life</option>
+      </select>
+      <select class="sf" id="refF" onchange="filterClients()">
+        <option value="">전체</option><option value="TRUE">리퍼만</option><option value="FALSE">일반만</option>
+      </select>
+      <button class="btn pri" onclick="openAddClient()">+ 고객 등록</button>
+    </div>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>다음연락일</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
+      <tbody id="cBody"><tr class="spin-row"><td colspan="10"><div class="spin"></div></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="pg" id="pg-schedule">
+  <div class="sh">
+    <div class="st">📅 다음 연락일 관리</div>
+    <select class="sf" id="ddF" onchange="renderSchedule()">
+      <option value="">전체</option><option value="-1">기한 초과</option>
+      <option value="7">D-7 이내</option><option value="30">D-30 이내</option>
+    </select>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>고객명</th><th>연락처</th><th>플랜</th><th>가입상품</th><th>다음연락일</th><th>D-Day</th><th>메모</th><th>관리</th></tr></thead>
+      <tbody id="sBody"><tr class="spin-row"><td colspan="8"><div class="spin"></div></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MEMOS -->
+<div class="pg" id="pg-memos">
+  <div class="sh">
+    <div class="st">📝 상담 메모</div>
+    <div class="sa">
+      <input class="srch" id="mSearch" placeholder="🔍 고객명·내용" oninput="filterMemos()">
+      <button class="btn pri" onclick="openAddMemo()">+ 메모 추가</button>
+    </div>
+  </div>
+  <div id="memoContainer"><div class="spin-row" style="text-align:center;padding:40px"><div class="spin"></div></div></div>
+</div>
+
+<!-- DETAIL -->
+<div id="detailPg">
+  <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
+  <div class="dh" id="dHead"></div>
+  <div class="dgrid" id="dGrid"></div>
+</div>
+
+<!-- MODAL: 고객 -->
 <div class="ov" id="clientModal">
   <div class="modal">
     <h3 id="mTitle">👤 신규 고객 등록</h3>
-    <input type="hidden" id="eRow">
-    <input type="hidden" id="eNo">
+    <input type="hidden" id="eRow"><input type="hidden" id="eNo">
     <div class="fgr">
       <div class="fg"><label>고객명 *</label><input id="f_name" placeholder="홍길동"></div>
       <div class="fg"><label>비즈니스</label><input id="f_biz" placeholder="(선택)"></div>
@@ -359,11 +251,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
     <div class="fgr">
       <div class="fg"><label>플랜 구분</label>
-        <select id="f_plan">
-          <option value="">선택</option>
-          <option>PDP</option><option>MAPD</option><option>MA</option>
-          <option>SNP</option><option>Medigap</option><option>Life</option>
-        </select>
+        <select id="f_plan"><option value="">선택</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option></select>
       </div>
       <div class="fg"><label>가입 상품</label><input id="f_prod" placeholder="Anthem, Kaiser..."></div>
     </div>
@@ -384,24 +272,17 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
-<!-- MODAL: 메모 추가 -->
+<!-- MODAL: 메모 -->
 <div class="ov" id="memoModal">
   <div class="modal">
     <h3>📝 상담 메모 추가</h3>
     <div class="fgr">
-      <div class="fg"><label>고객명 *</label>
-        <select id="m_client"><option value="">선택...</option></select>
-      </div>
+      <div class="fg"><label>고객명 *</label><select id="m_client"><option value="">선택...</option></select></div>
       <div class="fg"><label>상담 유형</label>
-        <select id="m_type">
-          <option>전화 상담</option><option>대면 미팅</option>
-          <option>이메일</option><option>문자</option><option>기타</option>
-        </select>
+        <select id="m_type"><option>전화 상담</option><option>대면 미팅</option><option>이메일</option><option>문자</option><option>기타</option></select>
       </div>
     </div>
-    <div class="fg"><label>상담 내용 *</label>
-      <textarea id="m_text" placeholder="상담 내용, 고객 요청사항, 다음 액션 등..." style="min-height:100px"></textarea>
-    </div>
+    <div class="fg"><label>상담 내용 *</label><textarea id="m_text" placeholder="상담 내용, 요청사항, 다음 액션..." style="min-height:100px"></textarea></div>
     <div class="mf">
       <button class="btn" onclick="closeOv('memoModal')">취소</button>
       <button class="btn pri" onclick="saveMemo()">저장하기</button>
@@ -409,24 +290,23 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
-<!-- LOADING OVERLAY -->
 <div id="loadOv"><div class="spin"></div><p id="loadTxt">저장 중...</p></div>
 <div id="toast"></div>
-<script>
-// ════════════════════════════════════
-// STATE
-// ════════════════════════════════════
-let SCRIPT_URL = '';
-let clients    = [];
-let allMemos   = [];
-let isDemo     = false;
 
-// ════════════════════════════════════
+<script>
+// ══════════════════════════════════════
+// CONFIG — Apps Script URL 고정
+// ══════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmfU7kElEHXydtn_WkA6xgGwvWOCJgw2WYPxP7TPLdL77rxf9Helh1aLeG5M_nsWDB/exec';
+
+let clients  = [];
+let allMemos = [];
+
+// ══════════════════════════════════════
 // API
-// ════════════════════════════════════
+// ══════════════════════════════════════
 async function api(action, data={}) {
-  if (isDemo) return demoApi(action, data);
-  const res = await fetch(SCRIPT_URL, {
+  const res  = await fetch(SCRIPT_URL, {
     method: 'POST',
     body: JSON.stringify({action, ...data}),
   });
@@ -435,85 +315,17 @@ async function api(action, data={}) {
   return json;
 }
 
-// ════════════════════════════════════
-// SETUP
-// ════════════════════════════════════
-async function connect() {
-  const url = document.getElementById('scriptUrl').value.trim();
-  if (!url.includes('script.google.com')) {
-    showErr('올바른 Apps Script URL을 입력해주세요\n예: https://script.google.com/macros/s/.../exec');
-    return;
-  }
-  SCRIPT_URL = url;
-  const btn = document.getElementById('connBtn');
-  btn.disabled = true; btn.textContent = '🔄 연결 확인 중...';
-  hideErr();
-  try {
-    const r = await api('initSheets');
-    if (r.ok) {
-      localStorage.setItem('fcrm_url', url);
-      document.getElementById('okBox').textContent = '✅ 연결 성공! 시트가 준비되었습니다.';
-      document.getElementById('okBox').style.display = 'block';
-      btn.textContent = '✅ 연결됨';
-      setTimeout(bootApp, 800);
-    }
-  } catch(e) {
-    showErr('연결 실패: ' + e.message
-      + '\n\n해결방법:\n1. 배포 → 액세스를 "모든 사용자"로 설정\n2. URL이 /exec 로 끝나는지 확인\n3. 첫 배포 시 구글 권한 승인 완료 여부 확인');
-    btn.disabled = false; btn.textContent = '🔗 연결 및 시작';
-  }
-}
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+window.addEventListener('load', () => loadAll());
 
-function demoMode() {
-  isDemo = true;
-  clients = [
-    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime (HMO)',memo:'길벗 소개로',next:'2025-05-08',ref:'FALSE',durl:''},
-    {rowIdx:3,no:'2',name:'김철수',biz:'',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개',next:'2025-05-20',ref:'TRUE',durl:''},
-    {rowIdx:4,no:'3',name:'이영희',biz:'Seoul Market',phone:'310-555-0200',email:'lee@gmail.com',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜 문의',next:'2025-06-01',ref:'FALSE',durl:''},
-    {rowIdx:5,no:'4',name:'박민준',biz:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
-    {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
-  ];
-  allMemos = [
-    {id:'1',name:'홍문례',type:'전화 상담',text:'FEMA 로 가입 가능, 추후에 SSBCI 신청 예정',date:'2025-01-30'},
-    {id:'2',name:'홍문례',type:'대면 미팅',text:'Total plan 으로 변경 해 드림, 메디칼 나와서 확인 완료',date:'2025-03-18'},
-    {id:'3',name:'김철수',type:'전화 상담',text:'딸이 소개. 현재 플랜 비용 절감 원함. 다음 주 미팅 예약',date:'2025-04-10'},
-  ];
-  bootApp();
-}
-
-function bootApp() {
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('app').classList.add('on');
-  loadAll();
-}
-
-function showErr(m) { const e=document.getElementById('errBox'); e.textContent=m; e.style.display='block'; }
-function hideErr()  { document.getElementById('errBox').style.display='none'; }
-
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('fcrm_url');
-  if (saved) {
-    document.getElementById('scriptUrl').value = saved;
-    SCRIPT_URL = saved;
-    // Silent reconnect test
-    fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:'getClients'})})
-      .then(r => r.json())
-      .then(j => { if (!j.error) bootApp(); else localStorage.removeItem('fcrm_url'); })
-      .catch(() => localStorage.removeItem('fcrm_url'));
-  }
-});
-
-// ════════════════════════════════════
-// LOAD
-// ════════════════════════════════════
 async function loadAll() {
   setSyncStatus('동기화 중...', false);
   try {
-    if (!isDemo) {
-      const [cr, mr] = await Promise.all([api('getClients'), api('getMemos')]);
-      clients  = cr.clients || [];
-      allMemos = mr.memos   || [];
-    }
+    const [cr, mr] = await Promise.all([api('getClients'), api('getMemos')]);
+    clients  = cr.clients || [];
+    allMemos = mr.memos   || [];
     setSyncStatus('연결됨', true);
     renderAll();
   } catch(e) {
@@ -523,48 +335,41 @@ async function loadAll() {
 }
 
 function renderAll() {
-  updateKPIs();
-  renderClients();
-  renderSchedule();
-  renderMemos();
-  renderFollowup();
-  renderPlanStats();
-  populateMemoSel();
+  updateKPIs(); renderClients(); renderSchedule();
+  renderMemos(); renderFollowup(); renderPlanStats(); populateMemoSel();
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // KPIs
-// ════════════════════════════════════
+// ══════════════════════════════════════
 function updateKPIs() {
-  const n  = clients.length;
-  const wp = clients.filter(c=>c.plan).length;
-  const td = clients.filter(c=>{ const d=dd(c.next); return d!==null&&d<=0; }).length;
-  const rf = clients.filter(c=>c.ref==='TRUE').length;
+  const n=clients.length, wp=clients.filter(c=>c.plan).length;
+  const td=clients.filter(c=>{const d=dd(c.next);return d!==null&&d<=0;}).length;
+  const rf=clients.filter(c=>c.ref==='TRUE').length;
   set('kT',n); set('kTs','명 등록됨');
   set('kP',wp); set('kPs',`전체의 ${n?Math.round(wp/n*100):0}%`);
   set('kC',td); set('kCs',td?'즉시 연락 필요':'오늘 없음');
   set('kR',rf); set('kRs',`${n?Math.round(rf/n*100):0}% 리퍼`);
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // CLIENTS TABLE
-// ════════════════════════════════════
+// ══════════════════════════════════════
 function renderClients(list) {
-  const data = list || clients;
-  set('cntBadge', `(${data.length}명)`);
-  const tb = document.getElementById('cBody');
+  const data=list||clients;
+  set('cntBadge',`(${data.length}명)`);
+  const tb=document.getElementById('cBody');
   if (!data.length) {
-    tb.innerHTML = `<tr class="empty"><td colspan="10">등록된 고객이 없습니다<br><br><button class="btn pri sm" onclick="openAddClient()">+ 첫 고객 등록하기</button></td></tr>`;
+    tb.innerHTML=`<tr class="empty"><td colspan="10">등록된 고객이 없습니다<br><br><button class="btn pri sm" onclick="openAddClient()">+ 첫 고객 등록하기</button></td></tr>`;
     return;
   }
-  tb.innerHTML = data.map(c => {
-    const d = dd(c.next);
-    const dh = d===null ? '—' : `<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`;
-    const mc = allMemos.filter(m=>m.name===c.name).length;
+  tb.innerHTML=data.map(c=>{
+    const d=dd(c.next);
+    const dh=d===null?'—':`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`;
+    const mc=allMemos.filter(m=>m.name===c.name).length;
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
       <td style="font-size:12px;color:var(--text3)">${c.no}</td>
-      <td><div class="nc">
-        <div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
+      <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
         <div><div style="font-weight:600">${c.name}</div>${c.biz?`<div style="font-size:11px;color:var(--text3)">${c.biz}</div>`:''}</div>
       </div></td>
       <td>${c.phone||'—'}</td>
@@ -573,39 +378,39 @@ function renderClients(list) {
       <td style="font-size:13px">${c.prod||'—'}</td>
       <td>${c.next?c.next+' ':''} ${dh}</td>
       <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
-      <td style="font-size:12px;color:var(--text2)">${c.memo?(c.memo.slice(0,22)+(c.memo.length>22?'…':'')):'—'}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
+      <td style="font-size:12px;color:var(--text2)">${c.memo?(c.memo.slice(0,20)+(c.memo.length>20?'…':'')):'—'}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
-        <button class="ib" title="상세" onclick="openDetail(${c.rowIdx})">🔍</button>
-        <button class="ib" title="수정" onclick="openEditClient(${c.rowIdx})">✏️</button>
-        <button class="ib del" title="삭제" onclick="delClient(${c.rowIdx},'${esc(c.name)}')">🗑</button>
+        <button class="ib" onclick="openDetail(${c.rowIdx})">🔍</button>
+        <button class="ib" onclick="openEditClient(${c.rowIdx})">✏️</button>
+        <button class="ib del" onclick="delClient(${c.rowIdx},'${esc(c.name)}')">🗑</button>
       </div></td>
     </tr>`;
   }).join('');
 }
 
 function filterClients() {
-  const q  = document.getElementById('cSearch').value.toLowerCase();
-  const pf = document.getElementById('planF').value;
-  const rf = document.getElementById('refF').value;
-  renderClients(clients.filter(c =>
-    (!q  || c.name.toLowerCase().includes(q) || c.phone.includes(q) || (c.memo||'').toLowerCase().includes(q)) &&
-    (!pf || c.plan===pf) && (!rf || c.ref===rf)
+  const q=document.getElementById('cSearch').value.toLowerCase();
+  const pf=document.getElementById('planF').value;
+  const rf=document.getElementById('refF').value;
+  renderClients(clients.filter(c=>
+    (!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.memo||'').toLowerCase().includes(q))&&
+    (!pf||c.plan===pf)&&(!rf||c.ref===rf)
   ));
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // SCHEDULE
-// ════════════════════════════════════
+// ══════════════════════════════════════
 function renderSchedule() {
-  const f = document.getElementById('ddF')?.value || '';
-  let data = [...clients].filter(c=>c.next).sort((a,b)=>new Date(a.next)-new Date(b.next));
-  if (f==='-1')     data = data.filter(c=>dd(c.next)<0);
-  else if (f==='7') data = data.filter(c=>{ const d=dd(c.next); return d!==null&&d>=0&&d<=7; });
-  else if (f==='30')data = data.filter(c=>{ const d=dd(c.next); return d!==null&&d>=0&&d<=30; });
-  const tb = document.getElementById('sBody');
-  if (!data.length) { tb.innerHTML=`<tr class="empty"><td colspan="8">해당하는 일정 없음</td></tr>`; return; }
-  tb.innerHTML = data.map(c => {
-    const d = dd(c.next);
+  const f=document.getElementById('ddF')?.value||'';
+  let data=[...clients].filter(c=>c.next).sort((a,b)=>new Date(a.next)-new Date(b.next));
+  if (f==='-1')      data=data.filter(c=>dd(c.next)<0);
+  else if (f==='7')  data=data.filter(c=>{const d=dd(c.next);return d!==null&&d>=0&&d<=7;});
+  else if (f==='30') data=data.filter(c=>{const d=dd(c.next);return d!==null&&d>=0&&d<=30;});
+  const tb=document.getElementById('sBody');
+  if (!data.length){tb.innerHTML=`<tr class="empty"><td colspan="8">해당 일정 없음</td></tr>`;return;}
+  tb.innerHTML=data.map(c=>{
+    const d=dd(c.next);
     return `<tr class="click" style="${d<0?'background:#fff5f5':d!==null&&d<=7?'background:#fffbeb':''}" onclick="openDetail(${c.rowIdx})">
       <td><div class="nc"><div class="av" style="background:${ac(c.name)};width:28px;height:28px;font-size:11px">${c.name[0]}</div><strong>${c.name}</strong></div></td>
       <td>${c.phone||'—'}</td>
@@ -619,22 +424,18 @@ function renderSchedule() {
   }).join('');
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // MEMOS
-// ════════════════════════════════════
+// ══════════════════════════════════════
 function renderMemos(list) {
-  const data = list || allMemos;
-  const el   = document.getElementById('memoContainer');
-  if (!data.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)">상담 메모가 없습니다<br><br><button class="btn pri sm" onclick="openAddMemo()">+ 첫 메모 추가</button></div>`;
-    return;
-  }
-  const byClient = {};
-  [...data].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(m => {
-    if (!byClient[m.name]) byClient[m.name] = [];
-    byClient[m.name].push(m);
+  const data=list||allMemos;
+  const el=document.getElementById('memoContainer');
+  if (!data.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">메모 없음<br><br><button class="btn pri sm" onclick="openAddMemo()">+ 첫 메모 추가</button></div>`;return;}
+  const byClient={};
+  [...data].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(m=>{
+    if(!byClient[m.name])byClient[m.name]=[];byClient[m.name].push(m);
   });
-  el.innerHTML = Object.entries(byClient).map(([name,memos])=>`
+  el.innerHTML=Object.entries(byClient).map(([name,memos])=>`
     <div class="dc" style="margin-bottom:12px;box-shadow:var(--sh)">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
         <div class="av" style="background:${ac(name)}">${name[0]}</div>
@@ -642,40 +443,29 @@ function renderMemos(list) {
         <span class="badge bgy" style="margin-left:auto">${memos.length}건</span>
         <button class="btn sm" onclick="openAddMemoFor('${esc(name)}')">+ 추가</button>
       </div>
-      ${memos.map(m=>`
-        <div class="memo-item">
-          <div class="memo-date">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div>
-          <div class="memo-text">${m.text||''}</div>
-        </div>`).join('')}
+      ${memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')}
     </div>`).join('');
 }
 
-function filterMemos() {
-  const q = document.getElementById('mSearch').value.toLowerCase();
+function filterMemos(){
+  const q=document.getElementById('mSearch').value.toLowerCase();
   renderMemos(allMemos.filter(m=>m.name.toLowerCase().includes(q)||m.text.toLowerCase().includes(q)));
 }
-
-function populateMemoSel() {
-  const sel = document.getElementById('m_client');
-  sel.innerHTML = '<option value="">선택...</option>' +
+function populateMemoSel(){
+  document.getElementById('m_client').innerHTML='<option value="">선택...</option>'+
     clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // FOLLOWUP
-// ════════════════════════════════════
-function renderFollowup() {
-  const items = clients.filter(c=>c.next)
-    .map(c=>({...c,d:dd(c.next)}))
-    .filter(c=>c.d!==null&&c.d<=14)
-    .sort((a,b)=>a.d-b.d).slice(0,8);
-  set('fuCnt', items.length+'명');
-  const el = document.getElementById('fuList');
-  if (!items.length) {
-    el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 필요 고객 없음</div>`;
-    return;
-  }
-  el.innerHTML = items.map(c=>`
+// ══════════════════════════════════════
+function renderFollowup(){
+  const items=clients.filter(c=>c.next).map(c=>({...c,d:dd(c.next)}))
+    .filter(c=>c.d!==null&&c.d<=14).sort((a,b)=>a.d-b.d).slice(0,8);
+  set('fuCnt',items.length+'명');
+  const el=document.getElementById('fuList');
+  if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 필요 없음</div>`;return;}
+  el.innerHTML=items.map(c=>`
     <div class="fu ${c.d<0?'urgent':c.d<=7?'soon':'fine'}" onclick="openDetail(${c.rowIdx})">
       <div class="av" style="background:${ac(c.name)};width:36px;height:36px">${c.name[0]}</div>
       <div class="fu-meta">
@@ -683,42 +473,38 @@ function renderFollowup() {
         <div class="fu-sub">${c.plan||'플랜없음'} · ${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,18)+'…':''}</div>
       </div>
       <div style="font-size:12px;font-weight:700;color:${c.d<0?'var(--red)':c.d<=7?'var(--amber)':'var(--green)'};text-align:right;white-space:nowrap">
-        ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}<br>
-        <span style="font-size:10px;font-weight:400;color:var(--text3)">${c.next}</span>
+        ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}<br><span style="font-size:10px;font-weight:400;color:var(--text3)">${c.next}</span>
       </div>
     </div>`).join('');
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // PLAN STATS
-// ════════════════════════════════════
-function renderPlanStats() {
-  const cnt={};
-  clients.forEach(c=>{ const p=c.plan||'미지정'; cnt[p]=(cnt[p]||0)+1; });
+// ══════════════════════════════════════
+function renderPlanStats(){
+  const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
   const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre','미지정':'bgy'};
-  document.getElementById('planStats').innerHTML =
+  document.getElementById('planStats').innerHTML=
     Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([p,n])=>`
       <div class="ps">
         <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
-          <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
-        </div>
+          <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span></div>
         <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%"></div></div>
       </div>`).join('');
 }
 
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // DETAIL
-// ════════════════════════════════════
-function openDetail(rowIdx) {
-  const c = clients.find(x=>x.rowIdx===rowIdx); if(!c) return;
+// ══════════════════════════════════════
+function openDetail(rowIdx){
+  const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('detailPg').classList.add('on');
-  const d  = dd(c.next);
-  const db = d!==null ? `<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>` : '';
-  const memos = allMemos.filter(m=>m.name===c.name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-
-  document.getElementById('dHead').innerHTML = `
+  const d=dd(c.next);
+  const db=d!==null?`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`:'';
+  const memos=allMemos.filter(m=>m.name===c.name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  document.getElementById('dHead').innerHTML=`
     <div class="dh-av" style="background:${ac(c.name)}">${c.name[0]}</div>
     <div class="dh-info">
       <h2>${c.name}${c.biz?` <span style="font-size:14px;font-weight:400;color:var(--text2)">(${c.biz})</span>`:''}
@@ -732,15 +518,12 @@ function openDetail(rowIdx) {
       <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
       ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세시트</a>`:''}
     </div>`;
-
-  document.getElementById('dGrid').innerHTML = `
+  document.getElementById('dGrid').innerHTML=`
     <div class="dc">
       <h4>기본 정보</h4>
-      ${dr('연락처',c.phone)} ${dr('이메일',c.email)}
-      ${dr('비즈니스',c.biz)}
-      ${dr('플랜 구분',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
-      ${dr('가입 상품',c.prod)}
-      ${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
+      ${dr('연락처',c.phone)}${dr('이메일',c.email)}${dr('비즈니스',c.biz)}
+      ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
+      ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
     </div>
     <div class="dc">
       <h4>메모 &amp; 일정</h4>
@@ -751,149 +534,129 @@ function openDetail(rowIdx) {
       <h4>📞 상담 이력 (${memos.length}건)
         <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')" style="margin-left:8px">+ 추가</button>
       </h4>
-      ${memos.length
-        ? memos.map(m=>`<div class="memo-item"><div class="memo-date">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="memo-text">${m.text||''}</div></div>`).join('')
-        : '<p style="color:var(--text3);font-size:13px;padding:12px 0">상담 이력이 없습니다</p>'}
+      ${memos.length?memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')
+        :'<p style="color:var(--text3);font-size:13px;padding:12px 0">상담 이력 없음</p>'}
     </div>`;
 }
 
-function closeDetail() {
+function closeDetail(){
   document.getElementById('detailPg').classList.remove('on');
-  const at = document.querySelector('.tab.on');
+  const at=document.querySelector('.tab.on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  const id = at ? at.getAttribute('onclick').match(/'([^']+)'/)?.[1] : 'dashboard';
+  const id=at?at.getAttribute('onclick').match(/'([^']+)'/)?.[1]:'dashboard';
   document.getElementById('pg-'+(id||'dashboard'))?.classList.add('on');
 }
 
-// ════════════════════════════════════
-// ADD / EDIT / DELETE CLIENT
-// ════════════════════════════════════
-function openAddClient() {
+// ══════════════════════════════════════
+// ADD / EDIT / DELETE
+// ══════════════════════════════════════
+function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
-  document.getElementById('eRow').value=''; document.getElementById('eNo').value='';
-  ['name','biz','phone','email','prod','memo','next'].forEach(f=>{ const el=document.getElementById('f_'+f); if(el) el.value=''; });
-  document.getElementById('f_plan').value=''; document.getElementById('f_ref').value='FALSE';
+  document.getElementById('eRow').value='';document.getElementById('eNo').value='';
+  ['name','biz','phone','email','prod','memo','next'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';});
+  document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
   document.getElementById('clientModal').classList.add('on');
 }
 
-function openEditClient(rowIdx) {
-  const c=clients.find(x=>x.rowIdx===rowIdx); if(!c) return;
+function openEditClient(rowIdx){
+  const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   set('mTitle','✏️ 고객 정보 수정');
-  document.getElementById('eRow').value=rowIdx; document.getElementById('eNo').value=c.no;
-  document.getElementById('f_name').value=c.name; document.getElementById('f_biz').value=c.biz;
-  document.getElementById('f_phone').value=c.phone; document.getElementById('f_email').value=c.email;
-  document.getElementById('f_plan').value=c.plan; document.getElementById('f_prod').value=c.prod;
-  document.getElementById('f_memo').value=c.memo; document.getElementById('f_next').value=c.next;
+  document.getElementById('eRow').value=rowIdx;document.getElementById('eNo').value=c.no;
+  document.getElementById('f_name').value=c.name;document.getElementById('f_biz').value=c.biz;
+  document.getElementById('f_phone').value=c.phone;document.getElementById('f_email').value=c.email;
+  document.getElementById('f_plan').value=c.plan;document.getElementById('f_prod').value=c.prod;
+  document.getElementById('f_memo').value=c.memo;document.getElementById('f_next').value=c.next;
   document.getElementById('f_ref').value=c.ref;
   document.getElementById('clientModal').classList.add('on');
 }
 
-async function saveClient() {
+async function saveClient(){
   const name=document.getElementById('f_name').value.trim();
-  if (!name) { alert('고객명을 입력해주세요'); return; }
+  if(!name){alert('고객명을 입력해주세요');return;}
   const rowIdx=document.getElementById('eRow').value;
-  const data={
-    rowIdx:rowIdx?+rowIdx:undefined, no:document.getElementById('eNo').value||'',
-    name, biz:document.getElementById('f_biz').value,
-    phone:document.getElementById('f_phone').value, email:document.getElementById('f_email').value,
-    plan:document.getElementById('f_plan').value, prod:document.getElementById('f_prod').value,
-    memo:document.getElementById('f_memo').value, next:document.getElementById('f_next').value,
-    ref:document.getElementById('f_ref').value, durl:''
-  };
+  const data={rowIdx:rowIdx?+rowIdx:undefined,no:document.getElementById('eNo').value||'',
+    name,biz:document.getElementById('f_biz').value,phone:document.getElementById('f_phone').value,
+    email:document.getElementById('f_email').value,plan:document.getElementById('f_plan').value,
+    prod:document.getElementById('f_prod').value,memo:document.getElementById('f_memo').value,
+    next:document.getElementById('f_next').value,ref:document.getElementById('f_ref').value,durl:''};
   showLoad(rowIdx?'수정 저장 중...':'Google Sheets에 등록 중...');
   try {
-    if (rowIdx) {
-      await api('updateClient', data);
+    if(rowIdx){
+      await api('updateClient',data);
       const i=clients.findIndex(c=>c.rowIdx===+rowIdx);
-      if (i>=0) clients[i]={...clients[i],...data, rowIdx:+rowIdx};
+      if(i>=0)clients[i]={...clients[i],...data,rowIdx:+rowIdx};
     } else {
-      const r=await api('addClient', data);
-      clients.push({...data, rowIdx:r.rowIdx, no:String(r.no)});
+      const r=await api('addClient',data);
+      clients.push({...data,rowIdx:r.rowIdx,no:String(r.no)});
     }
-    closeOv('clientModal');
-    renderAll();
+    closeOv('clientModal');renderAll();
     toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장되었습니다!');
-  } catch(e) { toast('❌ 실패: '+e.message, 4000); }
-  finally { hideLoad(); }
+  } catch(e){toast('❌ 실패: '+e.message,4000);}
+  finally{hideLoad();}
 }
 
-async function delClient(rowIdx, name) {
-  if (!confirm(`"${name}" 고객을 삭제할까요?\nGoogle Sheets에서도 삭제됩니다.`)) return;
+async function delClient(rowIdx,name){
+  if(!confirm(`"${name}" 고객을 삭제할까요?\nGoogle Sheets에서도 삭제됩니다.`))return;
   showLoad('삭제 중...');
-  try {
-    await api('deleteClient', {rowIdx});
+  try{
+    await api('deleteClient',{rowIdx});
     clients=clients.filter(c=>c.rowIdx!==rowIdx);
-    clients.forEach(c=>{ if(c.rowIdx>rowIdx) c.rowIdx--; });
-    renderAll(); toast('🗑 삭제되었습니다');
-  } catch(e) { toast('❌ 삭제 실패: '+e.message, 4000); }
-  finally { hideLoad(); }
+    clients.forEach(c=>{if(c.rowIdx>rowIdx)c.rowIdx--;});
+    renderAll();toast('🗑 삭제되었습니다');
+  }catch(e){toast('❌ 삭제 실패: '+e.message,4000);}
+  finally{hideLoad();}
 }
 
-// ════════════════════════════════════
-// MEMOS
-// ════════════════════════════════════
-function openAddMemo()        { populateMemoSel(); document.getElementById('m_text').value=''; document.getElementById('memoModal').classList.add('on'); }
-function openAddMemoFor(name) { openAddMemo(); document.getElementById('m_client').value=name; }
+// ══════════════════════════════════════
+// MEMO
+// ══════════════════════════════════════
+function openAddMemo(){populateMemoSel();document.getElementById('m_text').value='';document.getElementById('memoModal').classList.add('on');}
+function openAddMemoFor(name){openAddMemo();document.getElementById('m_client').value=name;}
 
-async function saveMemo() {
+async function saveMemo(){
   const name=document.getElementById('m_client').value;
   const text=document.getElementById('m_text').value.trim();
-  if (!name) { alert('고객을 선택해주세요'); return; }
-  if (!text) { alert('내용을 입력해주세요'); return; }
-  const data={name, type:document.getElementById('m_type').value, text};
+  if(!name){alert('고객을 선택해주세요');return;}
+  if(!text){alert('내용을 입력해주세요');return;}
+  const data={name,type:document.getElementById('m_type').value,text};
   showLoad('메모 저장 중...');
-  try {
-    const r=await api('addMemo', data);
-    const today=new Date().toISOString().slice(0,10);
-    allMemos.unshift({id:String(r.id||Date.now()), ...data, date:today});
-    closeOv('memoModal');
-    document.getElementById('m_text').value='';
-    renderAll(); toast('✅ 메모가 Google Sheets에 저장되었습니다!');
-  } catch(e) { toast('❌ 저장 실패: '+e.message, 4000); }
-  finally { hideLoad(); }
+  try{
+    const r=await api('addMemo',data);
+    allMemos.unshift({id:String(r.id||Date.now()),...data,date:new Date().toISOString().slice(0,10)});
+    closeOv('memoModal');document.getElementById('m_text').value='';
+    renderAll();toast('✅ 메모가 Google Sheets에 저장되었습니다!');
+  }catch(e){toast('❌ 저장 실패: '+e.message,4000);}
+  finally{hideLoad();}
 }
 
-// ════════════════════════════════════
-// DEMO API
-// ════════════════════════════════════
-function demoApi(action, data) {
-  if (action==='addClient')    { const obj={...data,rowIdx:clients.length+2,no:String(clients.length+1)}; clients.push(obj); return {ok:true,rowIdx:obj.rowIdx,no:clients.length}; }
-  if (action==='updateClient') { const i=clients.findIndex(c=>c.rowIdx===data.rowIdx); if(i>=0)clients[i]={...clients[i],...data}; return {ok:true}; }
-  if (action==='deleteClient') { clients=clients.filter(c=>c.rowIdx!==data.rowIdx); return {ok:true}; }
-  if (action==='addMemo')      { const m={id:String(Date.now()),...data,date:new Date().toISOString().slice(0,10)}; allMemos.unshift(m); return {ok:true,id:m.id}; }
-  return {ok:true};
-}
-
-// ════════════════════════════════════
+// ══════════════════════════════════════
 // UI HELPERS
-// ════════════════════════════════════
-function showTab(id,el) {
+// ══════════════════════════════════════
+function showTab(id,el){
   document.getElementById('detailPg').classList.remove('on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
 }
-function closeOv(id) { document.getElementById(id).classList.remove('on'); }
+function closeOv(id){document.getElementById(id).classList.remove('on');}
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
-
-function setSyncStatus(txt,ok) {
+function setSyncStatus(txt,ok){
   set('syncTxt',txt);
-  const p=document.getElementById('syncPill'), dot=p.querySelector('.dot');
-  p.className='pill '+(ok?'ok':'err'); dot.className='dot '+(ok?'ok':'err');
+  const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');
+  p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');
 }
-function showLoad(t='저장 중...'){ set('loadTxt',t); document.getElementById('loadOv').classList.add('on'); }
-function hideLoad(){ document.getElementById('loadOv').classList.remove('on'); }
-
+function showLoad(t='저장 중...'){set('loadTxt',t);document.getElementById('loadOv').classList.add('on');}
+function hideLoad(){document.getElementById('loadOv').classList.remove('on');}
 let _tid;
-function toast(msg,dur=2600){ const e=document.getElementById('toast'); e.textContent=msg; e.classList.add('on'); clearTimeout(_tid); _tid=setTimeout(()=>e.classList.remove('on'),dur); }
-function set(id,v){ const e=document.getElementById(id); if(e) e.innerHTML=v||''; }
-function dd(s){ if(!s)return null; const d=new Date(s); d.setHours(0,0,0,0); const t=new Date(); t.setHours(0,0,0,0); return Math.ceil((d-t)/864e5); }
-function pb(p){ return {PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre'}[p]||'bgy'; }
-function dr(l,v){ return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`; }
-function esc(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function toast(msg,dur=2600){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tid);_tid=setTimeout(()=>e.classList.remove('on'),dur);}
+function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=v||'';}
+function dd(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((d-t)/864e5);}
+function pb(p){return{PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre'}[p]||'bgy';}
+function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
+function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
-function ac(n){ return AVC[(n||'A').charCodeAt(0)%AVC.length]; }
+function ac(n){return AVC[(n||'A').charCodeAt(0)%AVC.length];}
 </script>
 </body>
 </html>
