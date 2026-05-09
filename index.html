@@ -1474,8 +1474,14 @@ function openEditClient(rowIdx){
   document.getElementById('clientModal').classList.add('on');
 }
 async function saveClient(){
-  const name=document.getElementById('f_name').value.trim();
-  if(!name){alert('고객명 입력 필요');return;}
+  // 기존 name 변수 대신 아래 4줄을 넣으세요
+  const first = document.getElementById('f_first').value.trim();
+  const middle = document.getElementById('f_middle').value.trim();
+  const last = document.getElementById('f_last').value.trim();
+  const name = middle ? `${first} ${middle} ${last}` : `${first} ${last}`;
+
+  if (!first || !last) { alert('First/Last Name 입력 필요'); return; }
+  // ... 이후 코드는 그대로 두시면 됩니다. (name 변수가 합쳐진 이름을 가지고 갑니다)
   const rowIdx=document.getElementById('eRow').value;
   const plan=document.getElementById('f_plan').value;
   // 컬럼: A=no B=name C=biz D=phone E=email F=plan G=prod H=memo I=next J=ref K=durl(빈값) L=dob
