@@ -711,7 +711,7 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:L`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:M`);
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2,no:String(r[0]||''),name:String(r[1]||''),biz:String(r[2]||''),
       phone:String(r[3]||''),email:String(r[4]||''),plan:String(r[5]||''),
@@ -1080,7 +1080,8 @@ async function saveClient(){
   const name=document.getElementById('f_name').value.trim();
   if(!name){alert('고객명 입력 필요');return;}
   const rowIdx=document.getElementById('eRow').value;
-  const vals=[[document.getElementById('eNo').value||'',name,
+  const newNo = rowIdx ? document.getElementById('eNo').value : String(clients.length + 1);
+  const vals=[[newNo,name,
     document.getElementById('f_biz').value,document.getElementById('f_phone').value,
     document.getElementById('f_email').value,document.getElementById('f_plan').value,
     document.getElementById('f_prod').value,document.getElementById('f_memo').value,
@@ -1091,7 +1092,7 @@ async function saveClient(){
     if(isDemo){
       const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
         name,biz:vals[0][2],phone:vals[0][3],email:vals[0][4],plan:vals[0][5],
-        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:''};
+        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][12]||''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
     }else{
