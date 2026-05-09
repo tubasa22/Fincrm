@@ -1330,15 +1330,19 @@ async function deleteDoc(fileId, fileName, rowIdx, clientName){
     const el = document.getElementById(`doc-${fileId}`);
     if(el) el.remove();
     toast('🗑 파일 삭제됨');
-  }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
-  finally{ hideLoad(); }
-}
+} catch (e) {
+    toast('❌ 삭제 실패: ' + e.message, 4000);
+  } finally {
+    hideLoad();
+  }
+} // deleteDoc 함수 종료
+
+// 파일 확장자에 따른 아이콘 반환 함수
 function fileIcon(name) {
   if (/\.pdf$/i.test(name)) return '📄';
   if (/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
   return '📎';
 }
-
 function closeDetail(){
   document.getElementById('detailPg').classList.remove('on');
   const at=document.querySelector('.tab.on');
