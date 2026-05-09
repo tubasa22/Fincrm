@@ -20,33 +20,24 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
 
-/* SETUP */
-#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#e8f0fe,#f0f2f7)}
-.sbox{background:var(--sur);border-radius:16px;padding:40px;width:100%;max-width:520px;border:1px solid var(--g3);box-shadow:0 8px 32px rgba(26,86,219,.1)}
-.slogo{font-size:26px;font-weight:700;color:var(--blue);margin-bottom:4px}
-.ssub{font-size:13px;color:var(--text2);margin-bottom:28px}
-.step{background:var(--g2);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px}
-.snum{width:26px;height:26px;background:var(--blue);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.sbody h4{font-size:13px;font-weight:600;margin-bottom:3px}
-.sbody p{font-size:12px;color:var(--text2);line-height:1.7}
-.sbody a{color:var(--blue)}
-.sbody code{background:#fff;border:1px solid var(--g3);border-radius:4px;padding:1px 5px;font-size:11px;font-family:monospace;color:var(--blue)}
-.lbl{font-size:12px;font-weight:600;color:var(--text2);margin:14px 0 5px}
-.inp{width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:9px 12px;font-size:13px;color:var(--text);outline:none;transition:.15s;font-family:inherit;background:var(--sur)}
-.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
-.btn-conn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;transition:.15s}
-.btn-conn:hover{background:var(--blue3)}
-.btn-conn:disabled{opacity:.6;cursor:not-allowed}
-.hint{font-size:11px;color:var(--text3);margin-top:8px;text-align:center}
-.hint a{color:var(--blue);cursor:pointer;text-decoration:underline}
-.err-box{background:var(--red2);border:1px solid #fca5a5;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:#991b1b;margin-top:12px;display:none;white-space:pre-line;line-height:1.7}
-.ok-box{background:var(--green2);border:1px solid #6ee7b7;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:#065f46;margin-top:12px;display:none}
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#e8f0fe,#f0f2f7)}
+.lbox{background:var(--sur);border-radius:20px;padding:48px 40px;width:100%;max-width:420px;border:1px solid var(--g3);box-shadow:0 12px 40px rgba(26,86,219,.12);text-align:center}
+.llogo{font-size:32px;font-weight:800;color:var(--blue);margin-bottom:8px}
+.lsub{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.6}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;background:#fff;border:2px solid var(--g3);border-radius:var(--r);font-size:15px;font-weight:600;color:var(--text);cursor:pointer;transition:.2s;margin-bottom:12px}
+.google-btn:hover{border-color:var(--blue);background:var(--blue2);color:var(--blue)}
+.google-btn svg{width:22px;height:22px;flex-shrink:0}
+.demo-btn{width:100%;padding:11px;background:none;border:1px solid var(--g3);border-radius:var(--r);font-size:13px;color:var(--text2);cursor:pointer;transition:.15s}
+.demo-btn:hover{background:var(--g2)}
+.login-note{font-size:11px;color:var(--text3);margin-top:16px;line-height:1.6}
+.err-msg{background:var(--red2);border:1px solid #fca5a5;border-radius:var(--rs);padding:10px 14px;font-size:13px;color:#991b1b;margin-bottom:16px;display:none}
 
 /* APP */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.on{display:flex}
 .topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:0 20px;height:54px;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
-.logo{font-size:17px;font-weight:700;color:var(--blue);margin-right:14px;white-space:nowrap;flex-shrink:0}
+.logo{font-size:17px;font-weight:800;color:var(--blue);margin-right:14px;white-space:nowrap;flex-shrink:0}
 .tab{padding:7px 13px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);transition:.15s;white-space:nowrap;font-family:inherit}
 .tab:hover{background:var(--g2)}.tab.on{background:var(--blue2);color:var(--blue);font-weight:700}
 .tr{margin-left:auto;display:flex;align-items:center;gap:8px}
@@ -55,8 +46,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .dot{width:6px;height:6px;border-radius:50%;animation:blink 2s infinite}
 .dot.ok{background:var(--green)}.dot.err{background:var(--red)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.user-av{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--g3)}
 .btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap}
 .btn:hover{background:var(--g2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:var(--blue3)}.btn.sm{padding:5px 10px;font-size:12px}
+.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
 
 .pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%}.pg.on{display:block}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
@@ -114,12 +107,30 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .dr:last-child{border-bottom:none;padding-bottom:0}.dr-l{color:var(--text2);flex-shrink:0}.dr-v{font-weight:500;text-align:right;word-break:break-word}
 .mi{background:var(--g2);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
 .mi:last-child{margin-bottom:0}.mi-d{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px}.mi-t{font-size:13px;line-height:1.7}
-.fu{background:var(--sur);border:1px solid var(--g3);border-left:3px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s;box-shadow:var(--sh)}
-.fu:hover{background:#f8f9ff}.fu.urgent{border-left-color:var(--red)}.fu.soon{border-left-color:var(--amber)}.fu.fine{border-left-color:var(--green)}
-.fu-meta{flex:1;min-width:0}.fu-name{font-size:14px;font-weight:600;margin-bottom:2px}
+
+/* FOLLOWUP - UX 개선 */
+.fu{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:.15s;box-shadow:var(--sh)}
+.fu:hover{background:#f8f9ff}
+.fu-indicator{width:4px;height:40px;border-radius:4px;flex-shrink:0}
+.fu-indicator.urgent{background:var(--red)}.fu-indicator.soon{background:var(--amber)}.fu-indicator.fine{background:var(--green)}
+.fu-meta{flex:1;min-width:0;cursor:pointer}
+.fu-name{font-size:14px;font-weight:600;margin-bottom:2px}
 .fu-sub{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ps{margin-bottom:10px}.ps-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.ps-bar{height:6px;background:var(--g3);border-radius:3px;overflow:hidden}.ps-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .5s}
+.fu-actions{display:flex;gap:6px;flex-shrink:0}
+.fu-dd{font-size:11px;font-weight:600;text-align:center;white-space:nowrap;min-width:36px}
+
+/* TOOLTIP */
+.tooltip-wrap{position:relative;display:inline-block}
+.tooltip-wrap:hover .tooltip{display:block}
+.tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;font-size:12px;padding:7px 10px;border-radius:6px;white-space:nowrap;max-width:280px;white-space:normal;z-index:100;line-height:1.5;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1f2937}
+
+/* PLAN BAR */
+.ps{margin-bottom:12px}
+.ps-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ps-bar{height:10px;background:var(--g3);border-radius:5px;overflow:hidden}
+.ps-fill{height:100%;border-radius:5px;transition:width .5s}
+
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap}
 #toast.on{opacity:1}
 #loadOv{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:300;flex-direction:column;gap:12px}
@@ -130,35 +141,18 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 </head>
 <body>
 
-<!-- SETUP -->
-<div id="setup">
-  <div class="sbox">
-    <div class="slogo">🏦 FinCRM</div>
-    <p class="ssub">보험 에이전트 고객관리 · Google Sheets 직접 연동</p>
-
-    <div class="step">
-      <div class="snum">1</div>
-      <div class="sbody">
-        <h4>Google Cloud API 키 발급</h4>
-        <p><a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> → APIs & Services → Credentials → API Key 생성<br>
-        <strong>Sheets API</strong> 활성화 필수 · API 키 제한: <strong>없음</strong></p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="snum">2</div>
-      <div class="sbody">
-        <h4>Google Sheets 공유 설정</h4>
-        <p>시트 → 공유 → <strong>링크가 있는 모든 사용자 → 편집자</strong><br>
-        메인 시트 ID: <code>1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM</code></p>
-      </div>
-    </div>
-
-    <div class="lbl">Google API 키</div>
-    <input class="inp" id="cfgKey" placeholder="AIzaSy...">
-    <div class="err-box" id="errBox"></div>
-    <div class="ok-box" id="okBox"></div>
-    <button class="btn-conn" id="connBtn" onclick="connect()">🔗 연결 시작</button>
-    <p class="hint">API 키 없이 <a onclick="demoMode()">→ 데모 모드 체험</a></p>
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="lbox">
+    <div class="llogo">🏦 FinCRM</div>
+    <p class="lsub">보험 에이전트 고객관리 시스템<br>Google 계정으로 로그인하면<br>Sheets 읽기/쓰기가 모두 가능합니다</p>
+    <div class="err-msg" id="loginErr"></div>
+    <button class="google-btn" onclick="signIn()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Google 계정으로 로그인
+    </button>
+    <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기</button>
+    <p class="login-note">로그인 시 Google Sheets 읽기/쓰기 권한이 요청됩니다.<br>데이터는 본인의 Google Sheets에만 저장됩니다.</p>
   </div>
 </div>
 
@@ -172,8 +166,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <button class="tab" onclick="showTab('memos',this)">📝 상담 메모</button>
     <div class="tr">
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
-      <button class="btn sm" onclick="loadAll()">🔄 새로고침</button>
+      <button class="btn sm" onclick="loadAll()">🔄</button>
       <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
+      <img id="userAvatar" class="user-av" style="display:none" title="">
+      <button class="btn sm" onclick="signOut()" id="signOutBtn" style="display:none">로그아웃</button>
     </div>
   </div>
 
@@ -186,8 +182,17 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs"></div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div><div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div><div id="fuList"></div></div>
-      <div><div class="sh"><div class="st">📊 플랜별 현황</div></div><div class="dc" id="planStats" style="box-shadow:var(--sh)"></div></div>
+      <div>
+        <div class="sh">
+          <div class="st">⚠️ 연락 필요 고객</div>
+          <span id="fuCnt" style="font-size:12px;color:var(--text3)"></span>
+        </div>
+        <div id="fuList"></div>
+      </div>
+      <div>
+        <div class="sh"><div class="st">📊 플랜별 현황</div></div>
+        <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
+      </div>
     </div>
   </div>
 
@@ -299,117 +304,144 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <div id="loadOv"><div class="spin"></div><p id="loadTxt">저장 중...</p></div>
 <div id="toast"></div>
 
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async></script>
+
 <script>
-// ═══════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════
+const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleusercontent.com';
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
-// 컬럼: No(0) 고객명(1) 비즈니스(2) 연락처(3) 이메일(4) 플랜구분(5) 가입상품(6) 메모(7) 다음연락일(8) 에이전트리퍼(9) 상세페이지링크(11)
+const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets';
 
-let API_KEY  = '';
-let clients  = [];
-let allMemos = [];
-let isDemo   = false;
+let accessToken = '';
+let tokenExpiry  = 0;
+let clients      = [];
+let allMemos     = [];
+let isDemo       = false;
+let tokenClient  = null;
 
 // ═══════════════════════════════════════
-// GOOGLE SHEETS API (직접 연결)
+// OAUTH
 // ═══════════════════════════════════════
-async function sheetGet(id, range) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
-  const r = await fetch(url);
-  if (!r.ok) {
-    const e = await r.json().catch(()=>({}));
-    throw new Error(e?.error?.message || `HTTP ${r.status}`);
+window.addEventListener('load', () => {
+  // 저장된 토큰 확인
+  const saved = localStorage.getItem('fcrm_token');
+  const exp   = localStorage.getItem('fcrm_exp');
+  if (saved && exp && Date.now() < +exp) {
+    accessToken = saved;
+    tokenExpiry  = +exp;
+    bootApp();
   }
-  return (await r.json()).values || [];
-}
+});
 
-async function sheetAppend(id, range, rows) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=${API_KEY}`;
-  const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({values:rows})});
-  if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e?.error?.message || `HTTP ${r.status}`); }
-}
-
-async function sheetUpdate(id, range, rows) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${API_KEY}`;
-  const r = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({values:rows})});
-  if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e?.error?.message || `HTTP ${r.status}`); }
-}
-
-// ═══════════════════════════════════════
-// SETUP
-// ═══════════════════════════════════════
-async function connect() {
-  const key = document.getElementById('cfgKey').value.trim();
-  if (!key) { showErr('API 키를 입력해주세요'); return; }
-  const btn = document.getElementById('connBtn');
-  btn.disabled = true; btn.textContent = '🔄 연결 확인 중...';
-  hideErr();
-  try {
-    // 연결 테스트
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${MAIN_ID}?key=${key}&fields=spreadsheetId,properties.title`;
-    const r = await fetch(url);
-    const d = await r.json();
-    if (!r.ok) {
-      const msg = d?.error?.message || `HTTP ${r.status}`;
-      const status = d?.error?.status || '';
-      if (status==='PERMISSION_DENIED'||r.status===403) showErr(`❌ 권한 오류 (403)\nSheets API가 활성화되어 있는지 확인해주세요.\n오류: ${msg}`);
-      else if (r.status===400) showErr(`❌ 잘못된 API 키 (400)\nAPI 키를 다시 확인해주세요.\n오류: ${msg}`);
-      else showErr(`❌ 연결 실패: ${msg}`);
-      btn.disabled=false; btn.textContent='🔗 연결 시작';
-      return;
+function initTokenClient() {
+  if (!window.google) { setTimeout(initTokenClient, 300); return; }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.error) {
+        showLoginErr('로그인 실패: ' + resp.error);
+        return;
+      }
+      accessToken = resp.access_token;
+      tokenExpiry  = Date.now() + (resp.expires_in - 60) * 1000;
+      localStorage.setItem('fcrm_token', accessToken);
+      localStorage.setItem('fcrm_exp',   tokenExpiry);
+      // 사용자 정보 가져오기
+      fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: {Authorization: 'Bearer ' + accessToken}
+      }).then(r=>r.json()).then(u=>{
+        if (u.picture) {
+          document.getElementById('userAvatar').src = u.picture;
+          document.getElementById('userAvatar').title = u.name||'';
+          document.getElementById('userAvatar').style.display = 'block';
+        }
+        document.getElementById('signOutBtn').style.display = 'block';
+      });
+      bootApp();
     }
-    API_KEY = key;
-    localStorage.setItem('fcrm_key', key);
-    document.getElementById('okBox').textContent = `✅ "${d.properties?.title}" 연결 성공!`;
-    document.getElementById('okBox').style.display = 'block';
-    btn.textContent = '✅ 연결됨';
-    setTimeout(bootApp, 700);
-  } catch(e) {
-    showErr(`❌ 네트워크 오류: ${e.message}`);
-    btn.disabled=false; btn.textContent='🔗 연결 시작';
-  }
+  });
+}
+
+// GIS 로드 완료 후 초기화
+document.addEventListener('DOMContentLoaded', () => {
+  const check = setInterval(() => {
+    if (window.google?.accounts?.oauth2) {
+      clearInterval(check);
+      initTokenClient();
+    }
+  }, 200);
+});
+
+function signIn() {
+  if (!tokenClient) { showLoginErr('Google 인증 라이브러리 로딩 중... 잠시 후 다시 시도해주세요'); return; }
+  tokenClient.requestAccessToken({prompt: 'consent'});
+}
+
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken, ()=>{});
+  accessToken = '';
+  localStorage.removeItem('fcrm_token');
+  localStorage.removeItem('fcrm_exp');
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('userAvatar').style.display = 'none';
+  document.getElementById('signOutBtn').style.display = 'none';
+  clients = []; allMemos = []; isDemo = false;
 }
 
 function demoMode() {
   isDemo = true;
   clients = [
-    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개로',next:'2025-05-08',ref:'FALSE',durl:''},
-    {rowIdx:3,no:'2',name:'김철수',biz:'',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개',next:'2025-05-20',ref:'TRUE',durl:''},
+    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개로. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:''},
+    {rowIdx:3,no:'2',name:'김철수',biz:'',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE',durl:''},
     {rowIdx:4,no:'3',name:'이영희',biz:'Seoul Market',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE',durl:''},
     {rowIdx:5,no:'4',name:'박민준',biz:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
     {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
   ];
   allMemos = [
-    {name:'홍문례',type:'전화 상담',text:'FEMA 로 가입 가능, 추후 SSBCI 신청',date:'2025-01-30'},
-    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료. 메디칼 나와서 확인',date:'2025-03-18'},
-    {name:'김철수',type:'전화 상담',text:'딸이 소개. 비용 절감 원함. 다음 주 미팅',date:'2025-04-10'},
+    {name:'홍문례',type:'전화 상담',text:'FEMA 로 가입 가능, 추후 SSBCI 신청 예정',date:'2025-01-30'},
+    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18'},
+    {name:'김철수',type:'전화 상담',text:'딸이 소개. 비용 절감 원함',date:'2025-04-10'},
   ];
   bootApp();
 }
 
 function bootApp() {
-  document.getElementById('setup').style.display='none';
+  document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('on');
-  if (!isDemo) loadAll();
-  else { setSyncStatus('데모 모드',true); renderAll(); }
+  setSyncStatus(isDemo?'데모 모드':'연결됨', true);
+  if (!isDemo) loadAll(); else renderAll();
 }
 
-function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.style.display='block';}
-function hideErr(){document.getElementById('errBox').style.display='none';}
+function showLoginErr(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';}
 
-// 자동 재연결
-window.addEventListener('load', () => {
-  const k = localStorage.getItem('fcrm_key');
-  if (k) {
-    document.getElementById('cfgKey').value = k;
-    API_KEY = k;
-    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${MAIN_ID}?key=${k}&fields=spreadsheetId`)
-      .then(r => { if(r.ok) bootApp(); else localStorage.removeItem('fcrm_key'); })
-      .catch(() => localStorage.removeItem('fcrm_key'));
+// ═══════════════════════════════════════
+// SHEETS API (OAuth Bearer Token)
+// ═══════════════════════════════════════
+async function sheetsReq(method, path, body=null) {
+  // 토큰 만료 체크
+  if (!isDemo && Date.now() > tokenExpiry - 30000) {
+    tokenClient.requestAccessToken({prompt:''});
+    throw new Error('토큰이 만료되었습니다. 잠시 후 다시 시도해주세요.');
   }
-});
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${path}`;
+  const opts = {
+    method,
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  if (!r.ok) {
+    const e = await r.json().catch(()=>({}));
+    throw new Error(e?.error?.message || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
 
 // ═══════════════════════════════════════
 // LOAD DATA
@@ -417,7 +449,8 @@ window.addEventListener('load', () => {
 async function loadAll() {
   setSyncStatus('동기화 중...', false);
   try {
-    const rows = await sheetGet(MAIN_ID, 'A:L');
+    const data = await sheetsReq('GET', `${MAIN_ID}/values/A:L`);
+    const rows = data.values || [];
     clients = rows.slice(1).map((r,i) => ({
       rowIdx: i+2, no:String(r[0]||''),
       name:String(r[1]||''), biz:String(r[2]||''),
@@ -428,7 +461,6 @@ async function loadAll() {
     })).filter(c=>c.name.trim());
     setSyncStatus('연결됨', true);
     renderAll();
-    toast('✅ Google Sheets 연결 완료!');
   } catch(e) {
     setSyncStatus('오류', false);
     toast('❌ 로드 실패: '+e.message, 4000);
@@ -441,13 +473,13 @@ function renderAll(){updateKPIs();renderClients();renderSchedule();renderMemos()
 // KPIs
 // ═══════════════════════════════════════
 function updateKPIs(){
-  const n=clients.length,wp=clients.filter(c=>c.plan).length;
+  const n=clients.length, wp=clients.filter(c=>c.plan).length;
   const td=clients.filter(c=>{const d=dd(c.next);return d!==null&&d<=0;}).length;
   const rf=clients.filter(c=>c.ref==='TRUE').length;
-  set('kT',n);set('kTs','명 등록됨');
-  set('kP',wp);set('kPs',n?Math.round(wp/n*100)+'%':'—');
-  set('kC',td);set('kCs',td?'즉시 연락':'오늘 없음');
-  set('kR',rf);set('kRs',n?Math.round(rf/n*100)+'% 리퍼':'—');
+  set('kT',n); set('kTs','명 등록됨');
+  set('kP',wp); set('kPs',n?Math.round(wp/n*100)+'%':'—');
+  set('kC',td); set('kCs',td?'즉시 연락':'오늘 없음');
+  set('kR',rf); set('kRs',n?Math.round(rf/n*100)+'% 리퍼':'—');
 }
 
 // ═══════════════════════════════════════
@@ -462,6 +494,8 @@ function renderClients(list){
     const d=dd(c.next);
     const dh=d===null?'—':`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`;
     const mc=allMemos.filter(m=>m.name===c.name).length;
+    const memoShort=c.memo?(c.memo.slice(0,20)+(c.memo.length>20?'…':'')):'—';
+    const memoTip=c.memo&&c.memo.length>20?`<div class="tooltip-wrap">${memoShort}<span class="tooltip">${c.memo}</span></div>`:memoShort;
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
       <td style="font-size:11px;color:var(--text3)">${c.no}</td>
       <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
@@ -473,7 +507,7 @@ function renderClients(list){
       <td style="font-size:12px">${c.prod||'—'}</td>
       <td style="font-size:12px">${c.next?c.next+' ':''} ${dh}</td>
       <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
-      <td style="font-size:12px;color:var(--text2)">${c.memo?(c.memo.slice(0,20)+(c.memo.length>20?'…':'')):'—'}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
+      <td style="font-size:12px;color:var(--text2)">${memoTip}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
         <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
@@ -543,7 +577,7 @@ function filterMemos(){const q=document.getElementById('mSearch').value.toLowerC
 function populateMemoSel(){document.getElementById('m_client').innerHTML='<option value="">선택...</option>'+clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');}
 
 // ═══════════════════════════════════════
-// FOLLOWUP
+// FOLLOWUP - UX 개선 버전
 // ═══════════════════════════════════════
 function renderFollowup(){
   const items=clients.filter(c=>c.next).map(c=>({...c,d:dd(c.next)})).filter(c=>c.d!==null&&c.d<=14).sort((a,b)=>a.d-b.d).slice(0,8);
@@ -551,26 +585,39 @@ function renderFollowup(){
   const el=document.getElementById('fuList');
   if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 없음</div>`;return;}
   el.innerHTML=items.map(c=>`
-    <div class="fu ${c.d<0?'urgent':c.d<=7?'soon':'fine'}" onclick="openDetail(${c.rowIdx})">
-      <div class="av" style="background:${ac(c.name)};width:36px;height:36px">${c.name[0]}</div>
-      <div class="fu-meta">
-        <div class="fu-name">${c.name}${c.ref==='TRUE'?' <span class="badge bpu" style="font-size:10px">리퍼</span>':''}</div>
-        <div class="fu-sub">${c.plan||'플랜없음'} · ${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,18)+'…':''}</div>
+    <div class="fu">
+      <div class="fu-indicator ${c.d<0?'urgent':c.d<=7?'soon':'fine'}"></div>
+      <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
+        <div class="fu-name">${c.name}${c.ref==='TRUE'?' <span class="badge bpu" style="font-size:10px">리퍼</span>':''}
+          ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:4px">${c.plan}</span>`:''}
+        </div>
+        <div class="fu-sub">${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,25)+'…':''}</div>
       </div>
-      <div style="font-size:12px;font-weight:700;color:${c.d<0?'var(--red)':c.d<=7?'var(--amber)':'var(--green)'};text-align:right;white-space:nowrap">
-        ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}<br><span style="font-size:10px;font-weight:400;color:var(--text3)">${c.next}</span>
+      <div class="fu-actions">
+        <a href="tel:${c.phone}" class="btn sm" title="전화 걸기" onclick="event.stopPropagation()">📞</a>
+        <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모 추가">📝</button>
+      </div>
+      <div class="fu-dd" style="color:${c.d<0?'var(--red)':c.d<=7?'var(--amber)':'var(--green)'}">
+        ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}
       </div>
     </div>`).join('');
 }
 
+// ═══════════════════════════════════════
+// PLAN STATS - 굵은 막대 + 색상 개선
+// ═══════════════════════════════════════
 function renderPlanStats(){
   const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
+  const pcolBar={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309',Life:'#dc2626','미지정':'#9ca3af'};
   const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre','미지정':'bgy'};
   document.getElementById('planStats').innerHTML=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([p,n])=>`
-    <div class="ps"><div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
-      <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span></div>
-      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%"></div></div>
+    <div class="ps">
+      <div class="ps-top">
+        <span class="badge ${pcol[p]||'bgy'}">${p}</span>
+        <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
+      </div>
+      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${pcolBar[p]||'#9ca3af'}"></div></div>
     </div>`).join('');
 }
 
@@ -594,6 +641,7 @@ function openDetail(rowIdx){
       <p>📞 ${c.phone||'—'} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 ${c.next||'미정'} ${db}</p>
     </div>
     <div class="dh-right">
+      ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞 전화</a>`:''}
       <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}')">📝 메모</button>
       <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
       ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세시트</a>`:''}
@@ -628,7 +676,7 @@ function closeDetail(){
 }
 
 // ═══════════════════════════════════════
-// ADD / EDIT / DELETE CLIENT
+// ADD / EDIT / DELETE
 // ═══════════════════════════════════════
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
@@ -665,14 +713,17 @@ async function saveClient(){
   showLoad('저장 중...');
   try{
     if(isDemo){
-      const obj={rowIdx:rowIdx?+rowIdx:clients.length+2, no:vals[0][0]||String(clients.length+1),
-        name, biz:vals[0][2], phone:vals[0][3], email:vals[0][4], plan:vals[0][5],
-        prod:vals[0][6], memo:vals[0][7], next:vals[0][8], ref:vals[0][9], durl:''};
+      const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
+        name,biz:vals[0][2],phone:vals[0][3],email:vals[0][4],plan:vals[0][5],
+        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
     } else {
-      if(rowIdx) await sheetUpdate(MAIN_ID,`A${rowIdx}:L${rowIdx}`,vals);
-      else await sheetAppend(MAIN_ID,'A:L',vals);
+      if(rowIdx){
+        await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      } else {
+        await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
+      }
       await loadAll();
     }
     closeOv('clientModal');renderAll();
@@ -684,10 +735,16 @@ async function saveClient(){
 async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
   if(isDemo){clients=clients.filter(c=>c.rowIdx!==rowIdx);renderAll();toast('삭제됨');return;}
-  // Sheets API 행 삭제는 batchUpdate 필요 - 로컬만 삭제 후 안내
-  clients=clients.filter(c=>c.rowIdx!==rowIdx);
-  renderAll();
-  toast('⚠️ 화면에서 삭제됨. Sheets에서 직접 해당 행을 삭제해주세요.');
+  showLoad('삭제 중...');
+  try{
+    // 행 삭제 batchUpdate
+    await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{
+      requests:[{deleteDimension:{range:{sheetId:0,dimension:'ROWS',startIndex:rowIdx-1,endIndex:rowIdx}}}]
+    });
+    await loadAll();
+    toast('🗑 삭제되었습니다');
+  }catch(e){toast('❌ '+e.message,4000);}
+  finally{hideLoad();}
 }
 
 // ═══════════════════════════════════════
@@ -705,7 +762,10 @@ async function saveMemo(){
   const today=new Date().toISOString().slice(0,10);
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo) await sheetAppend(DETAIL_ID,'메모!A:E',[[Date.now(),name,type,text,today]]);
+    if(!isDemo){
+      await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,
+        {values:[[Date.now(),name,type,text,today]]});
+    }
     allMemos.unshift({name,type,text,date:today});
     closeOv('memoModal');document.getElementById('m_text').value='';
     renderAll();toast('✅ 메모 저장됨!');
