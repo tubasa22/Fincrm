@@ -1333,8 +1333,9 @@ async function deleteDoc(fileId, fileName, rowIdx, clientName){
   }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
   finally{ hideLoad(); }
 }
-  if(/\.pdf$/i.test(name)) return '📄';
-  if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
+function fileIcon(name) {
+  if (/\.pdf$/i.test(name)) return '📄';
+  if (/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
   return '📎';
 }
 
