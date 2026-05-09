@@ -953,7 +953,7 @@ function openDetail(rowIdx){
       ${dr('연락처',c.phone)}${dr('이메일',c.email)}${dr('비즈니스',c.biz)}
       ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
       ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
-      ${dr('생년월일',c.dob||'—')}
+      ${dr('생년월일', (()=>{ const p=parseDob(c.dob); return p ? `${p.display} <span style="color:var(--text3);font-size:12px">(만 ${new Date().getFullYear()-p.y}세)</span>` : '—'; })())}
     </div>
     <div class="dc">
       <h4>메모 &amp; 일정</h4>
@@ -1285,29 +1285,55 @@ async function saveMemo(){
 // ══════════════════════════════════════
 // BIRTHDAY
 // ══════════════════════════════════════
-// 생일은 메인 시트 컬럼 12 (M열)에 추가 또는 상세시트 DOB 파싱
-// 포맷: MM/DD/YYYY 또는 YYYY-MM-DD
+// DOB 파싱 유틸 — MM/DD/YYYY, YYYY-MM-DD, Sheets 시리얼 숫자 모두 처리
+function parseDob(raw) {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+
+  // MM/DD/YYYY
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+    const [mm, dd, yyyy] = s.split('/').map(Number);
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+  }
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [yyyy, mm, dd] = s.split('-').map(Number);
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+  }
+  // M/D/YYYY (월/일 한자리)
+  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
+    const parts = s.split('/').map(Number);
+    const [mm, dd, yyyy] = parts;
+    const fullY = yyyy < 100 ? (yyyy > 30 ? 1900+yyyy : 2000+yyyy) : yyyy;
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:fullY, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${fullY}`};
+  }
+  // Google Sheets 날짜 시리얼 숫자 (1900-01-01 기준)
+  if (/^\d+$/.test(s)) {
+    const serial = parseInt(s);
+    if (serial > 1000 && serial < 80000) {
+      const base = new Date(1899, 11, 30);
+      const date = new Date(base.getTime() + serial * 86400000);
+      const mm = date.getMonth()+1, dd = date.getDate(), yyyy = date.getFullYear();
+      return {m:mm, d:dd, y:yyyy, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${yyyy}`};
+    }
+  }
+  return null;
+}
 
 function getBirthdays() {
   return clients
     .map(c => {
-      // durl 컬럼에서 DOB 파싱하거나 별도 dob 필드 사용
-      const dob = c.dob || '';
-      if (!dob) return null;
-      // MM/DD/YYYY 또는 YYYY-MM-DD 파싱
-      let m, d;
-      if (/\d{2}\/\d{2}\/\d{4}/.test(dob)) {
-        [m, d] = dob.split('/').map(Number);
-      } else if (/\d{4}-\d{2}-\d{2}/.test(dob)) {
-        const parts = dob.split('-');
-        m = +parts[1]; d = +parts[2];
-      } else return null;
+      const parsed = parseDob(c.dob);
+      if (!parsed) return null;
+      const {m, d, y, display} = parsed;
       const today = new Date(); today.setHours(0,0,0,0);
       const thisYear = today.getFullYear();
       let bday = new Date(thisYear, m-1, d); bday.setHours(0,0,0,0);
       if (bday < today) bday = new Date(thisYear+1, m-1, d);
       const daysLeft = Math.ceil((bday - today) / 864e5);
-      return {...c, dob, bdMonth:m, bdDay:d, daysLeft};
+      const age = thisYear - y - (bday.getFullYear()===thisYear && bday>today ? 1 : 0);
+      return {...c, dob:display, bdMonth:m, bdDay:d, daysLeft, age};
     })
     .filter(Boolean)
     .sort((a,b) => a.daysLeft - b.daysLeft);
@@ -1352,7 +1378,7 @@ function renderBirthday() {
           ${c.ref==='TRUE'?'<span class="badge bpu" style="font-size:10px;margin-left:4px">리퍼</span>':''}
           ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:4px">${c.plan}</span>`:''}
         </div>
-        <div class="bday-info">📞 ${c.phone||'—'} &nbsp;·&nbsp; 생일: ${c.bdMonth}월 ${c.bdDay}일</div>
+        <div class="bday-info">📞 ${c.phone||'—'} &nbsp;·&nbsp; 생일: ${c.bdMonth}월 ${c.bdDay}일${c.age?' &nbsp;·&nbsp; 만 '+c.age+'세':''}</div>
       </div>
       <div class="bday-acts">
         ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞</a>`:''}
