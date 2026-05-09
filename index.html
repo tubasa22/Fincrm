@@ -191,7 +191,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <body>
 
 <!-- ══════════ SETUP ══════════ -->
-<div id="setup">
+<div id="setup" style="display:none">
   <div class="sbox">
     <div class="slogo">🏦 FinCRM</div>
     <p class="ssub">보험 에이전트 고객관리 · Google Sheets 완전 연동</p>
@@ -230,7 +230,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 </div>
 
 <!-- ══════════ APP ══════════ -->
-<div id="app">
+<div id="app" class="on">
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="logo">🏦 FinCRM</div>
@@ -416,7 +416,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 // ════════════════════════════════════
 // STATE
 // ════════════════════════════════════
-let SCRIPT_URL = '';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
 let clients    = [];
 let allMemos   = [];
 let isDemo     = false;
@@ -425,11 +425,12 @@ let isDemo     = false;
 // API
 // ════════════════════════════════════
 async function api(action, data={}) {
-  if (isDemo) return demoApi(action, data);
-  const res = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({action, ...data}),
-  });
+  const params = new URLSearchParams({action});
+  if (Object.keys(data).length) {
+    params.set('data', encodeURIComponent(JSON.stringify(data)));
+  }
+  const res = await fetch(SCRIPT_URL + '?' + params.toString());
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   const json = await res.json();
   if (json.error) throw new Error(json.error);
   return json;
@@ -490,18 +491,7 @@ function bootApp() {
 function showErr(m) { const e=document.getElementById('errBox'); e.textContent=m; e.style.display='block'; }
 function hideErr()  { document.getElementById('errBox').style.display='none'; }
 
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('fcrm_url');
-  if (saved) {
-    document.getElementById('scriptUrl').value = saved;
-    SCRIPT_URL = saved;
-    // Silent reconnect test
-    fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:'getClients'})})
-      .then(r => r.json())
-      .then(j => { if (!j.error) bootApp(); else localStorage.removeItem('fcrm_url'); })
-      .catch(() => localStorage.removeItem('fcrm_url'));
-  }
-});
+window.addEventListener('load', () => { loadAll(); });
 
 // ════════════════════════════════════
 // LOAD
