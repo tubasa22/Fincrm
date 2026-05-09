@@ -229,7 +229,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <div class="kpis">
       <div class="kpi"><div class="kpi-l">👥 전체 고객</div><div class="kpi-v" id="kT">—</div><div class="kpi-s" id="kTs"></div></div>
       <div class="kpi"><div class="kpi-l">📋 플랜 있음</div><div class="kpi-v" id="kP">—</div><div class="kpi-s ok" id="kPs"></div></div>
-      <div class="kpi"><div class="kpi-l">📞 오늘 연락 필요</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs"></div></div>
+      <div class="kpi"><div class="kpi-l">📞 장기 미연락 (30일↑)</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs"></div></div>
       <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs"></div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
@@ -260,7 +260,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       </div>
     </div>
     <div class="tw"><table>
-      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>다음연락일</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
+      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
       <tbody id="cBody"><tr class="spin-row"><td colspan="10"><div class="spin"></div></td></tr></tbody>
     </table></div>
   </div>
@@ -268,13 +268,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <!-- SCHEDULE -->
   <div class="pg" id="pg-schedule">
     <div class="sh">
-      <div class="st">📅 다음 연락일 관리</div>
+      <div class="st">📅 마지막 연락일 관리</div>
       <select class="sf" id="ddF" onchange="renderSchedule()">
-        <option value="">전체</option><option value="-1">기한 초과</option><option value="7">D-7 이내</option><option value="30">D-30 이내</option>
+        <option value="">전체 (경과일순)</option><option value="-1">오늘 연락</option><option value="7">7일 이내</option><option value="30">30일 이내</option>
       </select>
     </div>
     <div class="tw"><table>
-      <thead><tr><th>고객명</th><th>연락처</th><th>플랜</th><th>가입상품</th><th>다음연락일</th><th>D-Day</th><th>메모</th><th>관리</th></tr></thead>
+      <thead><tr><th>고객명</th><th>연락처</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>메모</th><th>관리</th></tr></thead>
       <tbody id="sBody"><tr class="spin-row"><td colspan="8"><div class="spin"></div></td></tr></tbody>
     </table></div>
   </div>
@@ -398,10 +398,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 
     <div class="zap-card">
       <div class="zap-head">
-        <div class="zap-title">📅 다음 연락일 D-3 → 알림</div>
+        <div class="zap-title">📅 마지막 연락 D+30 → 알림 → 알림</div>
         <button class="tog on" id="zap_contact" onclick="this.classList.toggle('on')"></button>
       </div>
-      <div class="zap-desc">다음 연락일 3일 전 자동 감지 → SMS 또는 Slack 알림<br>전송 데이터: 이름, 연락처, 플랜, 메모</div>
+      <div class="zap-desc">마지막 연락일 기준 3일 경과 자동 감지 → SMS 또는 Slack 알림<br>전송 데이터: 이름, 연락처, 플랜, 메모</div>
       <div class="wh-box"><span id="wh_contact">웹훅 URL을 위에서 먼저 등록해주세요</span><button class="btn sm" onclick="copyWh('wh_contact')">📋</button></div>
       <div style="font-size:11px;color:var(--text3);margin-top:8px">D-3 이내: <strong id="zapContactCnt" style="color:var(--amber)">0</strong>명</div>
     </div>
@@ -465,7 +465,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
     <div class="fg"><label>메모</label><textarea id="f_memo"></textarea></div>
     <div class="fgr">
-      <div class="fg"><label>다음 연락일</label><input type="date" id="f_next"></div>
+      <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next" title="상담/연락한 날짜"></div>
       <div class="fg"><label>에이전트 리퍼</label><select id="f_ref"><option value="FALSE">없음</option><option value="TRUE">있음</option></select></div>
     </div>
     <div class="fgr">
@@ -729,11 +729,11 @@ function renderAll(){updateKPIs();renderClients();renderSchedule();renderMemos()
 // ══════════════════════════════════════
 function updateKPIs(){
   const n=clients.length,wp=clients.filter(c=>c.plan).length;
-  const td=clients.filter(c=>{const d=dd(c.next);return d!==null&&d<=0;}).length;
+  const td=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length;
   const rf=clients.filter(c=>c.ref==='TRUE').length;
   set('kT',n);set('kTs','명 등록됨');
   set('kP',wp);set('kPs',n?Math.round(wp/n*100)+'%':'—');
-  set('kC',td);set('kCs',td?'즉시 연락':'오늘 없음');
+  set('kC',td);set('kCs',td?'즉시 연락 필요':'양호');
   set('kR',rf);set('kRs',n?Math.round(rf/n*100)+'% 리퍼':'—');
 }
 
@@ -746,8 +746,8 @@ function renderClients(list){
   const tb=document.getElementById('cBody');
   if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="10">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
   tb.innerHTML=data.map(c=>{
-    const d=dd(c.next);
-    const dh=d===null?'—':`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`;
+    const el_d=elapsed(c.next);
+    const dh=el_d===null?'—':`<span class="badge ${el_d>=30?'bre':el_d>=14?'bam':'bgr'}">D+${el_d}</span>`;
     const mc=allMemos.filter(m=>m.name===c.name).length;
     const memoEl=c.memo?(c.memo.length>20?`<span class="tip">${c.memo.slice(0,20)}…<span class="tipbox">${c.memo}</span></span>`:c.memo):'—';
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
@@ -759,7 +759,7 @@ function renderClients(list){
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
       <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
       <td style="font-size:12px">${c.prod||'—'}</td>
-      <td style="font-size:12px">${c.next?c.next+' ':''} ${dh}</td>
+      <td style="font-size:12px">${c.next||'—'}</td><td>${dh}</td>
       <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${memoEl}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
@@ -783,21 +783,21 @@ function filterClients(){
 // ══════════════════════════════════════
 function renderSchedule(){
   const f=document.getElementById('ddF')?.value||'';
-  let data=[...clients].filter(c=>c.next).sort((a,b)=>new Date(a.next)-new Date(b.next));
-  if(f==='-1') data=data.filter(c=>dd(c.next)<0);
-  else if(f==='7') data=data.filter(c=>{const d=dd(c.next);return d!==null&&d>=0&&d<=7;});
-  else if(f==='30') data=data.filter(c=>{const d=dd(c.next);return d!==null&&d>=0&&d<=30;});
+  let data=[...clients].filter(c=>c.next).sort((a,b)=>elapsed(b.next)-elapsed(a.next));
+  if(f==='-1') data=data.filter(c=>elapsed(c.next)===0);
+  else if(f==='7') data=data.filter(c=>{const d=elapsed(c.next);return d!==null&&d<=7;});
+  else if(f==='30') data=data.filter(c=>{const d=elapsed(c.next);return d!==null&&d<=30;});
   const tb=document.getElementById('sBody');
   if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="8">해당 일정 없음</td></tr>`;return;}
   tb.innerHTML=data.map(c=>{
-    const d=dd(c.next);
-    return `<tr class="click" style="${d<0?'background:#fff5f5':d!==null&&d<=7?'background:#fffbeb':''}" onclick="openDetail(${c.rowIdx})">
+    const d=elapsed(c.next);
+    return `<tr class="click" style="${d!==null&&d>=30?'background:#fff5f5':d!==null&&d>=14?'background:#fffbeb':''}" onclick="openDetail(${c.rowIdx})">
       <td><div class="nc"><div class="av" style="background:${ac(c.name)};width:28px;height:28px;font-size:11px">${c.name[0]}</div><strong>${c.name}</strong></div></td>
       <td>${c.phone||'—'}</td>
       <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
       <td style="font-size:12px">${c.prod||'—'}</td>
-      <td><strong>${c.next}</strong></td>
-      <td><span class="badge ${d===null?'bgy':d<0?'bre':d<=7?'bam':'bgr'}">${d===null?'—':d<0?'D+'+Math.abs(d):'D-'+d}</span></td>
+      <td><strong>${c.next||'—'}</strong></td>
+      <td><span class="badge ${d===null?'bgy':d>=30?'bre':d>=14?'bam':'bgr'}">${d===null?'—':'D+'+d}</span></td>
       <td style="font-size:12px;color:var(--text2)">${(c.memo||'').slice(0,30)}</td>
       <td onclick="event.stopPropagation()"><button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️</button></td>
     </tr>`;
@@ -831,13 +831,13 @@ function populateMemoSel(){document.getElementById('m_client').innerHTML='<optio
 // FOLLOWUP — UX 개선
 // ══════════════════════════════════════
 function renderFollowup(){
-  const items=clients.filter(c=>c.next).map(c=>({...c,d:dd(c.next)})).filter(c=>c.d!==null&&c.d<=14).sort((a,b)=>a.d-b.d).slice(0,8);
+  const items=clients.filter(c=>c.next).map(c=>({...c,d:elapsed(c.next)})).filter(c=>c.d!==null&&c.d>=7).sort((a,b)=>b.d-a.d).slice(0,8);
   set('fuCnt',items.length+'명');
   const el=document.getElementById('fuList');
   if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 없음</div>`;return;}
   el.innerHTML=items.map(c=>`
     <div class="fu">
-      <div class="fu-bar ${c.d<0?'urgent':c.d<=7?'soon':'fine'}"></div>
+      <div class="fu-bar ${c.d>=30?'urgent':c.d>=14?'soon':'fine'}"></div>
       <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
         <div class="fu-name">${c.name}
           ${c.ref==='TRUE'?'<span class="badge bpu" style="font-size:10px;margin-left:4px">리퍼</span>':''}
@@ -849,8 +849,8 @@ function renderFollowup(){
         <a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>
         <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모">📝</button>
       </div>
-      <div class="fu-dd" style="color:${c.d<0?'var(--red)':c.d<=7?'var(--amber)':'var(--green)'}">
-        ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}
+      <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">
+        D+${c.d}
       </div>
     </div>`).join('');
 }
@@ -879,8 +879,8 @@ function openDetail(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('detailPg').classList.add('on');
-  const d=dd(c.next);
-  const db=d!==null?`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`:'';
+  const d=elapsed(c.next);
+  const db=d!==null?`<span class="badge ${d>=30?'bre':d>=14?'bam':'bgr'}">D+${d}</span>`:'';
   const memos=allMemos.filter(m=>m.name===c.name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   document.getElementById('dHead').innerHTML=`
     <div class="dh-av" style="background:${ac(c.name)}">${c.name[0]}</div>
@@ -889,7 +889,7 @@ function openDetail(rowIdx){
         ${c.ref==='TRUE'?'<span class="badge bpu" style="margin-left:8px;font-size:12px">리퍼</span>':''}
         ${c.plan?`<span class="badge ${pb(c.plan)}" style="margin-left:6px;font-size:12px">${c.plan}</span>`:''}
       </h2>
-      <p>📞 ${c.phone||'—'} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 ${c.next||'미정'} ${db}</p>
+      <p>📞 ${c.phone||'—'} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 마지막 연락: ${c.next||'없음'} ${db}</p>
     </div>
     <div class="dh-right">
       ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞 전화</a>`:''}
@@ -1095,8 +1095,8 @@ async function saveClient(){
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
     }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:M${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:M:append?valueInputOption=USER_ENTERED`,{values:vals});
       await loadAll();
     }
     closeOv('clientModal');renderAll();
@@ -1130,8 +1130,17 @@ async function saveMemo(){
   try{
     if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,today]]});
     allMemos.unshift({name,type,text,date:today});
+    // 마지막 연락일 자동 갱신
+    const ci = clients.findIndex(c=>c.name===name);
+    if(ci>=0){
+      clients[ci].next = today;
+      if(!isDemo){
+        const rowIdx = clients[ci].rowIdx;
+        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[today]]});
+      }
+    }
     closeOv('memoModal');document.getElementById('m_text').value='';
-    renderAll();toast('✅ 메모 저장됨!');
+    renderAll();toast('✅ 메모 저장 + 마지막 연락일 갱신!');
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
@@ -1422,7 +1431,7 @@ function updateZapUrls(base){
 }
 
 function updateZapCounts(){
-  const d3=clients.filter(c=>{const d=dd(c.next);return d!==null&&d>=0&&d<=3;}).length;
+  const d3=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length;
   set('zapContactCnt',d3);
   const bd=getBirthdays().filter(c=>c.daysLeft<=7).length;
   set('zapBdayCnt',bd);
@@ -1469,6 +1478,8 @@ let _tid;
 function toast(msg,dur=2600){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tid);_tid=setTimeout(()=>e.classList.remove('on'),dur);}
 function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=v||'';}
 function dd(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((d-t)/864e5);}
+// 마지막 연락일로부터 경과일 (오래될수록 큰 숫자)
+function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((t-d)/864e5);}
 function pb(p){return{PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
 function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
