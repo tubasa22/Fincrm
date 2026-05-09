@@ -1336,6 +1336,13 @@ async function deleteDoc(fileId, fileName, rowIdx, clientName){
     toast('🗑 파일 삭제됨');
   }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
   finally{ hideLoad(); }
+}} // deleteDoc 함수 닫는 괄호
+
+// 새로 추가하거나 누락된 함수 선언부
+function fileIcon(name) {
+  if (/\.pdf$/i.test(name)) return '📄';
+  if (/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
+  return '📎';
 }
   if(/\.pdf$/i.test(name)) return '📄';
   if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
