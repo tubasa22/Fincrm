@@ -758,7 +758,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 200);
 });
 
-function signIn(){ if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'}); }
+// 기존 함수 정의 아래에 추가
+function signIn() {
+  if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'});
+}
+window.signIn = signIn; // 전역 객체에 강제로 등록
 function signOut(){
   if(accessToken) google.accounts.oauth2.revoke(accessToken,()=>{});
   accessToken=''; localStorage.removeItem('fcrm_token'); localStorage.removeItem('fcrm_exp');
