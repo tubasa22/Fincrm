@@ -1328,16 +1328,21 @@ async function deleteDoc(fileId, fileName, rowIdx, clientName){
     });
     if(!r.ok && r.status !== 204) throw new Error(`HTTP ${r.status}`);
     const el = document.getElementById(`doc-${fileId}`);
-    if(el) el.remove();
+   if (el) el.remove();
     toast('🗑 파일 삭제됨');
-  }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
-  finally{ hideLoad(); }
-}
-  if(/\.pdf$/i.test(name)) return '📄';
-  if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
+  } catch (e) {
+    toast('❌ 삭제 실패: ' + e.message, 4000);
+  } finally {
+    hideLoad();
+  }
+} // deleteDoc 함수가 여기서 정확히 닫혀야 합니다.
+
+// 아래 함수 선언이 누락되었거나 중괄호가 어긋나 에러가 발생한 것입니다.
+function fileIcon(name) {
+  if (/\.pdf$/i.test(name)) return '📄';
+  if (/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
   return '📎';
 }
-
 function closeDetail(){
   document.getElementById('detailPg').classList.remove('on');
   const at=document.querySelector('.tab.on');
