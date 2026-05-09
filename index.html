@@ -186,6 +186,93 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .prog-wrap{width:200px;height:6px;background:var(--g3);border-radius:3px;overflow:hidden;display:none}
 .prog-wrap.on{display:block}
 .prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .2s}
+
+/* GLOBAL SEARCH */
+.gsrch-wrap{position:relative;flex:1;max-width:260px}
+.gsrch{width:100%;padding:6px 12px 6px 32px;border:1px solid var(--g3);border-radius:20px;font-size:13px;background:var(--g2);color:var(--text);outline:none;font-family:inherit;transition:.2s}
+.gsrch:focus{border-color:var(--blue);background:var(--sur);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.gsrch-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+.gsrch-results{position:absolute;top:calc(100%+6px);left:0;right:0;background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;max-height:320px;overflow-y:auto;display:none}
+.gsrch-results.on{display:block}
+.gsr-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--g3);display:flex;align-items:center;gap:10px;transition:.1s}
+.gsr-item:last-child{border-bottom:none}
+.gsr-item:hover{background:var(--blue2)}
+.gsr-name{font-weight:600;font-size:13px}
+.gsr-sub{font-size:11px;color:var(--text2)}
+
+/* NOTIFICATION BELL */
+.notif-wrap{position:relative}
+.notif-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--g3);background:var(--sur);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;position:relative}
+.notif-btn:hover{background:var(--g2)}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:1.4;display:none}
+.notif-badge.on{display:block}
+.notif-panel{position:absolute;top:calc(100%+8px);right:0;width:300px;background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;display:none}
+.notif-panel.on{display:block}
+.notif-head{padding:12px 16px;border-bottom:1px solid var(--g3);font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.notif-item{padding:10px 16px;border-bottom:1px solid var(--g3);font-size:12px;line-height:1.6;cursor:pointer;transition:.1s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--g2)}
+.notif-item .ni-title{font-weight:600;margin-bottom:2px}
+.notif-item .ni-sub{color:var(--text2)}
+.notif-empty{padding:20px;text-align:center;color:var(--text3);font-size:13px}
+
+/* DONUT CHART */
+.donut-wrap{display:flex;align-items:center;gap:20px;margin-bottom:16px}
+.donut-svg{flex-shrink:0}
+.donut-legend{flex:1;min-width:0}
+.dl-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dl-label{flex:1;color:var(--text2)}
+.dl-val{font-weight:700}
+
+/* QUICK FILTER CHIPS */
+.qf-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.qf{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text2);transition:.15s;font-family:inherit;white-space:nowrap}
+.qf:hover{border-color:var(--blue);color:var(--blue)}
+.qf.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* CALENDAR */
+.cal-wrap{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--blue);color:#fff}
+.cal-title{font-size:15px;font-weight:700}
+.cal-nav{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:4px;opacity:.8}
+.cal-nav:hover{opacity:1;background:rgba(255,255,255,.15)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-dow{padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--text3);border-bottom:1px solid var(--g3)}
+.cal-day{min-height:70px;padding:6px;border-right:1px solid var(--g3);border-bottom:1px solid var(--g3);cursor:pointer;transition:.1s;position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day:hover{background:var(--blue2)}
+.cal-day.other{background:var(--g2)}
+.cal-day.today{background:#eff6ff}
+.cal-day.today .cal-dn{background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.cal-dn{font-size:12px;font-weight:600;margin-bottom:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.cal-ev{font-size:10px;background:var(--blue2);color:var(--blue);border-radius:3px;padding:1px 4px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.cal-ev.bday{background:var(--red2);color:var(--red)}
+.cal-ev.memo{background:var(--green2);color:var(--green)}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:768px){
+  .topbar{padding:0 10px;gap:1px;height:auto;min-height:54px;flex-wrap:wrap}
+  .logo{font-size:15px;margin-right:6px}
+  .tab{padding:5px 8px;font-size:12px}
+  .tr{gap:4px;flex-wrap:wrap}
+  .gsrch-wrap{max-width:140px}
+  .pg{padding:12px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  #pg-dashboard > div:nth-child(2){grid-template-columns:1fr!important}
+  .dgrid{grid-template-columns:1fr!important}
+  .fgr{grid-template-columns:1fr}
+  .donut-wrap{flex-direction:column}
+  .dh{flex-direction:column;align-items:flex-start}
+  .dh-right{margin-left:0;width:100%}
+  .cal-day{min-height:50px}
+  .cal-ev{display:none}
+  .cal-day .cal-dot{display:block}
+  table{font-size:12px}
+  th,td{padding:7px 8px}
+  .qf-wrap{gap:4px}
+  .notif-panel{width:260px;right:-60px}
+}
 </style>
 </head>
 <body>
@@ -211,11 +298,22 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
     <button class="tab" onclick="showTab('clients',this)">👥 고객 목록</button>
     <button class="tab" onclick="showTab('schedule',this)">📅 연락일</button>
-    <button class="tab" onclick="showTab('memos',this)">📝 상담 메모</button>
     <button class="tab" onclick="showTab('birthday',this)">🎂 생일</button>
     <button class="tab" onclick="showTab('sms',this)">💬 문자 발송</button>
     <button class="tab" onclick="showTab('automation',this)">⚡ 자동화</button>
     <div class="tr">
+      <div class="gsrch-wrap">
+        <span class="gsrch-icon">🔍</span>
+        <input class="gsrch" id="globalSearch" placeholder="고객 검색..." oninput="globalSearchFn()" onblur="setTimeout(()=>closeGlobalSearch(),200)">
+        <div class="gsrch-results" id="gsResults"></div>
+      </div>
+      <div class="notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif()" title="알림">🔔<span class="notif-badge" id="notifBadge"></span></button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-head">알림 <button style="border:none;background:none;cursor:pointer;font-size:11px;color:var(--text3)" onclick="clearNotifs()">모두 읽음</button></div>
+          <div id="notifList"><div class="notif-empty">새 알림 없음</div></div>
+        </div>
+      </div>
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
       <button class="btn sm" onclick="loadAll()">🔄</button>
       <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
@@ -232,14 +330,49 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="kpi"><div class="kpi-l">📞 장기 미연락 (30일↑)</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs"></div></div>
       <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs"></div></div>
     </div>
+    <!-- 퀵 필터 -->
+    <div class="qf-wrap" id="qfWrap">
+      <button class="qf on" onclick="qfFilter('',this)">전체</button>
+      <button class="qf" onclick="qfFilter('MAPD',this)">MAPD만</button>
+      <button class="qf" onclick="qfFilter('PDP',this)">PDP만</button>
+      <button class="qf" onclick="qfFilter('MA',this)">MA만</button>
+      <button class="qf" onclick="qfFilter('SNP',this)">SNP만</button>
+      <button class="qf" onclick="qfFilter('ref',this)">리퍼 고객</button>
+      <button class="qf" onclick="qfFilter('urgent',this)">🚨 즉시 연락 (30일↑)</button>
+      <button class="qf" onclick="qfFilter('recent',this)">최근 등록순</button>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
         <div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div>
         <div id="fuList"></div>
       </div>
       <div>
-        <div class="sh"><div class="st">📊 플랜별 현황</div></div>
+        <div class="sh">
+          <div class="st">📊 플랜별 현황</div>
+          <div style="display:flex;gap:6px">
+            <button class="qf on" id="chartToggleBar" onclick="switchChart('bar',this)" style="padding:3px 10px;font-size:11px">막대</button>
+            <button class="qf" id="chartToggleDot" onclick="switchChart('donut',this)" style="padding:3px 10px;font-size:11px">도넛</button>
+          </div>
+        </div>
         <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
+      </div>
+    </div>
+    <!-- 캘린더 -->
+    <div style="margin-top:20px">
+      <div class="sh">
+        <div class="st">📅 일정 캘린더</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:12px;color:var(--text2)"><span style="background:var(--blue2);color:var(--blue);padding:2px 7px;border-radius:3px;font-size:11px">연락일</span> <span style="background:var(--red2);color:var(--red);padding:2px 7px;border-radius:3px;font-size:11px">생일</span> <span style="background:var(--green2);color:var(--green);padding:2px 7px;border-radius:3px;font-size:11px">상담</span></span>
+        </div>
+      </div>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calNav(-1)">‹</button>
+          <div class="cal-title" id="calTitle"></div>
+          <button class="cal-nav" onclick="calNav(1)">›</button>
+        </div>
+        <div class="cal-grid" id="calDow"></div>
+        <div class="cal-grid" id="calGrid"></div>
       </div>
     </div>
   </div>
@@ -277,18 +410,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <thead><tr><th>고객명</th><th>연락처</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>메모</th><th>관리</th></tr></thead>
       <tbody id="sBody"><tr class="spin-row"><td colspan="8"><div class="spin"></div></td></tr></tbody>
     </table></div>
-  </div>
-
-  <!-- MEMOS -->
-  <div class="pg" id="pg-memos">
-    <div class="sh">
-      <div class="st">📝 상담 메모</div>
-      <div class="sa">
-        <input class="srch" id="mSearch" placeholder="🔍 고객명·내용 검색" oninput="filterMemos()">
-        <button class="btn pri" onclick="openAddMemo()">+ 메모 추가</button>
-      </div>
-    </div>
-    <div id="memoContainer"><div style="text-align:center;padding:40px"><div class="spin"></div></div></div>
   </div>
 
   <!-- BIRTHDAY -->
@@ -459,9 +580,27 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
     <div class="fgr">
       <div class="fg"><label>플랜 구분</label>
-        <select id="f_plan"><option value="">선택</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option></select>
+        <select id="f_plan" onchange="togglePlanFields()"><option value="">선택</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option></select>
       </div>
       <div class="fg"><label>가입 상품</label><input id="f_prod" placeholder="Anthem, Kaiser..."></div>
+    </div>
+    <!-- MAPD/PDP 전용 추가 정보 -->
+    <div id="planExtraFields" style="display:none;background:var(--blue2);border:1px solid #bfdbfe;border-radius:var(--rs);padding:14px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">🏥 MAPD / PDP 추가 정보</div>
+      <div class="fgr">
+        <div class="fg"><label>MBI (Medicare ID)</label><input id="f_mbi" placeholder="1EG4-TE5-MK72"></div>
+        <div class="fg"><label>Medical # (Medi-Cal)</label><input id="f_medical_no" placeholder="Medi-Cal #"></div>
+      </div>
+      <div class="fgr">
+        <div class="fg"><label>PCP 이름</label><input id="f_pcp" placeholder="Dr. Kim..."></div>
+        <div class="fg"><label>PCP 연락처</label><input id="f_pcp_phone" placeholder="949-000-0000"></div>
+      </div>
+      <div class="fgr">
+        <div class="fg"><label>메디컬 네트워크 / IPA</label><input id="f_network" placeholder="HMO, PPO, 센타메디칼..."></div>
+        <div class="fg"><label>그룹 번호</label><input id="f_group_no" placeholder="Group #"></div>
+      </div>
+      <div class="fg"><label>복용 약 리스트 (쉼표로 구분)</label><textarea id="f_meds" style="min-height:56px" placeholder="Metformin 500mg, Lisinopril 10mg..."></textarea></div>
+      <div class="fg"><label>특이사항 (만성질환, 알레르기 등)</label><textarea id="f_conditions" style="min-height:48px" placeholder="당뇨, 고혈압, 페니실린 알레르기..."></textarea></div>
     </div>
     <div class="fg"><label>메모</label><textarea id="f_memo"></textarea></div>
     <div class="fgr">
@@ -482,18 +621,23 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
-<!-- MODAL: 메모 -->
+<!-- MODAL: 상담 메모 -->
 <div class="ov" id="memoModal">
   <div class="modal">
     <h3>📝 상담 메모 추가</h3>
+    <input type="hidden" id="m_client">
+    <div style="background:var(--blue2);border-radius:var(--rs);padding:8px 12px;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:14px" id="m_client_label"></div>
     <div class="fgr">
-      <div class="fg"><label>고객명 *</label><select id="m_client"><option value="">선택...</option></select></div>
-      <div class="fg"><label>상담 유형</label><select id="m_type"><option>전화 상담</option><option>대면 미팅</option><option>이메일</option><option>문자</option><option>기타</option></select></div>
+      <div class="fg"><label>상담 유형</label>
+        <select id="m_type"><option>전화 상담</option><option>대면 미팅</option><option>이메일</option><option>문자</option><option>플랜 변경</option><option>서류 접수</option><option>기타</option></select>
+      </div>
+      <div class="fg"><label>상담 날짜</label><input type="date" id="m_date"></div>
     </div>
-    <div class="fg"><label>상담 내용 *</label><textarea id="m_text" style="min-height:100px"></textarea></div>
+    <div class="fg"><label>상담 내용 *</label><textarea id="m_text" style="min-height:120px" placeholder="상담 내용을 입력하세요..."></textarea></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ 저장된 메모는 수정·삭제 불가 (변경 이력 보존)</div>
     <div class="mf">
       <button class="btn" onclick="closeOv('memoModal')">취소</button>
-      <button class="btn pri" onclick="saveMemo()">저장하기</button>
+      <button class="btn pri" onclick="saveMemo()">💾 저장하기</button>
     </div>
   </div>
 </div>
@@ -568,12 +712,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleusercontent.com';
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
-const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
 
 let accessToken = '';
 let tokenExpiry  = 0;
 let clients      = [];
 let allMemos     = [];
+let allPlanInfo  = []; // MAPD/PDP 추가 정보
 let isDemo       = false;
 let tokenClient  = null;
 let pendingFiles = [];
@@ -633,9 +778,17 @@ function demoMode(){
     {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
   ];
   allMemos=[
-    {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30'},
-    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18'},
-    {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10'},
+    {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30',ts:'2025. 01. 30. 14:22'},
+    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18',ts:'2025. 03. 18. 10:05'},
+    {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10',ts:'2025. 04. 10. 16:40'},
+  ];
+  allPlanInfo=[
+    {name:'홍문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',
+      network:'센타메디칼 IPA',group_no:'GRP-1023',
+      meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',conditions:'당뇨 2형, 고혈압'},
+    {name:'김철수',mbi:'2AB7-RF3-XP91',medical_no:'',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',
+      network:'Kaiser PPO',group_no:'GRP-2041',
+      meds:'Amlodipine 5mg, Metoprolol 25mg',conditions:'고혈압, 페니실린 알레르기'},
   ];
   bootApp();
 }
@@ -660,28 +813,37 @@ async function sheetsReq(method,path,body=null){
 // DRIVE API — 파일 업로드
 // ══════════════════════════════════════
 async function driveUpload(file, clientName, fileType) {
-  // 1. FinCRM 폴더 찾거나 생성
+  if(!accessToken) throw new Error('로그인이 필요합니다');
+  // 1. FinCRM 루트 폴더
   let folderId = await findOrCreateFolder('FinCRM_고객서류');
   // 2. 고객별 폴더
   let clientFolderId = await findOrCreateFolder(clientName, folderId);
   // 3. 파일 업로드 (multipart)
-  const meta = {name: `[${fileType}] ${file.name}`, parents: [clientFolderId]};
+  const meta = {name:`[${fileType}] ${file.name}`,parents:[clientFolderId]};
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)],{type:'application/json'}));
   form.append('file', file);
-  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{
     method:'POST',
     headers:{Authorization:'Bearer '+accessToken},
-    body: form
+    body:form
   });
-  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`Upload HTTP ${r.status}`);}
+  if(!r.ok){
+    const e=await r.json().catch(()=>({}));
+    const msg=e?.error?.message||`HTTP ${r.status}`;
+    if(r.status===401) throw new Error('인증 만료 — 페이지를 새로고침 후 다시 로그인해주세요');
+    if(r.status===403) throw new Error('Drive 권한 없음 — 로그아웃 후 다시 로그인해주세요 (권한 재승인 필요)');
+    throw new Error(msg);
+  }
   const data = await r.json();
-  // 4. 파일 공유 설정 (링크 공유)
-  await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
-    method:'POST',
-    headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-    body:JSON.stringify({role:'reader',type:'anyone'})
-  });
+  // 4. 링크 공유 설정 (에러 무시)
+  try{
+    await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
+      method:'POST',
+      headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+      body:JSON.stringify({role:'reader',type:'anyone'})
+    });
+  }catch(e){}
   return data;
 }
 
@@ -711,18 +873,36 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:M`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:L`);
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2,no:String(r[0]||''),name:String(r[1]||''),biz:String(r[2]||''),
       phone:String(r[3]||''),email:String(r[4]||''),plan:String(r[5]||''),
       prod:String(r[6]||''),memo:String(r[7]||''),next:String(r[8]||''),
-      ref:String(r[9]||'FALSE'),durl:String(r[11]||''),dob:String(r[12]||''),
+      ref:String(r[9]||'FALSE'),durl:String(r[10]||''),dob:String(r[11]||''),
     })).filter(c=>c.name.trim());
+    // 상담 메모 로드 (DETAIL 시트 Sheet1, A:F)
+    try{
+      const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
+      allMemos=(md.values||[]).slice(1).map(r=>({
+        name:String(r[1]||''),type:String(r[2]||''),text:String(r[3]||''),
+        date:String(r[4]||''),ts:String(r[5]||''),
+      })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    }catch(e){ allMemos=[]; }
+    // MAPD/PDP 플랜 추가 정보 로드 (DETAIL 시트 2번째 탭: PlanInfo)
+    try{
+      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`);
+      allPlanInfo=(pi.values||[]).slice(1).map(r=>({
+        name:String(r[0]||''),mbi:String(r[1]||''),medical_no:String(r[2]||''),
+        pcp:String(r[3]||''),pcp_phone:String(r[4]||''),
+        network:String(r[5]||''),group_no:String(r[6]||''),
+        meds:String(r[7]||''),conditions:String(r[8]||''),
+      })).filter(p=>p.name.trim());
+    }catch(e){ allPlanInfo=[]; } // 시트 없으면 무시
     setSyncStatus('연결됨',true);
     renderAll();
   }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
 }
-function renderAll(){updateKPIs();renderClients();renderSchedule();renderMemos();renderFollowup();renderPlanStats();populateMemoSel();}
+function renderAll(){updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();}
 
 // ══════════════════════════════════════
 // KPIs
@@ -807,25 +987,7 @@ function renderSchedule(){
 // ══════════════════════════════════════
 // MEMOS
 // ══════════════════════════════════════
-function renderMemos(list){
-  const data=list||allMemos;
-  const el=document.getElementById('memoContainer');
-  if(!data.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">메모 없음<br><br><button class="btn pri sm" onclick="openAddMemo()">+ 추가</button></div>`;return;}
-  const by={};
-  [...data].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(m=>{if(!by[m.name])by[m.name]=[];by[m.name].push(m);});
-  el.innerHTML=Object.entries(by).map(([name,memos])=>`
-    <div class="dc" style="margin-bottom:12px;box-shadow:var(--sh)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <div class="av" style="background:${ac(name)}">${name[0]}</div>
-        <span style="font-weight:700;font-size:14px">${name}</span>
-        <span class="badge bgy" style="margin-left:auto">${memos.length}건</span>
-        <button class="btn sm" onclick="openAddMemoFor('${esc(name)}')">+ 추가</button>
-      </div>
-      ${memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')}
-    </div>`).join('');
-}
-function filterMemos(){const q=document.getElementById('mSearch').value.toLowerCase();renderMemos(allMemos.filter(m=>m.name.toLowerCase().includes(q)||m.text.toLowerCase().includes(q)));}
-function populateMemoSel(){document.getElementById('m_client').innerHTML='<option value="">선택...</option>'+clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');}
+function populateMemoSel(){} // 호환성 유지용 빈 함수
 
 // ══════════════════════════════════════
 // FOLLOWUP — UX 개선
@@ -856,20 +1018,190 @@ function renderFollowup(){
 }
 
 // ══════════════════════════════════════
-// PLAN STATS — 굵은 막대 + 색상별
+// GLOBAL SEARCH
 // ══════════════════════════════════════
+function globalSearchFn(){
+  const q=document.getElementById('globalSearch').value.toLowerCase().trim();
+  const res=document.getElementById('gsResults');
+  if(!q){res.classList.remove('on');return;}
+  const hits=clients.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||c.prod.toLowerCase().includes(q)).slice(0,8);
+  if(!hits.length){res.innerHTML='<div class="gsr-item" style="color:var(--text3)">검색 결과 없음</div>';res.classList.add('on');return;}
+  res.innerHTML=hits.map(c=>`
+    <div class="gsr-item" onclick="document.getElementById('globalSearch').value='';closeGlobalSearch();openDetail(${c.rowIdx})">
+      <div class="av" style="background:${ac(c.name)};width:28px;height:28px;font-size:11px;flex-shrink:0">${c.name[0]}</div>
+      <div><div class="gsr-name">${c.name}</div><div class="gsr-sub">${c.plan||'플랜 없음'} · ${c.phone||'—'}</div></div>
+    </div>`).join('');
+  res.classList.add('on');
+}
+function closeGlobalSearch(){document.getElementById('gsResults').classList.remove('on');}
+
+// ══════════════════════════════════════
+// NOTIFICATION
+// ══════════════════════════════════════
+let notifs=[];
+function buildNotifs(){
+  notifs=[];
+  const urgent=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
+  if(urgent.length) notifs.push({icon:'📞',title:`장기 미연락 ${urgent.length}명`,sub:'30일 이상 연락 없는 고객',action:()=>qfFilter('urgent',null)});
+  const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
+  if(bdays.length) notifs.push({icon:'🎂',title:`이번 주 생일 ${bdays.length}명`,sub:bdays.map(c=>c.name).join(', '),action:()=>showTab('birthday',document.querySelector('.tab:nth-child(5))'))});
+  const newRef=clients.filter(c=>c.ref==='TRUE');
+  if(newRef.length) notifs.push({icon:'🔗',title:`리퍼 고객 ${newRef.length}명`,sub:'에이전트 리퍼 연결 고객'});
+  renderNotifs();
+}
+function renderNotifs(){
+  const badge=document.getElementById('notifBadge');
+  const list=document.getElementById('notifList');
+  if(!notifs.length){badge.classList.remove('on');list.innerHTML='<div class="notif-empty">새 알림 없음</div>';return;}
+  badge.textContent=notifs.length;badge.classList.add('on');
+  list.innerHTML=notifs.map((n,i)=>`
+    <div class="notif-item" data-idx="${i}">
+      <div class="ni-title">${n.icon} ${n.title}</div>
+      <div class="ni-sub">${n.sub}</div>
+    </div>`).join('');
+  // 이벤트 리스너 등록
+  document.querySelectorAll('.notif-item').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const idx=parseInt(el.getAttribute('data-idx'));
+      if(notifs[idx]&&notifs[idx].action){closeNotif();notifs[idx].action();}
+    });
+  });
+}
+function n_click(i){if(notifs[i]&&notifs[i].action){closeNotif();notifs[i].action();}}
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('on');}
+function closeNotif(){document.getElementById('notifPanel').classList.remove('on');}
+function clearNotifs(){notifs=[];renderNotifs();closeNotif();}
+document.addEventListener('click',e=>{if(!e.target.closest('.notif-wrap'))closeNotif();});
+
+// ══════════════════════════════════════
+// QUICK FILTER
+// ══════════════════════════════════════
+function qfFilter(type, el){
+  document.querySelectorAll('.qf').forEach(b=>b.classList.remove('on'));
+  if(el) el.classList.add('on');
+  let filtered;
+  if(!type) filtered=clients;
+  else if(type==='ref') filtered=clients.filter(c=>c.ref==='TRUE');
+  else if(type==='urgent') filtered=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
+  else if(type==='recent') filtered=[...clients].reverse();
+  else filtered=clients.filter(c=>c.plan===type);
+  renderClients(filtered);
+}
+
+// ══════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}else if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function renderCalendar(){
+  const dows=['일','월','화','수','목','금','토'];
+  document.getElementById('calDow').innerHTML=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  document.getElementById('calTitle').textContent=`${calYear}년 ${calMonth+1}월`;
+  const first=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date();
+  // 이벤트 맵 생성
+  const evMap={};
+  // 마지막 연락일
+  clients.filter(c=>c.next).forEach(c=>{
+    const d=elapsed(c.next);
+    if(d!==null&&d>=0){
+      const k=c.next;
+      if(!evMap[k])evMap[k]=[];
+      evMap[k].push({type:'contact',label:c.name,rowIdx:c.rowIdx});
+    }
+  });
+  // 생일
+  getBirthdays().forEach(c=>{
+    const bd=new Date(calYear,c.bdMonth-1,c.bdDay);
+    const k=`${calYear}-${String(c.bdMonth).padStart(2,'0')}-${String(c.bdDay).padStart(2,'0')}`;
+    if(!evMap[k])evMap[k]=[];
+    evMap[k].push({type:'bday',label:'🎂'+c.name});
+  });
+  // 상담 메모
+  allMemos.forEach(m=>{
+    if(!m.date)return;
+    const [y,mo,d]=m.date.split('-').map(Number);
+    if(y===calYear&&mo===calMonth+1){
+      if(!evMap[m.date])evMap[m.date]=[];
+      evMap[m.date].push({type:'memo',label:'📝'+m.name});
+    }
+  });
+  let cells='';
+  // 이전 달 빈 칸
+  const prevDays=new Date(calYear,calMonth,0).getDate();
+  for(let i=first-1;i>=0;i--) cells+=`<div class="cal-day other"><div class="cal-dn" style="color:var(--text3)">${prevDays-i}</div></div>`;
+  // 이번 달
+  for(let d=1;d<=days;d++){
+    const isToday=d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
+    const k=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const evs=evMap[k]||[];
+    const evsHtml=evs.slice(0,3).map(e=>`<div class="cal-ev ${e.type==='bday'?'bday':e.type==='memo'?'memo':''}" onclick="event.stopPropagation();${e.rowIdx?`openDetail(${e.rowIdx})`:''}"> ${e.label}</div>`).join('');
+    const more=evs.length>3?`<div style="font-size:9px;color:var(--text3)">+${evs.length-3}개</div>`:'';
+    cells+=`<div class="cal-day${isToday?' today':''}"><div class="cal-dn">${d}</div>${evsHtml}${more}</div>`;
+  }
+  // 다음 달 빈 칸
+  const total=first+days;const remain=(7-total%7)%7;
+  for(let i=1;i<=remain;i++) cells+=`<div class="cal-day other"><div class="cal-dn" style="color:var(--text3)">${i}</div></div>`;
+  document.getElementById('calGrid').innerHTML=cells;
+}
+// ══════════════════════════════════════
+let chartMode = 'bar';
+function switchChart(mode, el){
+  chartMode = mode;
+  document.querySelectorAll('#chartToggleBar,#chartToggleDot').forEach(b=>b.classList.remove('on'));
+  if(el) el.classList.add('on');
+  renderPlanStats();
+}
 function renderPlanStats(){
   const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
   const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309',Life:'#dc2626','미지정':'#9ca3af'};
   const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre','미지정':'bgy'};
-  document.getElementById('planStats').innerHTML=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([p,n])=>`
-    <div class="ps">
-      <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
-        <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
+  const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('planStats');
+  if(chartMode==='donut'){
+    // SVG 도넛 차트
+    const r=54,cx=70,cy=70,stroke=22;
+    const circ=2*Math.PI*r;
+    let offset=0;
+    const slices=sorted.map(([p,n])=>{
+      const pct=n/total;
+      const slice={p,n,pct,offset,col:barCol[p]||'#9ca3af'};
+      offset+=pct;
+      return slice;
+    });
+    const paths=slices.map(s=>{
+      const start=s.offset*circ;
+      const len=s.pct*circ;
+      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.col}" stroke-width="${stroke}"
+        stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${circ/4-start}" transform="rotate(-90 0 0)" style="transform-origin:${cx}px ${cy}px;transform:rotate(-90deg);stroke-dashoffset:${circ/4-start}" />`;
+    });
+    el.innerHTML=`<div class="donut-wrap">
+      <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="54" fill="none" stroke="var(--g3)" stroke-width="22"/>
+        ${paths.join('')}
+        <text x="70" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${total}</text>
+        <text x="70" y="82" text-anchor="middle" font-size="10" fill="var(--text3)">전체</text>
+      </svg>
+      <div class="donut-legend">
+        ${slices.map(s=>`<div class="dl-item">
+          <div class="dl-dot" style="background:${s.col}"></div>
+          <span class="dl-label">${s.p}</span>
+          <span class="dl-val">${s.n}명</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:4px">${Math.round(s.pct*100)}%</span>
+        </div>`).join('')}
       </div>
-      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${barCol[p]||'#9ca3af'}"></div></div>
-    </div>`).join('');
+    </div>`;
+  } else {
+    el.innerHTML=sorted.map(([p,n])=>`
+      <div class="ps">
+        <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
+          <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
+        </div>
+        <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${barCol[p]||'#9ca3af'}"></div></div>
+      </div>`).join('');
+  }
 }
 
 // ══════════════════════════════════════
@@ -910,24 +1242,55 @@ function openDetail(rowIdx){
       ${dr('연락처',c.phone)}${dr('이메일',c.email)}${dr('비즈니스',c.biz)}
       ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
       ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
+      ${dr('생년월일', (()=>{ const p=parseDob(c.dob); return p ? `${p.display} <span style="color:var(--text3);font-size:12px">(만 ${new Date().getFullYear()-p.y}세)</span>` : '—'; })())}
     </div>
     <div class="dc">
       <h4>메모 &amp; 일정</h4>
-      ${dr('다음 연락일',(c.next||'미정')+' '+db)}
+      ${dr('마지막 연락일',(c.next||'없음')+' '+db)}
       <div style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">${c.memo||'(메모 없음)'}</div>
     </div>
+    ${['MAPD','PDP'].includes(c.plan)?`
+    <div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">
+      <h4 style="color:var(--blue)">🏥 ${c.plan} 플랜 상세 정보
+        <button class="btn sm" onclick="openEditClient(${c.rowIdx})" style="font-size:11px">✏️ 수정</button>
+      </h4>
+      ${(()=>{
+        const pi=allPlanInfo.find(p=>p.name===c.name)||{};
+        const hasPi=pi.mbi||pi.medical_no||pi.pcp||pi.network||pi.meds||pi.conditions;
+        if(!hasPi) return `<p style="color:var(--text3);font-size:13px;padding:8px 0">추가 정보 없음 — 수정 버튼을 눌러 입력해주세요</p>`;
+        return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+          ${pi.mbi?dr('🪪 MBI (Medicare ID)', `<span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:1px">${pi.mbi}</span>`):''}
+          ${pi.medical_no?dr('🏥 Medical # (Medi-Cal)', `<span style="font-family:monospace;font-size:13px;font-weight:700">${pi.medical_no}</span>`):''}
+          ${dr('PCP 이름', pi.pcp||'—')}${dr('PCP 연락처', pi.pcp_phone||'—')}
+          ${dr('메디컬 네트워크 / IPA', pi.network||'—')}${dr('그룹 번호', pi.group_no||'—')}
+        </div>
+        ${pi.meds?`<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">💊 복용 약 리스트</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">${pi.meds.split(',').map(m=>`<span class="badge bbl">${m.trim()}</span>`).join('')}</div>
+        </div>`:''}
+        ${pi.conditions?`<div style="margin-top:8px">${dr('⚠️ 특이사항 / 만성질환', pi.conditions)}</div>`:''}`;
+      })()}
+    </div>`:''
+    }
     <div class="dc">
       <h4>📎 고객 서류
         <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">+ 업로드</button>
       </h4>
       <div id="docsList_${rowIdx}">${docsHtml}</div>
     </div>
-    <div class="dc">
-      <h4>📞 상담 이력 (${memos.length}건)
-        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 추가</button>
+    <div class="dc full">
+      <h4>📋 상담 이력 · 변경 로그 (${memos.length}건)
+        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 메모 추가</button>
       </h4>
-      ${memos.length?memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')
-        :'<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음</p>'}
+      ${memos.length ? memos.map(m=>`
+        <div class="mi" style="border-left:3px solid var(--blue);padding-left:12px;margin-bottom:10px;background:var(--sur);border-radius:0 var(--rs) var(--rs) 0">
+          <div class="mi-d" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="badge bbl" style="font-size:10px">${m.type||'기타'}</span>
+            <span style="font-weight:600;color:var(--text)">${m.date||''}</span>
+            ${m.ts?`<span style="font-size:11px;color:var(--text3)">작성: ${m.ts}</span>`:''}
+          </div>
+          <div class="mi-t" style="margin-top:6px;white-space:pre-wrap">${m.text||''}</div>
+        </div>`).join('')
+      : '<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음 — 위 버튼으로 첫 메모를 추가하세요</p>'}
     </div>`;
 
   if(!isDemo) loadClientDocs(c.name, rowIdx);
@@ -948,13 +1311,14 @@ async function loadClientDocs(clientName, rowIdx){
     const ld=await lr.json();
     if(!ld.files||ld.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
     el.innerHTML=ld.files.map(f=>`
-      <div class="doc-item">
+      <div class="doc-item" id="doc-${f.id}">
         <span style="font-size:18px">${fileIcon(f.name)}</span>
         <div style="flex:1;min-width:0">
           <div class="doc-name">${f.name}</div>
           <div class="doc-date">${f.createdTime?.slice(0,10)||''}</div>
         </div>
         <a href="${f.webViewLink}" target="_blank" class="btn sm">열기</a>
+        <button class="btn sm red" onclick="deleteDoc('${f.id}','${esc(f.name)}',${rowIdx},'${esc(clientName)}')" title="삭제">🗑</button>
       </div>`).join('');
   }catch(e){
     const el=document.getElementById(`docsList_${rowIdx}`);
@@ -962,7 +1326,20 @@ async function loadClientDocs(clientName, rowIdx){
   }
 }
 
-function fileIcon(name){
+async function deleteDoc(fileId, fileName, rowIdx, clientName){
+  if(!confirm(`"${fileName}" 파일을 삭제할까요?`)) return;
+  try{
+    showLoad('삭제 중...');
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`,{
+      method:'DELETE', headers:{Authorization:'Bearer '+accessToken}
+    });
+    if(!r.ok && r.status !== 204) throw new Error(`HTTP ${r.status}`);
+    const el = document.getElementById(`doc-${fileId}`);
+    if(el) el.remove();
+    toast('🗑 파일 삭제됨');
+  }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
+  finally{ hideLoad(); }
+}
   if(/\.pdf$/i.test(name)) return '📄';
   if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
   return '📎';
@@ -1057,11 +1434,22 @@ async function uploadFiles(){
 // ══════════════════════════════════════
 // ADD / EDIT / DELETE
 // ══════════════════════════════════════
+function togglePlanFields(){
+  const plan=document.getElementById('f_plan').value;
+  const show=['MAPD','PDP'].includes(plan);
+  document.getElementById('planExtraFields').style.display=show?'block':'none';
+}
+function clearPlanFields(){
+  ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('planExtraFields').style.display='none';
+}
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
   ['name','biz','phone','email','prod','memo','next'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';});
   document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
+  clearPlanFields();
   document.getElementById('clientModal').classList.add('on');
 }
 function openEditClient(rowIdx){
@@ -1074,30 +1462,80 @@ function openEditClient(rowIdx){
   document.getElementById('f_memo').value=c.memo;document.getElementById('f_next').value=c.next;
   document.getElementById('f_ref').value=c.ref;
   document.getElementById('f_dob').value=c.dob||'';
+  // MAPD/PDP 추가 정보 로드
+  clearPlanFields();
+  if(['MAPD','PDP'].includes(c.plan)){
+    document.getElementById('planExtraFields').style.display='block';
+    const pi=allPlanInfo.find(p=>p.name===c.name)||{};
+    document.getElementById('f_mbi').value=pi.mbi||'';
+    document.getElementById('f_medical_no').value=pi.medical_no||'';
+    document.getElementById('f_pcp').value=pi.pcp||'';
+    document.getElementById('f_pcp_phone').value=pi.pcp_phone||'';
+    document.getElementById('f_network').value=pi.network||'';
+    document.getElementById('f_group_no').value=pi.group_no||'';
+    document.getElementById('f_meds').value=pi.meds||'';
+    document.getElementById('f_conditions').value=pi.conditions||'';
+  }
   document.getElementById('clientModal').classList.add('on');
 }
 async function saveClient(){
   const name=document.getElementById('f_name').value.trim();
   if(!name){alert('고객명 입력 필요');return;}
   const rowIdx=document.getElementById('eRow').value;
-  const newNo = rowIdx ? document.getElementById('eNo').value : String(clients.length + 1);
-  const vals=[[newNo,name,
+  const plan=document.getElementById('f_plan').value;
+  // 컬럼: A=no B=name C=biz D=phone E=email F=plan G=prod H=memo I=next J=ref K=durl(빈값) L=dob
+  const vals=[[document.getElementById('eNo').value||'',name,
     document.getElementById('f_biz').value,document.getElementById('f_phone').value,
-    document.getElementById('f_email').value,document.getElementById('f_plan').value,
+    document.getElementById('f_email').value,plan,
     document.getElementById('f_prod').value,document.getElementById('f_memo').value,
-    document.getElementById('f_next').value,document.getElementById('f_ref').value,'','',
+    document.getElementById('f_next').value,document.getElementById('f_ref').value,'',
     document.getElementById('f_dob').value]];
+  // MAPD/PDP 추가 정보 — 컬럼: name, mbi, medical_no, pcp, pcp_phone, network, group_no, meds, conditions
+  let piVals=null;
+  if(['MAPD','PDP'].includes(plan)){
+    piVals=[[name,
+      document.getElementById('f_mbi').value,
+      document.getElementById('f_medical_no').value,
+      document.getElementById('f_pcp').value,
+      document.getElementById('f_pcp_phone').value,
+      document.getElementById('f_network').value,
+      document.getElementById('f_group_no').value,
+      document.getElementById('f_meds').value,
+      document.getElementById('f_conditions').value,
+    ]];
+  }
   showLoad('저장 중...');
   try{
     if(isDemo){
       const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
         name,biz:vals[0][2],phone:vals[0][3],email:vals[0][4],plan:vals[0][5],
-        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][12]||''};
+        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][11]||''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
+      // 데모: planInfo 메모리 저장
+      if(piVals){
+        const pi={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],pcp_phone:piVals[0][4],
+          network:piVals[0][5],group_no:piVals[0][6],meds:piVals[0][7],conditions:piVals[0][8]};
+        const pi_i=allPlanInfo.findIndex(p=>p.name===name);
+        if(pi_i>=0) allPlanInfo[pi_i]=pi; else allPlanInfo.push(pi);
+      }
     }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:M${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:M:append?valueInputOption=USER_ENTERED`,{values:vals});
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
+      // MAPD/PDP 추가 정보 저장 (PlanInfo 탭)
+      if(piVals){
+        try{
+          // 기존 행 찾기
+          const existing=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
+          const rows=existing.values||[];
+          const piRow=rows.findIndex((r,i)=>i>0&&r[0]===name);
+          if(piRow>=0){
+            await sheetsReq('PUT',`${DETAIL_ID}/values/PlanInfo!A${piRow+1}:I${piRow+1}?valueInputOption=USER_ENTERED`,{values:piVals});
+          }else{
+            await sheetsReq('POST',`${DETAIL_ID}/values/PlanInfo!A:I:append?valueInputOption=USER_ENTERED`,{values:piVals});
+          }
+        }catch(e){ /* PlanInfo 탭 없으면 무시 */ }
+      }
       await loadAll();
     }
     closeOv('clientModal');renderAll();
@@ -1119,29 +1557,43 @@ async function delClient(rowIdx,name){
 // ══════════════════════════════════════
 // MEMO
 // ══════════════════════════════════════
-function openAddMemo(){populateMemoSel();document.getElementById('m_text').value='';document.getElementById('memoModal').classList.add('on');}
-function openAddMemoFor(name){openAddMemo();document.getElementById('m_client').value=name;}
+function openAddMemoFor(name){
+  document.getElementById('m_client').value=name;
+  document.getElementById('m_client_label').textContent='👤 '+name;
+  document.getElementById('m_text').value='';
+  document.getElementById('m_type').value='전화 상담';
+  document.getElementById('m_date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('memoModal').classList.add('on');
+}
 async function saveMemo(){
   const name=document.getElementById('m_client').value;
   const text=document.getElementById('m_text').value.trim();
-  if(!name){alert('고객 선택 필요');return;}if(!text){alert('내용 입력 필요');return;}
+  if(!name){alert('고객 정보 오류');return;}
+  if(!text){alert('내용을 입력해주세요');return;}
   const type=document.getElementById('m_type').value;
-  const today=new Date().toISOString().slice(0,10);
+  const date=document.getElementById('m_date').value||new Date().toISOString().slice(0,10);
+  const ts=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,today]]});
-    allMemos.unshift({name,type,text,date:today});
+    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:F:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,date,ts]]});
+    allMemos.unshift({name,type,text,date,ts});
     // 마지막 연락일 자동 갱신
-    const ci = clients.findIndex(c=>c.name===name);
+    const ci=clients.findIndex(c=>c.name===name);
     if(ci>=0){
-      clients[ci].next = today;
+      clients[ci].next=date;
       if(!isDemo){
-        const rowIdx = clients[ci].rowIdx;
-        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[today]]});
+        const rowIdx=clients[ci].rowIdx;
+        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
       }
     }
-    closeOv('memoModal');document.getElementById('m_text').value='';
-    renderAll();toast('✅ 메모 저장 + 마지막 연락일 갱신!');
+    closeOv('memoModal');
+    renderAll();
+    // 상세 페이지가 열려 있으면 새로고침
+    if(document.getElementById('detailPg').classList.contains('on')){
+      const c=clients.find(x=>x.name===name);
+      if(c) openDetail(c.rowIdx);
+    }
+    toast('✅ 메모 저장 완료!');
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
@@ -1153,29 +1605,55 @@ async function saveMemo(){
 // ══════════════════════════════════════
 // BIRTHDAY
 // ══════════════════════════════════════
-// 생일은 메인 시트 컬럼 12 (M열)에 추가 또는 상세시트 DOB 파싱
-// 포맷: MM/DD/YYYY 또는 YYYY-MM-DD
+// DOB 파싱 유틸 — MM/DD/YYYY, YYYY-MM-DD, Sheets 시리얼 숫자 모두 처리
+function parseDob(raw) {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+
+  // MM/DD/YYYY
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+    const [mm, dd, yyyy] = s.split('/').map(Number);
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+  }
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [yyyy, mm, dd] = s.split('-').map(Number);
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+  }
+  // M/D/YYYY (월/일 한자리)
+  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
+    const parts = s.split('/').map(Number);
+    const [mm, dd, yyyy] = parts;
+    const fullY = yyyy < 100 ? (yyyy > 30 ? 1900+yyyy : 2000+yyyy) : yyyy;
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:fullY, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${fullY}`};
+  }
+  // Google Sheets 날짜 시리얼 숫자 (1900-01-01 기준)
+  if (/^\d+$/.test(s)) {
+    const serial = parseInt(s);
+    if (serial > 1000 && serial < 80000) {
+      const base = new Date(1899, 11, 30);
+      const date = new Date(base.getTime() + serial * 86400000);
+      const mm = date.getMonth()+1, dd = date.getDate(), yyyy = date.getFullYear();
+      return {m:mm, d:dd, y:yyyy, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${yyyy}`};
+    }
+  }
+  return null;
+}
 
 function getBirthdays() {
   return clients
     .map(c => {
-      // durl 컬럼에서 DOB 파싱하거나 별도 dob 필드 사용
-      const dob = c.dob || '';
-      if (!dob) return null;
-      // MM/DD/YYYY 또는 YYYY-MM-DD 파싱
-      let m, d;
-      if (/\d{2}\/\d{2}\/\d{4}/.test(dob)) {
-        [m, d] = dob.split('/').map(Number);
-      } else if (/\d{4}-\d{2}-\d{2}/.test(dob)) {
-        const parts = dob.split('-');
-        m = +parts[1]; d = +parts[2];
-      } else return null;
+      const parsed = parseDob(c.dob);
+      if (!parsed) return null;
+      const {m, d, y, display} = parsed;
       const today = new Date(); today.setHours(0,0,0,0);
       const thisYear = today.getFullYear();
       let bday = new Date(thisYear, m-1, d); bday.setHours(0,0,0,0);
       if (bday < today) bday = new Date(thisYear+1, m-1, d);
       const daysLeft = Math.ceil((bday - today) / 864e5);
-      return {...c, dob, bdMonth:m, bdDay:d, daysLeft};
+      const age = thisYear - y - (bday.getFullYear()===thisYear && bday>today ? 1 : 0);
+      return {...c, dob:display, bdMonth:m, bdDay:d, daysLeft, age};
     })
     .filter(Boolean)
     .sort((a,b) => a.daysLeft - b.daysLeft);
@@ -1220,7 +1698,7 @@ function renderBirthday() {
           ${c.ref==='TRUE'?'<span class="badge bpu" style="font-size:10px;margin-left:4px">리퍼</span>':''}
           ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:4px">${c.plan}</span>`:''}
         </div>
-        <div class="bday-info">📞 ${c.phone||'—'} &nbsp;·&nbsp; 생일: ${c.bdMonth}월 ${c.bdDay}일</div>
+        <div class="bday-info">📞 ${c.phone||'—'} &nbsp;·&nbsp; 생일: ${c.bdMonth}월 ${c.bdDay}일${c.age?' &nbsp;·&nbsp; 만 '+c.age+'세':''}</div>
       </div>
       <div class="bday-acts">
         ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞</a>`:''}
