@@ -297,7 +297,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 // ══════════════════════════════════════
 // CONFIG — Apps Script URL 고정
 // ══════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmfU7kElEHXydtn_WkA6xgGwvWOCJgw2WYPxP7TPLdL77rxf9Helh1aLeG5M_nsWDB/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
 
 let clients  = [];
 let allMemos = [];
@@ -307,19 +307,15 @@ let allMemos = [];
 // ══════════════════════════════════════
 async function api(action, data={}) {
   const res = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ action, ...data }),
-  });
-
-  const json = await res.json();
-
-  if (json.error) {
-    throw new Error(json.error);
+    const params = new URLSearchParams({action});
+  if (Object.keys(data).length) {
+    params.set('data', encodeURIComponent(JSON.stringify(data)));
   }
-
+  const res = await fetch(SCRIPT_URL + '?' + params.toString());
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  const json = JSON.parse(text.replace(/^\)\]\}'/, ''));
+  if (json.error) throw new Error(json.error);
   return json;
 }
 
