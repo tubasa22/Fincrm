@@ -211,7 +211,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
     <button class="tab" onclick="showTab('clients',this)">👥 고객 목록</button>
     <button class="tab" onclick="showTab('schedule',this)">📅 연락일</button>
-    <button class="tab" onclick="showTab('memos',this)">📝 상담 메모</button>
     <button class="tab" onclick="showTab('birthday',this)">🎂 생일</button>
     <button class="tab" onclick="showTab('sms',this)">💬 문자 발송</button>
     <button class="tab" onclick="showTab('automation',this)">⚡ 자동화</button>
@@ -277,18 +276,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <thead><tr><th>고객명</th><th>연락처</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>메모</th><th>관리</th></tr></thead>
       <tbody id="sBody"><tr class="spin-row"><td colspan="8"><div class="spin"></div></td></tr></tbody>
     </table></div>
-  </div>
-
-  <!-- MEMOS -->
-  <div class="pg" id="pg-memos">
-    <div class="sh">
-      <div class="st">📝 상담 메모</div>
-      <div class="sa">
-        <input class="srch" id="mSearch" placeholder="🔍 고객명·내용 검색" oninput="filterMemos()">
-        <button class="btn pri" onclick="openAddMemo()">+ 메모 추가</button>
-      </div>
-    </div>
-    <div id="memoContainer"><div style="text-align:center;padding:40px"><div class="spin"></div></div></div>
   </div>
 
   <!-- BIRTHDAY -->
@@ -500,18 +487,23 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
-<!-- MODAL: 메모 -->
+<!-- MODAL: 상담 메모 -->
 <div class="ov" id="memoModal">
   <div class="modal">
     <h3>📝 상담 메모 추가</h3>
+    <input type="hidden" id="m_client">
+    <div style="background:var(--blue2);border-radius:var(--rs);padding:8px 12px;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:14px" id="m_client_label"></div>
     <div class="fgr">
-      <div class="fg"><label>고객명 *</label><select id="m_client"><option value="">선택...</option></select></div>
-      <div class="fg"><label>상담 유형</label><select id="m_type"><option>전화 상담</option><option>대면 미팅</option><option>이메일</option><option>문자</option><option>기타</option></select></div>
+      <div class="fg"><label>상담 유형</label>
+        <select id="m_type"><option>전화 상담</option><option>대면 미팅</option><option>이메일</option><option>문자</option><option>플랜 변경</option><option>서류 접수</option><option>기타</option></select>
+      </div>
+      <div class="fg"><label>상담 날짜</label><input type="date" id="m_date"></div>
     </div>
-    <div class="fg"><label>상담 내용 *</label><textarea id="m_text" style="min-height:100px"></textarea></div>
+    <div class="fg"><label>상담 내용 *</label><textarea id="m_text" style="min-height:120px" placeholder="상담 내용을 입력하세요..."></textarea></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ 저장된 메모는 수정·삭제 불가 (변경 이력 보존)</div>
     <div class="mf">
       <button class="btn" onclick="closeOv('memoModal')">취소</button>
-      <button class="btn pri" onclick="saveMemo()">저장하기</button>
+      <button class="btn pri" onclick="saveMemo()">💾 저장하기</button>
     </div>
   </div>
 </div>
@@ -586,7 +578,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleusercontent.com';
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
-const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
 
 let accessToken = '';
 let tokenExpiry  = 0;
@@ -652,9 +644,9 @@ function demoMode(){
     {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
   ];
   allMemos=[
-    {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30'},
-    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18'},
-    {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10'},
+    {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30',ts:'2025. 01. 30. 14:22'},
+    {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18',ts:'2025. 03. 18. 10:05'},
+    {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10',ts:'2025. 04. 10. 16:40'},
   ];
   allPlanInfo=[
     {name:'홍문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',
@@ -687,28 +679,37 @@ async function sheetsReq(method,path,body=null){
 // DRIVE API — 파일 업로드
 // ══════════════════════════════════════
 async function driveUpload(file, clientName, fileType) {
-  // 1. FinCRM 폴더 찾거나 생성
+  if(!accessToken) throw new Error('로그인이 필요합니다');
+  // 1. FinCRM 루트 폴더
   let folderId = await findOrCreateFolder('FinCRM_고객서류');
   // 2. 고객별 폴더
   let clientFolderId = await findOrCreateFolder(clientName, folderId);
   // 3. 파일 업로드 (multipart)
-  const meta = {name: `[${fileType}] ${file.name}`, parents: [clientFolderId]};
+  const meta = {name:`[${fileType}] ${file.name}`,parents:[clientFolderId]};
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)],{type:'application/json'}));
   form.append('file', file);
-  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{
     method:'POST',
     headers:{Authorization:'Bearer '+accessToken},
-    body: form
+    body:form
   });
-  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`Upload HTTP ${r.status}`);}
+  if(!r.ok){
+    const e=await r.json().catch(()=>({}));
+    const msg=e?.error?.message||`HTTP ${r.status}`;
+    if(r.status===401) throw new Error('인증 만료 — 페이지를 새로고침 후 다시 로그인해주세요');
+    if(r.status===403) throw new Error('Drive 권한 없음 — 로그아웃 후 다시 로그인해주세요 (권한 재승인 필요)');
+    throw new Error(msg);
+  }
   const data = await r.json();
-  // 4. 파일 공유 설정 (링크 공유)
-  await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
-    method:'POST',
-    headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-    body:JSON.stringify({role:'reader',type:'anyone'})
-  });
+  // 4. 링크 공유 설정 (에러 무시)
+  try{
+    await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
+      method:'POST',
+      headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+      body:JSON.stringify({role:'reader',type:'anyone'})
+    });
+  }catch(e){}
   return data;
 }
 
@@ -745,6 +746,14 @@ async function loadAll(){
       prod:String(r[6]||''),memo:String(r[7]||''),next:String(r[8]||''),
       ref:String(r[9]||'FALSE'),durl:String(r[10]||''),dob:String(r[11]||''),
     })).filter(c=>c.name.trim());
+    // 상담 메모 로드 (DETAIL 시트 Sheet1, A:F)
+    try{
+      const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
+      allMemos=(md.values||[]).slice(1).map(r=>({
+        name:String(r[1]||''),type:String(r[2]||''),text:String(r[3]||''),
+        date:String(r[4]||''),ts:String(r[5]||''),
+      })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    }catch(e){ allMemos=[]; }
     // MAPD/PDP 플랜 추가 정보 로드 (DETAIL 시트 2번째 탭: PlanInfo)
     try{
       const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`);
@@ -759,7 +768,7 @@ async function loadAll(){
     renderAll();
   }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
 }
-function renderAll(){updateKPIs();renderClients();renderSchedule();renderMemos();renderFollowup();renderPlanStats();populateMemoSel();}
+function renderAll(){updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();}
 
 // ══════════════════════════════════════
 // KPIs
@@ -844,25 +853,7 @@ function renderSchedule(){
 // ══════════════════════════════════════
 // MEMOS
 // ══════════════════════════════════════
-function renderMemos(list){
-  const data=list||allMemos;
-  const el=document.getElementById('memoContainer');
-  if(!data.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">메모 없음<br><br><button class="btn pri sm" onclick="openAddMemo()">+ 추가</button></div>`;return;}
-  const by={};
-  [...data].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(m=>{if(!by[m.name])by[m.name]=[];by[m.name].push(m);});
-  el.innerHTML=Object.entries(by).map(([name,memos])=>`
-    <div class="dc" style="margin-bottom:12px;box-shadow:var(--sh)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <div class="av" style="background:${ac(name)}">${name[0]}</div>
-        <span style="font-weight:700;font-size:14px">${name}</span>
-        <span class="badge bgy" style="margin-left:auto">${memos.length}건</span>
-        <button class="btn sm" onclick="openAddMemoFor('${esc(name)}')">+ 추가</button>
-      </div>
-      ${memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')}
-    </div>`).join('');
-}
-function filterMemos(){const q=document.getElementById('mSearch').value.toLowerCase();renderMemos(allMemos.filter(m=>m.name.toLowerCase().includes(q)||m.text.toLowerCase().includes(q)));}
-function populateMemoSel(){document.getElementById('m_client').innerHTML='<option value="">선택...</option>'+clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');}
+function populateMemoSel(){} // 호환성 유지용 빈 함수
 
 // ══════════════════════════════════════
 // FOLLOWUP — UX 개선
@@ -982,12 +973,20 @@ function openDetail(rowIdx){
       </h4>
       <div id="docsList_${rowIdx}">${docsHtml}</div>
     </div>
-    <div class="dc">
-      <h4>📞 상담 이력 (${memos.length}건)
-        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 추가</button>
+    <div class="dc full">
+      <h4>📋 상담 이력 · 변경 로그 (${memos.length}건)
+        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 메모 추가</button>
       </h4>
-      ${memos.length?memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')
-        :'<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음</p>'}
+      ${memos.length ? memos.map(m=>`
+        <div class="mi" style="border-left:3px solid var(--blue);padding-left:12px;margin-bottom:10px;background:var(--sur);border-radius:0 var(--rs) var(--rs) 0">
+          <div class="mi-d" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="badge bbl" style="font-size:10px">${m.type||'기타'}</span>
+            <span style="font-weight:600;color:var(--text)">${m.date||''}</span>
+            ${m.ts?`<span style="font-size:11px;color:var(--text3)">작성: ${m.ts}</span>`:''}
+          </div>
+          <div class="mi-t" style="margin-top:6px;white-space:pre-wrap">${m.text||''}</div>
+        </div>`).join('')
+      : '<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음 — 위 버튼으로 첫 메모를 추가하세요</p>'}
     </div>`;
 
   if(!isDemo) loadClientDocs(c.name, rowIdx);
@@ -1240,29 +1239,43 @@ async function delClient(rowIdx,name){
 // ══════════════════════════════════════
 // MEMO
 // ══════════════════════════════════════
-function openAddMemo(){populateMemoSel();document.getElementById('m_text').value='';document.getElementById('memoModal').classList.add('on');}
-function openAddMemoFor(name){openAddMemo();document.getElementById('m_client').value=name;}
+function openAddMemoFor(name){
+  document.getElementById('m_client').value=name;
+  document.getElementById('m_client_label').textContent='👤 '+name;
+  document.getElementById('m_text').value='';
+  document.getElementById('m_type').value='전화 상담';
+  document.getElementById('m_date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('memoModal').classList.add('on');
+}
 async function saveMemo(){
   const name=document.getElementById('m_client').value;
   const text=document.getElementById('m_text').value.trim();
-  if(!name){alert('고객 선택 필요');return;}if(!text){alert('내용 입력 필요');return;}
+  if(!name){alert('고객 정보 오류');return;}
+  if(!text){alert('내용을 입력해주세요');return;}
   const type=document.getElementById('m_type').value;
-  const today=new Date().toISOString().slice(0,10);
+  const date=document.getElementById('m_date').value||new Date().toISOString().slice(0,10);
+  const ts=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,today]]});
-    allMemos.unshift({name,type,text,date:today});
+    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:F:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,date,ts]]});
+    allMemos.unshift({name,type,text,date,ts});
     // 마지막 연락일 자동 갱신
-    const ci = clients.findIndex(c=>c.name===name);
+    const ci=clients.findIndex(c=>c.name===name);
     if(ci>=0){
-      clients[ci].next = today;
+      clients[ci].next=date;
       if(!isDemo){
-        const rowIdx = clients[ci].rowIdx;
-        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[today]]});
+        const rowIdx=clients[ci].rowIdx;
+        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
       }
     }
-    closeOv('memoModal');document.getElementById('m_text').value='';
-    renderAll();toast('✅ 메모 저장 + 마지막 연락일 갱신!');
+    closeOv('memoModal');
+    renderAll();
+    // 상세 페이지가 열려 있으면 새로고침
+    if(document.getElementById('detailPg').classList.contains('on')){
+      const c=clients.find(x=>x.name===name);
+      if(c) openDetail(c.rowIdx);
+    }
+    toast('✅ 메모 저장 완료!');
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
