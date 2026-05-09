@@ -711,12 +711,12 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:M`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:L`);
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2,no:String(r[0]||''),name:String(r[1]||''),biz:String(r[2]||''),
       phone:String(r[3]||''),email:String(r[4]||''),plan:String(r[5]||''),
       prod:String(r[6]||''),memo:String(r[7]||''),next:String(r[8]||''),
-      ref:String(r[9]||'FALSE'),durl:String(r[11]||''),dob:String(r[12]||''),
+      ref:String(r[9]||'FALSE'),durl:String(r[10]||''),dob:String(r[11]||''),
     })).filter(c=>c.name.trim());
     setSyncStatus('연결됨',true);
     renderAll();
@@ -1080,24 +1080,24 @@ async function saveClient(){
   const name=document.getElementById('f_name').value.trim();
   if(!name){alert('고객명 입력 필요');return;}
   const rowIdx=document.getElementById('eRow').value;
-  const newNo = rowIdx ? document.getElementById('eNo').value : String(clients.length + 1);
-  const vals=[[newNo,name,
+  // 컬럼: A=no B=name C=biz D=phone E=email F=plan G=prod H=memo I=next J=ref K=durl(빈값) L=dob
+  const vals=[[document.getElementById('eNo').value||'',name,
     document.getElementById('f_biz').value,document.getElementById('f_phone').value,
     document.getElementById('f_email').value,document.getElementById('f_plan').value,
     document.getElementById('f_prod').value,document.getElementById('f_memo').value,
-    document.getElementById('f_next').value,document.getElementById('f_ref').value,'','',
+    document.getElementById('f_next').value,document.getElementById('f_ref').value,'',
     document.getElementById('f_dob').value]];
   showLoad('저장 중...');
   try{
     if(isDemo){
       const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
         name,biz:vals[0][2],phone:vals[0][3],email:vals[0][4],plan:vals[0][5],
-        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][12]||''};
+        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][11]||''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
     }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:M${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:M:append?valueInputOption=USER_ENTERED`,{values:vals});
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
       await loadAll();
     }
     closeOv('clientModal');renderAll();
