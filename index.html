@@ -465,24 +465,20 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
     <!-- MAPD/PDP 전용 추가 정보 -->
     <div id="planExtraFields" style="display:none;background:var(--blue2);border:1px solid #bfdbfe;border-radius:var(--rs);padding:14px;margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">💊 MAPD / PDP 추가 정보</div>
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">🏥 MAPD / PDP 추가 정보</div>
+      <div class="fgr">
+        <div class="fg"><label>MBI (Medicare ID)</label><input id="f_mbi" placeholder="1EG4-TE5-MK72"></div>
+        <div class="fg"><label>Medical # (Medi-Cal)</label><input id="f_medical_no" placeholder="Medi-Cal #"></div>
+      </div>
       <div class="fgr">
         <div class="fg"><label>PCP 이름</label><input id="f_pcp" placeholder="Dr. Kim..."></div>
         <div class="fg"><label>PCP 연락처</label><input id="f_pcp_phone" placeholder="949-000-0000"></div>
       </div>
       <div class="fgr">
-        <div class="fg"><label>메디컬 네트워크</label><input id="f_network" placeholder="HMO, PPO, Blue Shield..."></div>
+        <div class="fg"><label>메디컬 네트워크 / IPA</label><input id="f_network" placeholder="HMO, PPO, 센타메디칼..."></div>
         <div class="fg"><label>그룹 번호</label><input id="f_group_no" placeholder="Group #"></div>
       </div>
-      <div class="fg"><label>복용 약 리스트 (쉼표로 구분)</label><textarea id="f_meds" style="min-height:56px" placeholder="Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg..."></textarea></div>
-      <div class="fgr">
-        <div class="fg"><label>약국 이름</label><input id="f_pharmacy" placeholder="CVS, Walgreens..."></div>
-        <div class="fg"><label>약국 연락처</label><input id="f_pharmacy_phone" placeholder="949-000-0000"></div>
-      </div>
-      <div class="fgr">
-        <div class="fg"><label>플랜 시작일</label><input type="date" id="f_plan_start"></div>
-        <div class="fg"><label>플랜 만료일</label><input type="date" id="f_plan_end"></div>
-      </div>
+      <div class="fg"><label>복용 약 리스트 (쉼표로 구분)</label><textarea id="f_meds" style="min-height:56px" placeholder="Metformin 500mg, Lisinopril 10mg..."></textarea></div>
       <div class="fg"><label>특이사항 (만성질환, 알레르기 등)</label><textarea id="f_conditions" style="min-height:48px" placeholder="당뇨, 고혈압, 페니실린 알레르기..."></textarea></div>
     </div>
     <div class="fg"><label>메모</label><textarea id="f_memo"></textarea></div>
@@ -661,14 +657,12 @@ function demoMode(){
     {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10'},
   ];
   allPlanInfo=[
-    {name:'홍문례',pcp:'Dr. Kim Jungsoo',pcp_phone:'949-321-0001',network:'HMO Blue Shield',group_no:'GRP-1023',
-      meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',
-      pharmacy:'CVS Pharmacy',pharmacy_phone:'949-555-1234',
-      plan_start:'2025-01-01',plan_end:'2025-12-31',conditions:'당뇨 2형, 고혈압'},
-    {name:'김철수',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',network:'PPO Kaiser',group_no:'GRP-2041',
-      meds:'Amlodipine 5mg, Metoprolol 25mg',
-      pharmacy:'Walgreens',pharmacy_phone:'213-555-5678',
-      plan_start:'2025-01-01',plan_end:'2025-12-31',conditions:'고혈압, 페니실린 알레르기'},
+    {name:'홍문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',
+      network:'센타메디칼 IPA',group_no:'GRP-1023',
+      meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',conditions:'당뇨 2형, 고혈압'},
+    {name:'김철수',mbi:'2AB7-RF3-XP91',medical_no:'',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',
+      network:'Kaiser PPO',group_no:'GRP-2041',
+      meds:'Amlodipine 5mg, Metoprolol 25mg',conditions:'고혈압, 페니실린 알레르기'},
   ];
   bootApp();
 }
@@ -753,12 +747,12 @@ async function loadAll(){
     })).filter(c=>c.name.trim());
     // MAPD/PDP 플랜 추가 정보 로드 (DETAIL 시트 2번째 탭: PlanInfo)
     try{
-      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:K`);
+      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`);
       allPlanInfo=(pi.values||[]).slice(1).map(r=>({
-        name:String(r[0]||''),pcp:String(r[1]||''),pcp_phone:String(r[2]||''),
-        network:String(r[3]||''),group_no:String(r[4]||''),meds:String(r[5]||''),
-        pharmacy:String(r[6]||''),pharmacy_phone:String(r[7]||''),
-        plan_start:String(r[8]||''),plan_end:String(r[9]||''),conditions:String(r[10]||''),
+        name:String(r[0]||''),mbi:String(r[1]||''),medical_no:String(r[2]||''),
+        pcp:String(r[3]||''),pcp_phone:String(r[4]||''),
+        network:String(r[5]||''),group_no:String(r[6]||''),
+        meds:String(r[7]||''),conditions:String(r[8]||''),
       })).filter(p=>p.name.trim());
     }catch(e){ allPlanInfo=[]; } // 시트 없으면 무시
     setSyncStatus('연결됨',true);
@@ -962,23 +956,23 @@ function openDetail(rowIdx){
     </div>
     ${['MAPD','PDP'].includes(c.plan)?`
     <div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">
-      <h4 style="color:var(--blue)">💊 ${c.plan} 플랜 상세 정보
+      <h4 style="color:var(--blue)">🏥 ${c.plan} 플랜 상세 정보
         <button class="btn sm" onclick="openEditClient(${c.rowIdx})" style="font-size:11px">✏️ 수정</button>
       </h4>
       ${(()=>{
         const pi=allPlanInfo.find(p=>p.name===c.name)||{};
-        const hasPi=Object.values(pi).some((v,i)=>i>0&&v);
+        const hasPi=pi.mbi||pi.medical_no||pi.pcp||pi.network||pi.meds||pi.conditions;
         if(!hasPi) return `<p style="color:var(--text3);font-size:13px;padding:8px 0">추가 정보 없음 — 수정 버튼을 눌러 입력해주세요</p>`;
         return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+          ${pi.mbi?dr('🪪 MBI (Medicare ID)', `<span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:1px">${pi.mbi}</span>`):''}
+          ${pi.medical_no?dr('🏥 Medical # (Medi-Cal)', `<span style="font-family:monospace;font-size:13px;font-weight:700">${pi.medical_no}</span>`):''}
           ${dr('PCP 이름', pi.pcp||'—')}${dr('PCP 연락처', pi.pcp_phone||'—')}
-          ${dr('메디컬 네트워크', pi.network||'—')}${dr('그룹 번호', pi.group_no||'—')}
-          ${dr('약국', pi.pharmacy||'—')}${dr('약국 연락처', pi.pharmacy_phone||'—')}
-          ${dr('플랜 시작일', pi.plan_start||'—')}${dr('플랜 만료일', pi.plan_end||'—')}
+          ${dr('메디컬 네트워크 / IPA', pi.network||'—')}${dr('그룹 번호', pi.group_no||'—')}
         </div>
         ${pi.meds?`<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">💊 복용 약 리스트</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px">${pi.meds.split(',').map(m=>`<span class="badge bbl">${m.trim()}</span>`).join('')}</div>
         </div>`:''}
-        ${pi.conditions?`<div style="margin-top:10px">${dr('특이사항 / 만성질환', pi.conditions)}</div>`:''}`;
+        ${pi.conditions?`<div style="margin-top:8px">${dr('⚠️ 특이사항 / 만성질환', pi.conditions)}</div>`:''}`;
       })()}
     </div>`:''
     }
@@ -1129,7 +1123,7 @@ function togglePlanFields(){
   document.getElementById('planExtraFields').style.display=show?'block':'none';
 }
 function clearPlanFields(){
-  ['f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_pharmacy','f_pharmacy_phone','f_plan_start','f_plan_end','f_conditions']
+  ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('planExtraFields').style.display='none';
 }
@@ -1156,15 +1150,13 @@ function openEditClient(rowIdx){
   if(['MAPD','PDP'].includes(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
     const pi=allPlanInfo.find(p=>p.name===c.name)||{};
+    document.getElementById('f_mbi').value=pi.mbi||'';
+    document.getElementById('f_medical_no').value=pi.medical_no||'';
     document.getElementById('f_pcp').value=pi.pcp||'';
     document.getElementById('f_pcp_phone').value=pi.pcp_phone||'';
     document.getElementById('f_network').value=pi.network||'';
     document.getElementById('f_group_no').value=pi.group_no||'';
     document.getElementById('f_meds').value=pi.meds||'';
-    document.getElementById('f_pharmacy').value=pi.pharmacy||'';
-    document.getElementById('f_pharmacy_phone').value=pi.pharmacy_phone||'';
-    document.getElementById('f_plan_start').value=pi.plan_start||'';
-    document.getElementById('f_plan_end').value=pi.plan_end||'';
     document.getElementById('f_conditions').value=pi.conditions||'';
   }
   document.getElementById('clientModal').classList.add('on');
@@ -1181,19 +1173,17 @@ async function saveClient(){
     document.getElementById('f_prod').value,document.getElementById('f_memo').value,
     document.getElementById('f_next').value,document.getElementById('f_ref').value,'',
     document.getElementById('f_dob').value]];
-  // MAPD/PDP 추가 정보
+  // MAPD/PDP 추가 정보 — 컬럼: name, mbi, medical_no, pcp, pcp_phone, network, group_no, meds, conditions
   let piVals=null;
   if(['MAPD','PDP'].includes(plan)){
     piVals=[[name,
+      document.getElementById('f_mbi').value,
+      document.getElementById('f_medical_no').value,
       document.getElementById('f_pcp').value,
       document.getElementById('f_pcp_phone').value,
       document.getElementById('f_network').value,
       document.getElementById('f_group_no').value,
       document.getElementById('f_meds').value,
-      document.getElementById('f_pharmacy').value,
-      document.getElementById('f_pharmacy_phone').value,
-      document.getElementById('f_plan_start').value,
-      document.getElementById('f_plan_end').value,
       document.getElementById('f_conditions').value,
     ]];
   }
@@ -1207,9 +1197,8 @@ async function saveClient(){
       else clients.push(obj);
       // 데모: planInfo 메모리 저장
       if(piVals){
-        const pi={name,pcp:piVals[0][1],pcp_phone:piVals[0][2],network:piVals[0][3],group_no:piVals[0][4],
-          meds:piVals[0][5],pharmacy:piVals[0][6],pharmacy_phone:piVals[0][7],
-          plan_start:piVals[0][8],plan_end:piVals[0][9],conditions:piVals[0][10]};
+        const pi={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],pcp_phone:piVals[0][4],
+          network:piVals[0][5],group_no:piVals[0][6],meds:piVals[0][7],conditions:piVals[0][8]};
         const pi_i=allPlanInfo.findIndex(p=>p.name===name);
         if(pi_i>=0) allPlanInfo[pi_i]=pi; else allPlanInfo.push(pi);
       }
@@ -1224,9 +1213,9 @@ async function saveClient(){
           const rows=existing.values||[];
           const piRow=rows.findIndex((r,i)=>i>0&&r[0]===name);
           if(piRow>=0){
-            await sheetsReq('PUT',`${DETAIL_ID}/values/PlanInfo!A${piRow+1}:K${piRow+1}?valueInputOption=USER_ENTERED`,{values:piVals});
+            await sheetsReq('PUT',`${DETAIL_ID}/values/PlanInfo!A${piRow+1}:I${piRow+1}?valueInputOption=USER_ENTERED`,{values:piVals});
           }else{
-            await sheetsReq('POST',`${DETAIL_ID}/values/PlanInfo!A:K:append?valueInputOption=USER_ENTERED`,{values:piVals});
+            await sheetsReq('POST',`${DETAIL_ID}/values/PlanInfo!A:I:append?valueInputOption=USER_ENTERED`,{values:piVals});
           }
         }catch(e){ /* PlanInfo 탭 없으면 무시 */ }
       }
