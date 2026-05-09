@@ -31,7 +31,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .demo-btn{width:100%;padding:11px;background:none;border:1px solid var(--g3);border-radius:var(--r);font-size:13px;color:var(--text2);cursor:pointer;transition:.15s}
 .demo-btn:hover{background:var(--g2)}
 .login-note{font-size:11px;color:var(--text3);margin-top:16px;line-height:1.6}
-.err-msg{background:var(--red2);border:1px solid #fca5a5;border-radius:var(--rs);padding:10px 14px;font-size:13px;color:#991b1b;margin-bottom:16px;display:none}
 
 /* APP */
 #app{display:none;min-height:100vh;flex-direction:column}
@@ -47,9 +46,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .dot.ok{background:var(--green)}.dot.err{background:var(--red)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .user-av{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--g3)}
-.btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap}
-.btn:hover{background:var(--g2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:var(--blue3)}.btn.sm{padding:5px 10px;font-size:12px}
-.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
+.btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--g2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:var(--blue3)}
+.btn.sm{padding:5px 10px;font-size:12px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
+.btn.red{background:var(--red2);color:var(--red);border-color:var(--red)}
 
 .pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%}.pg.on{display:block}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
@@ -83,7 +83,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .ib:hover{background:var(--g2)}.ib.del:hover{background:var(--red2);border-color:var(--red)}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
 .ov.on{display:flex}
-.modal{background:var(--sur);border-radius:14px;padding:28px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18)}
+.modal{background:var(--sur);border-radius:14px;padding:28px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18)}
 .modal h3{font-size:16px;font-weight:700;margin-bottom:20px}
 .fg{margin-bottom:12px}.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px}
 .fg input,.fg select,.fg textarea{width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 11px;font-size:13px;color:var(--text);outline:none;transition:.15s;font-family:inherit;background:var(--sur)}
@@ -91,6 +91,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .fg textarea{resize:vertical;min-height:72px}
 .fgr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--g3)}
+
+/* DETAIL */
 #detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto}
 #detailPg.on{display:block}
 .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:18px;padding:6px 13px;border:1px solid var(--g3);border-radius:var(--rs);background:var(--sur);font-family:inherit}
@@ -101,7 +103,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .dh-right{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .dc{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
-.dc h4{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.dc h4{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .dc.full{grid-column:1/-1}
 .dr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g3);font-size:13px;gap:12px}
 .dr:last-child{border-bottom:none;padding-bottom:0}.dr-l{color:var(--text2);flex-shrink:0}.dr-v{font-weight:500;text-align:right;word-break:break-word}
@@ -109,27 +111,45 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .mi:last-child{margin-bottom:0}.mi-d{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px}.mi-t{font-size:13px;line-height:1.7}
 
 /* FOLLOWUP - UX 개선 */
-.fu{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:.15s;box-shadow:var(--sh)}
+.fu{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);transition:.15s}
 .fu:hover{background:#f8f9ff}
-.fu-indicator{width:4px;height:40px;border-radius:4px;flex-shrink:0}
-.fu-indicator.urgent{background:var(--red)}.fu-indicator.soon{background:var(--amber)}.fu-indicator.fine{background:var(--green)}
+.fu-bar{width:4px;height:44px;border-radius:4px;flex-shrink:0}
+.fu-bar.urgent{background:var(--red)}.fu-bar.soon{background:var(--amber)}.fu-bar.fine{background:var(--green)}
 .fu-meta{flex:1;min-width:0;cursor:pointer}
-.fu-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.fu-name{font-size:13px;font-weight:600;margin-bottom:2px}
 .fu-sub{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fu-actions{display:flex;gap:6px;flex-shrink:0}
-.fu-dd{font-size:11px;font-weight:600;text-align:center;white-space:nowrap;min-width:36px}
+.fu-acts{display:flex;gap:5px;flex-shrink:0}
+.fu-dd{font-size:11px;font-weight:700;text-align:right;white-space:nowrap;min-width:32px}
 
 /* TOOLTIP */
-.tooltip-wrap{position:relative;display:inline-block}
-.tooltip-wrap:hover .tooltip{display:block}
-.tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;font-size:12px;padding:7px 10px;border-radius:6px;white-space:nowrap;max-width:280px;white-space:normal;z-index:100;line-height:1.5;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1f2937}
+.tip{position:relative;display:inline-block;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.tip .tipbox{display:none;position:absolute;bottom:calc(100%+6px);left:0;background:#1f2937;color:#fff;font-size:12px;padding:7px 10px;border-radius:6px;white-space:normal;max-width:260px;z-index:100;line-height:1.5;box-shadow:0 4px 12px rgba(0,0,0,.2);width:max-content}
+.tip .tipbox::after{content:'';position:absolute;top:100%;left:14px;border:5px solid transparent;border-top-color:#1f2937}
+.tip:hover .tipbox{display:block}
 
-/* PLAN BAR */
+/* PLAN BARS */
 .ps{margin-bottom:12px}
 .ps-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .ps-bar{height:10px;background:var(--g3);border-radius:5px;overflow:hidden}
 .ps-fill{height:100%;border-radius:5px;transition:width .5s}
+
+/* FILE UPLOAD */
+.file-drop{border:2px dashed var(--g3);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:.2s;background:var(--g2)}
+.file-drop:hover,.file-drop.drag{border-color:var(--blue);background:var(--blue2)}
+.file-drop input{display:none}
+.file-drop p{font-size:13px;color:var(--text2);margin-top:6px}
+.file-drop strong{font-size:22px}
+.file-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--g2);border-radius:var(--rs);margin-bottom:7px;font-size:13px}
+.file-item:last-child{margin-bottom:0}
+.file-icon{font-size:20px;flex-shrink:0}
+.file-name{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-size{font-size:11px;color:var(--text3);flex-shrink:0}
+.file-status{font-size:11px;font-weight:600;flex-shrink:0}
+.file-status.done{color:var(--green)}.file-status.uploading{color:var(--amber)}.file-status.err{color:var(--red)}
+.doc-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--g2);border-radius:var(--rs);margin-bottom:7px}
+.doc-item:last-child{margin-bottom:0}
+.doc-name{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-date{font-size:11px;color:var(--text3)}
 
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap}
 #toast.on{opacity:1}
@@ -137,6 +157,9 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 #loadOv.on{display:flex}
 #loadOv .spin{width:36px;height:36px;border-width:3px}
 #loadOv p{font-size:14px;color:var(--text2);font-weight:500}
+.prog-wrap{width:200px;height:6px;background:var(--g3);border-radius:3px;overflow:hidden;display:none}
+.prog-wrap.on{display:block}
+.prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .2s}
 </style>
 </head>
 <body>
@@ -145,14 +168,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <div id="loginScreen">
   <div class="lbox">
     <div class="llogo">🏦 FinCRM</div>
-    <p class="lsub">보험 에이전트 고객관리 시스템<br>Google 계정으로 로그인하면<br>Sheets 읽기/쓰기가 모두 가능합니다</p>
-    <div class="err-msg" id="loginErr"></div>
+    <p class="lsub">보험 에이전트 고객관리 시스템<br>Google 계정으로 로그인해주세요</p>
     <button class="google-btn" onclick="signIn()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Google 계정으로 로그인
     </button>
     <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기</button>
-    <p class="login-note">로그인 시 Google Sheets 읽기/쓰기 권한이 요청됩니다.<br>데이터는 본인의 Google Sheets에만 저장됩니다.</p>
+    <p class="login-note">Sheets 읽기/쓰기 + Drive 파일 업로드 권한이 요청됩니다</p>
   </div>
 </div>
 
@@ -168,7 +190,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
       <button class="btn sm" onclick="loadAll()">🔄</button>
       <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
-      <img id="userAvatar" class="user-av" style="display:none" title="">
+      <img id="userAvatar" class="user-av" style="display:none">
       <button class="btn sm" onclick="signOut()" id="signOutBtn" style="display:none">로그아웃</button>
     </div>
   </div>
@@ -183,10 +205,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
-        <div class="sh">
-          <div class="st">⚠️ 연락 필요 고객</div>
-          <span id="fuCnt" style="font-size:12px;color:var(--text3)"></span>
-        </div>
+        <div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div>
         <div id="fuList"></div>
       </div>
       <div>
@@ -251,7 +270,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
-<!-- MODAL: 고객 -->
+<!-- MODAL: 고객 등록/수정 -->
 <div class="ov" id="clientModal">
   <div class="modal">
     <h3 id="mTitle">👤 신규 고객 등록</h3>
@@ -301,17 +320,61 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
+<!-- MODAL: 파일 업로드 -->
+<div class="ov" id="fileModal">
+  <div class="modal" style="max-width:520px">
+    <h3>📎 고객 서류 업로드</h3>
+    <div id="fileClientName" style="font-size:13px;color:var(--text2);margin-bottom:16px;padding:8px 12px;background:var(--blue2);border-radius:var(--rs);color:var(--blue);font-weight:600"></div>
+
+    <!-- 파일 종류 선택 -->
+    <div class="fg">
+      <label>서류 종류</label>
+      <select id="fileType">
+        <option>보험 카드</option>
+        <option>신분증 (ID)</option>
+        <option>Medicare 카드</option>
+        <option>계약서</option>
+        <option>신청서</option>
+        <option>기타 서류</option>
+      </select>
+    </div>
+
+    <!-- 드래그앤드롭 업로드 -->
+    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()"
+         ondragover="event.preventDefault();this.classList.add('drag')"
+         ondragleave="this.classList.remove('drag')"
+         ondrop="handleDrop(event)">
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.heic" onchange="handleFiles(this.files)">
+      <div style="font-size:28px">📂</div>
+      <p><strong>클릭</strong>하거나 파일을 여기에 드래그하세요</p>
+      <p style="font-size:11px;color:var(--text3);margin-top:4px">PDF, JPG, PNG, HEIC · 파일당 최대 10MB</p>
+    </div>
+
+    <!-- 업로드 대기 파일 목록 -->
+    <div id="pendingFiles" style="margin-top:12px"></div>
+
+    <!-- 업로드 진행 -->
+    <div style="margin-top:12px">
+      <div class="prog-wrap" id="uploadProg"><div class="prog-fill" id="uploadProgFill" style="width:0%"></div></div>
+      <div id="uploadStatus" style="font-size:12px;color:var(--text2);margin-top:6px"></div>
+    </div>
+
+    <div class="mf">
+      <button class="btn" onclick="closeOv('fileModal')">닫기</button>
+      <button class="btn pri" id="uploadBtn" onclick="uploadFiles()" style="display:none">📤 Google Drive에 업로드</button>
+    </div>
+  </div>
+</div>
+
 <div id="loadOv"><div class="spin"></div><p id="loadTxt">저장 중...</p></div>
 <div id="toast"></div>
 
-<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async></script>
-
 <script>
 const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleusercontent.com';
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
-const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets';
+const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
 
 let accessToken = '';
 let tokenExpiry  = 0;
@@ -319,183 +382,180 @@ let clients      = [];
 let allMemos     = [];
 let isDemo       = false;
 let tokenClient  = null;
+let pendingFiles = [];
+let currentUploadClient = '';
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // OAUTH
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 window.addEventListener('load', () => {
-  // 저장된 토큰 확인
-  const saved = localStorage.getItem('fcrm_token');
-  const exp   = localStorage.getItem('fcrm_exp');
-  if (saved && exp && Date.now() < +exp) {
-    accessToken = saved;
-    tokenExpiry  = +exp;
-    bootApp();
-  }
+  const t = localStorage.getItem('fcrm_token');
+  const e = localStorage.getItem('fcrm_exp');
+  if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
 });
 
-function initTokenClient() {
-  if (!window.google) { setTimeout(initTokenClient, 300); return; }
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: (resp) => {
-      if (resp.error) {
-        showLoginErr('로그인 실패: ' + resp.error);
-        return;
-      }
-      accessToken = resp.access_token;
-      tokenExpiry  = Date.now() + (resp.expires_in - 60) * 1000;
-      localStorage.setItem('fcrm_token', accessToken);
-      localStorage.setItem('fcrm_exp',   tokenExpiry);
-      // 사용자 정보 가져오기
-      fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: {Authorization: 'Bearer ' + accessToken}
-      }).then(r=>r.json()).then(u=>{
-        if (u.picture) {
-          document.getElementById('userAvatar').src = u.picture;
-          document.getElementById('userAvatar').title = u.name||'';
-          document.getElementById('userAvatar').style.display = 'block';
-        }
-        document.getElementById('signOutBtn').style.display = 'block';
-      });
-      bootApp();
-    }
-  });
-}
-
-// GIS 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
-  const check = setInterval(() => {
+  const chk = setInterval(() => {
     if (window.google?.accounts?.oauth2) {
-      clearInterval(check);
-      initTokenClient();
+      clearInterval(chk);
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (resp) => {
+          if (resp.error) return;
+          accessToken = resp.access_token;
+          tokenExpiry  = Date.now() + (resp.expires_in-60)*1000;
+          localStorage.setItem('fcrm_token', accessToken);
+          localStorage.setItem('fcrm_exp', tokenExpiry);
+          fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
+            .then(r=>r.json()).then(u=>{
+              if(u.picture){document.getElementById('userAvatar').src=u.picture;document.getElementById('userAvatar').style.display='block';}
+              document.getElementById('signOutBtn').style.display='block';
+            });
+          bootApp();
+        }
+      });
     }
   }, 200);
 });
 
-function signIn() {
-  if (!tokenClient) { showLoginErr('Google 인증 라이브러리 로딩 중... 잠시 후 다시 시도해주세요'); return; }
-  tokenClient.requestAccessToken({prompt: 'consent'});
-}
-
-function signOut() {
-  if (accessToken) google.accounts.oauth2.revoke(accessToken, ()=>{});
-  accessToken = '';
-  localStorage.removeItem('fcrm_token');
-  localStorage.removeItem('fcrm_exp');
+function signIn(){ if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'}); }
+function signOut(){
+  if(accessToken) google.accounts.oauth2.revoke(accessToken,()=>{});
+  accessToken=''; localStorage.removeItem('fcrm_token'); localStorage.removeItem('fcrm_exp');
   document.getElementById('app').classList.remove('on');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('userAvatar').style.display = 'none';
-  document.getElementById('signOutBtn').style.display = 'none';
-  clients = []; allMemos = []; isDemo = false;
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('userAvatar').style.display='none';
+  document.getElementById('signOutBtn').style.display='none';
+  clients=[]; allMemos=[]; isDemo=false;
 }
-
-function demoMode() {
-  isDemo = true;
-  clients = [
-    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개로. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:''},
+function demoMode(){
+  isDemo=true;
+  clients=[
+    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:''},
     {rowIdx:3,no:'2',name:'김철수',biz:'',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE',durl:''},
     {rowIdx:4,no:'3',name:'이영희',biz:'Seoul Market',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE',durl:''},
     {rowIdx:5,no:'4',name:'박민준',biz:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
     {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
   ];
-  allMemos = [
-    {name:'홍문례',type:'전화 상담',text:'FEMA 로 가입 가능, 추후 SSBCI 신청 예정',date:'2025-01-30'},
+  allMemos=[
+    {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30'},
     {name:'홍문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18'},
-    {name:'김철수',type:'전화 상담',text:'딸이 소개. 비용 절감 원함',date:'2025-04-10'},
+    {name:'김철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10'},
   ];
   bootApp();
 }
-
-function bootApp() {
-  document.getElementById('loginScreen').style.display = 'none';
+function bootApp(){
+  document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').classList.add('on');
-  setSyncStatus(isDemo?'데모 모드':'연결됨', true);
-  if (!isDemo) loadAll(); else renderAll();
+  setSyncStatus(isDemo?'데모 모드':'연결됨',true);
+  if(!isDemo) loadAll(); else renderAll();
 }
 
-function showLoginErr(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';}
-
-// ═══════════════════════════════════════
-// SHEETS API (OAuth Bearer Token)
-// ═══════════════════════════════════════
-async function sheetsReq(method, path, body=null) {
-  // 토큰 만료 체크
-  if (!isDemo && Date.now() > tokenExpiry - 30000) {
-    tokenClient.requestAccessToken({prompt:''});
-    throw new Error('토큰이 만료되었습니다. 잠시 후 다시 시도해주세요.');
-  }
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${path}`;
-  const opts = {
-    method,
-    headers: {
-      'Authorization': 'Bearer ' + accessToken,
-      'Content-Type': 'application/json',
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(url, opts);
-  if (!r.ok) {
-    const e = await r.json().catch(()=>({}));
-    throw new Error(e?.error?.message || `HTTP ${r.status}`);
-  }
+// ══════════════════════════════════════
+// SHEETS API
+// ══════════════════════════════════════
+async function sheetsReq(method,path,body=null){
+  const url=`https://sheets.googleapis.com/v4/spreadsheets/${path}`;
+  const r=await fetch(url,{method,headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`HTTP ${r.status}`);}
   return r.json();
 }
 
-// ═══════════════════════════════════════
-// LOAD DATA
-// ═══════════════════════════════════════
-async function loadAll() {
-  setSyncStatus('동기화 중...', false);
-  try {
-    const data = await sheetsReq('GET', `${MAIN_ID}/values/A:L`);
-    const rows = data.values || [];
-    clients = rows.slice(1).map((r,i) => ({
-      rowIdx: i+2, no:String(r[0]||''),
-      name:String(r[1]||''), biz:String(r[2]||''),
-      phone:String(r[3]||''), email:String(r[4]||''),
-      plan:String(r[5]||''), prod:String(r[6]||''),
-      memo:String(r[7]||''), next:String(r[8]||''),
-      ref:String(r[9]||'FALSE'), durl:String(r[11]||''),
-    })).filter(c=>c.name.trim());
-    setSyncStatus('연결됨', true);
-    renderAll();
-  } catch(e) {
-    setSyncStatus('오류', false);
-    toast('❌ 로드 실패: '+e.message, 4000);
-  }
+// ══════════════════════════════════════
+// DRIVE API — 파일 업로드
+// ══════════════════════════════════════
+async function driveUpload(file, clientName, fileType) {
+  // 1. FinCRM 폴더 찾거나 생성
+  let folderId = await findOrCreateFolder('FinCRM_고객서류');
+  // 2. 고객별 폴더
+  let clientFolderId = await findOrCreateFolder(clientName, folderId);
+  // 3. 파일 업로드 (multipart)
+  const meta = {name: `[${fileType}] ${file.name}`, parents: [clientFolderId]};
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  form.append('file', file);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+    method:'POST',
+    headers:{Authorization:'Bearer '+accessToken},
+    body: form
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`Upload HTTP ${r.status}`);}
+  const data = await r.json();
+  // 4. 파일 공유 설정 (링크 공유)
+  await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
+    method:'POST',
+    headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+    body:JSON.stringify({role:'reader',type:'anyone'})
+  });
+  return data;
 }
 
+async function findOrCreateFolder(name, parentId=null) {
+  const q = parentId
+    ? `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
+    : `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,{
+    headers:{Authorization:'Bearer '+accessToken}
+  });
+  const d = await r.json();
+  if(d.files && d.files.length>0) return d.files[0].id;
+  // 폴더 생성
+  const meta = {name, mimeType:'application/vnd.google-apps.folder',...(parentId?{parents:[parentId]}:{})};
+  const cr = await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{
+    method:'POST',
+    headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+    body:JSON.stringify(meta)
+  });
+  const cd = await cr.json();
+  return cd.id;
+}
+
+// ══════════════════════════════════════
+// LOAD
+// ══════════════════════════════════════
+async function loadAll(){
+  setSyncStatus('동기화 중...',false);
+  try{
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:L`);
+    clients=(d.values||[]).slice(1).map((r,i)=>({
+      rowIdx:i+2,no:String(r[0]||''),name:String(r[1]||''),biz:String(r[2]||''),
+      phone:String(r[3]||''),email:String(r[4]||''),plan:String(r[5]||''),
+      prod:String(r[6]||''),memo:String(r[7]||''),next:String(r[8]||''),
+      ref:String(r[9]||'FALSE'),durl:String(r[11]||''),
+    })).filter(c=>c.name.trim());
+    setSyncStatus('연결됨',true);
+    renderAll();
+  }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
+}
 function renderAll(){updateKPIs();renderClients();renderSchedule();renderMemos();renderFollowup();renderPlanStats();populateMemoSel();}
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // KPIs
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function updateKPIs(){
-  const n=clients.length, wp=clients.filter(c=>c.plan).length;
+  const n=clients.length,wp=clients.filter(c=>c.plan).length;
   const td=clients.filter(c=>{const d=dd(c.next);return d!==null&&d<=0;}).length;
   const rf=clients.filter(c=>c.ref==='TRUE').length;
-  set('kT',n); set('kTs','명 등록됨');
-  set('kP',wp); set('kPs',n?Math.round(wp/n*100)+'%':'—');
-  set('kC',td); set('kCs',td?'즉시 연락':'오늘 없음');
-  set('kR',rf); set('kRs',n?Math.round(rf/n*100)+'% 리퍼':'—');
+  set('kT',n);set('kTs','명 등록됨');
+  set('kP',wp);set('kPs',n?Math.round(wp/n*100)+'%':'—');
+  set('kC',td);set('kCs',td?'즉시 연락':'오늘 없음');
+  set('kR',rf);set('kRs',n?Math.round(rf/n*100)+'% 리퍼':'—');
 }
 
-// ═══════════════════════════════════════
-// CLIENTS
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
+// CLIENTS TABLE
+// ══════════════════════════════════════
 function renderClients(list){
   const data=list||clients;
   set('cntBadge','('+data.length+'명)');
   const tb=document.getElementById('cBody');
-  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="10">등록된 고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 첫 고객 등록</button></td></tr>`;return;}
+  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="10">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
   tb.innerHTML=data.map(c=>{
     const d=dd(c.next);
     const dh=d===null?'—':`<span class="badge ${d<0?'bre':d<=7?'bam':'bgr'}">${d<0?'D+'+Math.abs(d):'D-'+d}</span>`;
     const mc=allMemos.filter(m=>m.name===c.name).length;
-    const memoShort=c.memo?(c.memo.slice(0,20)+(c.memo.length>20?'…':'')):'—';
-    const memoTip=c.memo&&c.memo.length>20?`<div class="tooltip-wrap">${memoShort}<span class="tooltip">${c.memo}</span></div>`:memoShort;
+    const memoEl=c.memo?(c.memo.length>20?`<span class="tip">${c.memo.slice(0,20)}…<span class="tipbox">${c.memo}</span></span>`:c.memo):'—';
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
       <td style="font-size:11px;color:var(--text3)">${c.no}</td>
       <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
@@ -507,28 +567,26 @@ function renderClients(list){
       <td style="font-size:12px">${c.prod||'—'}</td>
       <td style="font-size:12px">${c.next?c.next+' ':''} ${dh}</td>
       <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
-      <td style="font-size:12px;color:var(--text2)">${memoTip}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
+      <td style="font-size:12px;color:var(--text2)">${memoEl}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
         <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
+        <button class="ib" onclick="openFileUpload('${esc(c.name)}')" title="파일 업로드">📎</button>
         <button class="ib del" onclick="delClient(${c.rowIdx},'${esc(c.name)}')" title="삭제">🗑</button>
       </div></td>
     </tr>`;
   }).join('');
 }
-
 function filterClients(){
   const q=document.getElementById('cSearch').value.toLowerCase();
   const pf=document.getElementById('planF').value;
   const rf=document.getElementById('refF').value;
-  renderClients(clients.filter(c=>
-    (!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.memo||'').toLowerCase().includes(q))&&
-    (!pf||c.plan===pf)&&(!rf||c.ref===rf)));
+  renderClients(clients.filter(c=>(!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.memo||'').toLowerCase().includes(q))&&(!pf||c.plan===pf)&&(!rf||c.ref===rf)));
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // SCHEDULE
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function renderSchedule(){
   const f=document.getElementById('ddF')?.value||'';
   let data=[...clients].filter(c=>c.next).sort((a,b)=>new Date(a.next)-new Date(b.next));
@@ -552,13 +610,13 @@ function renderSchedule(){
   }).join('');
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // MEMOS
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function renderMemos(list){
   const data=list||allMemos;
   const el=document.getElementById('memoContainer');
-  if(!data.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">메모 없음<br><br><button class="btn pri sm" onclick="openAddMemo()" style="margin-top:8px">+ 추가</button></div>`;return;}
+  if(!data.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">메모 없음<br><br><button class="btn pri sm" onclick="openAddMemo()">+ 추가</button></div>`;return;}
   const by={};
   [...data].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(m=>{if(!by[m.name])by[m.name]=[];by[m.name].push(m);});
   el.innerHTML=Object.entries(by).map(([name,memos])=>`
@@ -572,13 +630,12 @@ function renderMemos(list){
       ${memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')}
     </div>`).join('');
 }
-
 function filterMemos(){const q=document.getElementById('mSearch').value.toLowerCase();renderMemos(allMemos.filter(m=>m.name.toLowerCase().includes(q)||m.text.toLowerCase().includes(q)));}
 function populateMemoSel(){document.getElementById('m_client').innerHTML='<option value="">선택...</option>'+clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');}
 
-// ═══════════════════════════════════════
-// FOLLOWUP - UX 개선 버전
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
+// FOLLOWUP — UX 개선
+// ══════════════════════════════════════
 function renderFollowup(){
   const items=clients.filter(c=>c.next).map(c=>({...c,d:dd(c.next)})).filter(c=>c.d!==null&&c.d<=14).sort((a,b)=>a.d-b.d).slice(0,8);
   set('fuCnt',items.length+'명');
@@ -586,16 +643,17 @@ function renderFollowup(){
   if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 없음</div>`;return;}
   el.innerHTML=items.map(c=>`
     <div class="fu">
-      <div class="fu-indicator ${c.d<0?'urgent':c.d<=7?'soon':'fine'}"></div>
+      <div class="fu-bar ${c.d<0?'urgent':c.d<=7?'soon':'fine'}"></div>
       <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
-        <div class="fu-name">${c.name}${c.ref==='TRUE'?' <span class="badge bpu" style="font-size:10px">리퍼</span>':''}
-          ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:4px">${c.plan}</span>`:''}
+        <div class="fu-name">${c.name}
+          ${c.ref==='TRUE'?'<span class="badge bpu" style="font-size:10px;margin-left:4px">리퍼</span>':''}
+          ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:3px">${c.plan}</span>`:''}
         </div>
-        <div class="fu-sub">${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,25)+'…':''}</div>
+        <div class="fu-sub">${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,22)+'…':''}</div>
       </div>
-      <div class="fu-actions">
-        <a href="tel:${c.phone}" class="btn sm" title="전화 걸기" onclick="event.stopPropagation()">📞</a>
-        <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모 추가">📝</button>
+      <div class="fu-acts">
+        <a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>
+        <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모">📝</button>
       </div>
       <div class="fu-dd" style="color:${c.d<0?'var(--red)':c.d<=7?'var(--amber)':'var(--green)'}">
         ${c.d<0?'D+'+Math.abs(c.d):'D-'+c.d}
@@ -603,27 +661,26 @@ function renderFollowup(){
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════
-// PLAN STATS - 굵은 막대 + 색상 개선
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
+// PLAN STATS — 굵은 막대 + 색상별
+// ══════════════════════════════════════
 function renderPlanStats(){
   const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
-  const pcolBar={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309',Life:'#dc2626','미지정':'#9ca3af'};
+  const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309',Life:'#dc2626','미지정':'#9ca3af'};
   const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre','미지정':'bgy'};
   document.getElementById('planStats').innerHTML=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([p,n])=>`
     <div class="ps">
-      <div class="ps-top">
-        <span class="badge ${pcol[p]||'bgy'}">${p}</span>
+      <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
         <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
       </div>
-      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${pcolBar[p]||'#9ca3af'}"></div></div>
+      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${barCol[p]||'#9ca3af'}"></div></div>
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════
-// DETAIL
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
+// DETAIL PAGE
+// ══════════════════════════════════════
 function openDetail(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
@@ -643,9 +700,16 @@ function openDetail(rowIdx){
     <div class="dh-right">
       ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞 전화</a>`:''}
       <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}')">📝 메모</button>
+      <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">📎 서류 업로드</button>
       <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
       ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세시트</a>`:''}
     </div>`;
+
+  // Drive 파일 목록 로드
+  const docsHtml = isDemo
+    ? `<div class="doc-item"><span style="font-size:18px">📄</span><div><div class="doc-name">[보험카드] anthem_card.jpg</div><div class="doc-date">2025-03-18</div></div><a href="#" class="btn sm">열기</a></div>`
+    : `<div style="color:var(--text3);font-size:13px;text-align:center;padding:12px" id="docsList_${rowIdx}">서류 불러오는 중...</div>`;
+
   document.getElementById('dGrid').innerHTML=`
     <div class="dc">
       <h4>기본 정보</h4>
@@ -658,13 +722,56 @@ function openDetail(rowIdx){
       ${dr('다음 연락일',(c.next||'미정')+' '+db)}
       <div style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">${c.memo||'(메모 없음)'}</div>
     </div>
-    <div class="dc full">
+    <div class="dc">
+      <h4>📎 고객 서류
+        <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">+ 업로드</button>
+      </h4>
+      <div id="docsList_${rowIdx}">${docsHtml}</div>
+    </div>
+    <div class="dc">
       <h4>📞 상담 이력 (${memos.length}건)
-        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')" style="margin-left:8px">+ 추가</button>
+        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 추가</button>
       </h4>
       ${memos.length?memos.map(m=>`<div class="mi"><div class="mi-d">${m.date||''} <span class="badge bbl" style="font-size:10px">${m.type||''}</span></div><div class="mi-t">${m.text||''}</div></div>`).join('')
         :'<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음</p>'}
     </div>`;
+
+  if(!isDemo) loadClientDocs(c.name, rowIdx);
+}
+
+async function loadClientDocs(clientName, rowIdx){
+  try{
+    const q=`'FinCRM_고객서류' in parents`;
+    // 고객 폴더 찾기
+    const fq=`name='${clientName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+    const fr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(fq)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
+    const fd=await fr.json();
+    const el=document.getElementById(`docsList_${rowIdx}`);
+    if(!el) return;
+    if(!fd.files||fd.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
+    const folderId=fd.files[0].id;
+    const lr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${folderId}' in parents and trashed=false`)}&fields=files(id,name,webViewLink,createdTime)&orderBy=createdTime desc`,{headers:{Authorization:'Bearer '+accessToken}});
+    const ld=await lr.json();
+    if(!ld.files||ld.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
+    el.innerHTML=ld.files.map(f=>`
+      <div class="doc-item">
+        <span style="font-size:18px">${fileIcon(f.name)}</span>
+        <div style="flex:1;min-width:0">
+          <div class="doc-name">${f.name}</div>
+          <div class="doc-date">${f.createdTime?.slice(0,10)||''}</div>
+        </div>
+        <a href="${f.webViewLink}" target="_blank" class="btn sm">열기</a>
+      </div>`).join('');
+  }catch(e){
+    const el=document.getElementById(`docsList_${rowIdx}`);
+    if(el) el.innerHTML=`<p style="color:var(--text3);font-size:12px">서류 목록 로드 실패</p>`;
+  }
+}
+
+function fileIcon(name){
+  if(/\.pdf$/i.test(name)) return '📄';
+  if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
+  return '📎';
 }
 
 function closeDetail(){
@@ -675,9 +782,87 @@ function closeDetail(){
   document.getElementById('pg-'+(id||'dashboard'))?.classList.add('on');
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
+// FILE UPLOAD
+// ══════════════════════════════════════
+function openFileUpload(clientName){
+  currentUploadClient = clientName;
+  pendingFiles = [];
+  document.getElementById('fileClientName').textContent = '👤 ' + clientName;
+  document.getElementById('pendingFiles').innerHTML = '';
+  document.getElementById('uploadBtn').style.display = 'none';
+  document.getElementById('uploadStatus').textContent = '';
+  document.getElementById('uploadProg').classList.remove('on');
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileModal').classList.add('on');
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('fileDrop').classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files){
+  for(const f of files){
+    if(f.size > 10*1024*1024){ toast('❌ '+f.name+' — 10MB 초과'); continue; }
+    pendingFiles.push(f);
+  }
+  renderPendingFiles();
+}
+
+function renderPendingFiles(){
+  const el=document.getElementById('pendingFiles');
+  if(!pendingFiles.length){el.innerHTML='';document.getElementById('uploadBtn').style.display='none';return;}
+  el.innerHTML=pendingFiles.map((f,i)=>`
+    <div class="file-item">
+      <span class="file-icon">${fileIcon(f.name)}</span>
+      <span class="file-name">${f.name}</span>
+      <span class="file-size">${(f.size/1024).toFixed(0)}KB</span>
+      <button onclick="removePending(${i})" style="border:none;background:none;cursor:pointer;color:var(--text3);font-size:16px">✕</button>
+    </div>`).join('');
+  document.getElementById('uploadBtn').style.display = 'inline-flex';
+}
+
+function removePending(i){ pendingFiles.splice(i,1); renderPendingFiles(); }
+
+async function uploadFiles(){
+  if(!pendingFiles.length) return;
+  if(isDemo){ toast('데모 모드에서는 실제 업로드가 안 됩니다'); return; }
+  const fileType = document.getElementById('fileType').value;
+  const progWrap = document.getElementById('uploadProg');
+  const progFill = document.getElementById('uploadProgFill');
+  const status   = document.getElementById('uploadStatus');
+  progWrap.classList.add('on');
+  document.getElementById('uploadBtn').disabled = true;
+  let done=0;
+  const results=[];
+  for(const f of pendingFiles){
+    status.textContent = `업로드 중: ${f.name} (${done+1}/${pendingFiles.length})`;
+    try{
+      const res = await driveUpload(f, currentUploadClient, fileType);
+      results.push(res);
+      done++;
+      progFill.style.width = Math.round(done/pendingFiles.length*100)+'%';
+    }catch(e){
+      status.textContent = '❌ 실패: '+e.message;
+      document.getElementById('uploadBtn').disabled=false;
+      return;
+    }
+  }
+  status.textContent = `✅ ${done}개 파일 업로드 완료! Google Drive에 저장되었습니다.`;
+  document.getElementById('uploadBtn').style.display='none';
+  pendingFiles=[];
+  document.getElementById('pendingFiles').innerHTML='';
+  toast('✅ '+done+'개 파일이 Google Drive에 업로드되었습니다!');
+  // 상세 페이지 서류 목록 새로고침
+  const c=clients.find(x=>x.name===currentUploadClient);
+  if(c) setTimeout(()=>loadClientDocs(currentUploadClient, c.rowIdx), 1000);
+}
+
+// ══════════════════════════════════════
 // ADD / EDIT / DELETE
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
@@ -685,7 +870,6 @@ function openAddClient(){
   document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
   document.getElementById('clientModal').classList.add('on');
 }
-
 function openEditClient(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   set('mTitle','✏️ 고객 정보 수정');
@@ -697,19 +881,15 @@ function openEditClient(rowIdx){
   document.getElementById('f_ref').value=c.ref;
   document.getElementById('clientModal').classList.add('on');
 }
-
 async function saveClient(){
   const name=document.getElementById('f_name').value.trim();
-  if(!name){alert('고객명을 입력해주세요');return;}
+  if(!name){alert('고객명 입력 필요');return;}
   const rowIdx=document.getElementById('eRow').value;
-  const vals=[[
-    document.getElementById('eNo').value||'', name,
-    document.getElementById('f_biz').value, document.getElementById('f_phone').value,
-    document.getElementById('f_email').value, document.getElementById('f_plan').value,
-    document.getElementById('f_prod').value, document.getElementById('f_memo').value,
-    document.getElementById('f_next').value, document.getElementById('f_ref').value,
-    '', ''
-  ]];
+  const vals=[[document.getElementById('eNo').value||'',name,
+    document.getElementById('f_biz').value,document.getElementById('f_phone').value,
+    document.getElementById('f_email').value,document.getElementById('f_plan').value,
+    document.getElementById('f_prod').value,document.getElementById('f_memo').value,
+    document.getElementById('f_next').value,document.getElementById('f_ref').value,'','']];
   showLoad('저장 중...');
   try{
     if(isDemo){
@@ -718,12 +898,9 @@ async function saveClient(){
         prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
-    } else {
-      if(rowIdx){
-        await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      } else {
-        await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
-      }
+    }else{
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
       await loadAll();
     }
     closeOv('clientModal');renderAll();
@@ -731,41 +908,31 @@ async function saveClient(){
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
-
 async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
   if(isDemo){clients=clients.filter(c=>c.rowIdx!==rowIdx);renderAll();toast('삭제됨');return;}
   showLoad('삭제 중...');
   try{
-    // 행 삭제 batchUpdate
-    await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{
-      requests:[{deleteDimension:{range:{sheetId:0,dimension:'ROWS',startIndex:rowIdx-1,endIndex:rowIdx}}}]
-    });
-    await loadAll();
-    toast('🗑 삭제되었습니다');
+    await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{requests:[{deleteDimension:{range:{sheetId:0,dimension:'ROWS',startIndex:rowIdx-1,endIndex:rowIdx}}}]});
+    await loadAll();toast('🗑 삭제되었습니다');
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // MEMO
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function openAddMemo(){populateMemoSel();document.getElementById('m_text').value='';document.getElementById('memoModal').classList.add('on');}
 function openAddMemoFor(name){openAddMemo();document.getElementById('m_client').value=name;}
-
 async function saveMemo(){
   const name=document.getElementById('m_client').value;
   const text=document.getElementById('m_text').value.trim();
-  if(!name){alert('고객을 선택해주세요');return;}
-  if(!text){alert('내용을 입력해주세요');return;}
+  if(!name){alert('고객 선택 필요');return;}if(!text){alert('내용 입력 필요');return;}
   const type=document.getElementById('m_type').value;
   const today=new Date().toISOString().slice(0,10);
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo){
-      await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,
-        {values:[[Date.now(),name,type,text,today]]});
-    }
+    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:E:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,today]]});
     allMemos.unshift({name,type,text,date:today});
     closeOv('memoModal');document.getElementById('m_text').value='';
     renderAll();toast('✅ 메모 저장됨!');
@@ -773,9 +940,9 @@ async function saveMemo(){
   finally{hideLoad();}
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // UI HELPERS
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function showTab(id,el){
   document.getElementById('detailPg').classList.remove('on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
@@ -785,11 +952,7 @@ function showTab(id,el){
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
-function setSyncStatus(txt,ok){
-  set('syncTxt',txt);
-  const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');
-  p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');
-}
+function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
 function showLoad(t){set('loadTxt',t);document.getElementById('loadOv').classList.add('on');}
 function hideLoad(){document.getElementById('loadOv').classList.remove('on');}
 let _tid;
