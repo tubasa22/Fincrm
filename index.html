@@ -817,7 +817,26 @@ function bootApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').classList.add('on');
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
-  if(!isDemo) loadAll(); else renderAll();
+  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
+}
+
+// 새로고침 시 URL hash 보고 위치 복원
+function restoreFromHash(){
+  const hash = location.hash.replace('#','');
+  if(!hash) return;
+  if(hash.startsWith('detail-')){
+    const rowIdx = parseInt(hash.replace('detail-',''));
+    if(!isNaN(rowIdx)){
+      const c = clients.find(x=>x.rowIdx===rowIdx);
+      if(c){ openDetail(rowIdx); return; }
+    }
+  }
+  // 탭 복원
+  const tabMap = {dashboard:'dashboard',clients:'clients',schedule:'schedule',birthday:'birthday',sms:'sms',automation:'automation'};
+  if(tabMap[hash]){
+    const tabEl = Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+hash+"'"));
+    if(tabEl) showTab(hash, tabEl);
+  }
 }
 
 // ══════════════════════════════════════
@@ -1220,6 +1239,8 @@ function renderPlanStats(){
 // ══════════════════════════════════════
 function openDetail(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
+  // URL hash에 현재 위치 저장 → 새로고침 시 복원
+  history.replaceState(null,'','#detail-'+rowIdx);
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('detailPg').classList.add('on');
   const d=elapsed(c.next);
@@ -1430,6 +1451,7 @@ function openSheetView(clientName, durl){
 }
 
 function closeDetail(){
+  history.replaceState(null,'','#clients');
   document.getElementById('detailPg').classList.remove('on');
   const at=document.querySelector('.tab.on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
@@ -1732,6 +1754,12 @@ async function saveClient(){
     closeOv('clientModal');
     renderAll();
     toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장됨!');
+
+    // 수정 후 저장 시 → 해당 고객 상세 페이지 자동 갱신
+    if(rowIdx){
+      const updated = clients.find(c=>c.rowIdx===+rowIdx);
+      if(updated) openDetail(updated.rowIdx);
+    }
 
   } catch(e){
     toast('❌ 저장 실패: '+e.message, 5000);
@@ -2077,6 +2105,7 @@ function copyWh(id){
 // TAB / UI
 // ══════════════════════════════════════
 function showTab(id,el){
+  history.replaceState(null,'','#'+id);
   document.getElementById('detailPg').classList.remove('on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
