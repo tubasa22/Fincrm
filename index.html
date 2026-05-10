@@ -1985,7 +1985,7 @@ function showTab(id,el){
   if(id==='automation') initAutomation();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
-document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+// 모달 외부 클릭으로 닫기 제거 - X 버튼이나 취소 버튼으로만 닫기
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
 function showLoad(t){set('loadTxt',t);document.getElementById('loadOv').classList.add('on');}
 function hideLoad(){document.getElementById('loadOv').classList.remove('on');}
