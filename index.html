@@ -544,12 +544,14 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith"></div>
     </div>
     <div class="fg"><label>주소 (Street Address)</label><input id="f_address1" placeholder="123 Main Street"></div>
-    <div class="fgr">
+    <div class="fgr" style="grid-template-columns:1fr 0.6fr 0.7fr">
       <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles"></div>
+      <div class="fg"><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase"></div>
       <div class="fg"><label>ZIP Code</label><input id="f_zip" placeholder="90001"></div>
     </div>
-    <div style="background:var(--amber2);border:1px solid #f59e0b;border-radius:var(--rs);padding:9px 12px;font-size:12px;color:#92400e;margin-bottom:12px">
-      ℹ️ State, Business, DOB, 다음연락일은 <strong>상세 페이지</strong>에서 관리됩니다
+    <div class="fgr">
+      <div class="fg"><label>생년월일 (DOB)</label><input type="date" id="f_dob"></div>
+      <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next"></div>
     </div>
     <div class="fgr">
       <div class="fg"><label>연락처 *</label><input id="f_phone" placeholder="949-000-0000"></div>
@@ -821,18 +823,24 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:O`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:R`);
+    // A=No B=First C=Middle D=Last E=Email F=Address G=City H=Zip
+    // I=State J=DOB K=NextContact L=Phone M=Plan N=Product O=Memo
+    // P=Ref Q=에이전트 R=상세URL
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2,no:String(r[0]||''),
       fname:String(r[1]||''),mname:String(r[2]||''),lname:String(r[3]||''),
       name:String([r[3],r[1],r[2]].filter(Boolean).join(' ')||''),
       email:String(r[4]||''),
       address1:String(r[5]||''),city:String(r[6]||''),zip:String(r[7]||''),
-      phone:String(r[8]||''),plan:String(r[9]||''),
-      prod:String(r[10]||''),memo:String(r[11]||''),
-      ref:String(r[12]||'FALSE'),
-      durl:String(r[14]||''),
-      state:'',biz:'',dob:'',next:'',
+      state:String(r[8]||''),
+      dob:String(r[9]||''),
+      next:String(r[10]||''),
+      phone:String(r[11]||''),plan:String(r[12]||''),
+      prod:String(r[13]||''),memo:String(r[14]||''),
+      ref:String(r[15]||'FALSE'),
+      durl:String(r[17]||''),
+      biz:'',
     })).filter(c=>c.name.trim());
     try{
       const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
@@ -1179,13 +1187,24 @@ function openDetail(rowIdx){
       <h4>기본 정보</h4>
       ${dr('연락처',c.phone)}${dr('이메일',c.email)}
       ${c.address1?dr('주소',`${c.address1}${c.city?', '+c.city:''}${c.zip?' '+c.zip:''}`):''}
+      ${c.state?dr('State',c.state):''}
+      ${c.dob?dr('생년월일 (DOB)',c.dob):''}
       ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
       ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
     </div>
     <div class="dc">
-      <h4>메모 &amp; 일정</h4>
+      <h4>메모 &amp; 일정
+        <button class="btn sm" onclick="toggleMemoEdit(${c.rowIdx},'${esc(c.memo||'')}')">✏️ 수정</button>
+      </h4>
       ${dr('마지막 연락일',(c.next||'없음')+' '+db)}
-      <div style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">${c.memo||'(메모 없음)'}</div>
+      <div id="memoView_${c.rowIdx}" style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">${c.memo||'(메모 없음)'}</div>
+      <div id="memoEdit_${c.rowIdx}" style="display:none;margin-top:10px">
+        <textarea id="memoTa_${c.rowIdx}" style="width:100%;border:1px solid var(--blue);border-radius:var(--rs);padding:10px;font-size:13px;min-height:80px;resize:vertical;font-family:inherit;outline:none;line-height:1.7">${c.memo||''}</textarea>
+        <div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end">
+          <button class="btn sm" onclick="cancelMemoEdit(${c.rowIdx},'${esc(c.memo||'')}')">취소</button>
+          <button class="btn sm pri" onclick="saveMemoEdit(${c.rowIdx})">💾 저장</button>
+        </div>
+      </div>
     </div>
     ${['MAPD','PDP'].includes(c.plan)?`
     <div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">
@@ -1276,6 +1295,52 @@ function fileIcon(name){
   if(/\.pdf$/i.test(name)) return '📄';
   if(/\.(jpg|jpeg|png|heic|gif)$/i.test(name)) return '🖼️';
   return '📎';
+}
+
+// ══════════════════════════════════════
+// INLINE MEMO EDIT
+// ══════════════════════════════════════
+function toggleMemoEdit(rowIdx, currentMemo){
+  document.getElementById('memoView_'+rowIdx).style.display='none';
+  const editEl = document.getElementById('memoEdit_'+rowIdx);
+  editEl.style.display='block';
+  const ta = document.getElementById('memoTa_'+rowIdx);
+  ta.value = currentMemo;
+  ta.focus();
+}
+function cancelMemoEdit(rowIdx, originalMemo){
+  document.getElementById('memoView_'+rowIdx).style.display='block';
+  document.getElementById('memoEdit_'+rowIdx).style.display='none';
+  document.getElementById('memoTa_'+rowIdx).value = originalMemo;
+}
+async function saveMemoEdit(rowIdx){
+  const newMemo = document.getElementById('memoTa_'+rowIdx).value.trim();
+  const c = clients.find(x=>x.rowIdx===rowIdx);
+  if(!c) return;
+  showLoad('메모 저장 중...');
+  try{
+    if(!isDemo){
+      // 메인 시트 L열(12번째, 0-indexed) 업데이트
+      await sheetsReq('PUT',
+        `${MAIN_ID}/values/O${rowIdx}?valueInputOption=USER_ENTERED`,
+        {values:[[newMemo]]});
+    }
+    // 로컬 데이터 즉시 반영
+    c.memo = newMemo;
+    // 화면 업데이트
+    const viewEl = document.getElementById('memoView_'+rowIdx);
+    if(viewEl) viewEl.innerHTML = newMemo || '(메모 없음)';
+    document.getElementById('memoEdit_'+rowIdx).style.display='none';
+    viewEl.style.display='block';
+    // 고객 목록도 갱신
+    renderClients();
+    renderFollowup();
+    toast('✅ 메모가 저장되었습니다');
+  }catch(e){
+    toast('❌ 저장 실패: '+e.message, 4000);
+  }finally{
+    hideLoad();
+  }
 }
 
 function closeDetail(){
@@ -1370,7 +1435,9 @@ function clearPlanFields(){
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
-  ['fname','mname','lname','address1','city','zip','phone','email','prod','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';});
+  ['fname','mname','lname','address1','city','state','zip','phone','email','prod','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
+  document.getElementById('f_dob').value='';
+  document.getElementById('f_next').value='';
   document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
   clearPlanFields();
   document.getElementById('clientModal').classList.add('on');
@@ -1388,6 +1455,9 @@ function openEditClient(rowIdx){
   document.getElementById('f_zip').value=c.zip;
   document.getElementById('f_phone').value=c.phone;
   document.getElementById('f_email').value=c.email;
+  document.getElementById('f_state').value=c.state||'';
+  document.getElementById('f_dob').value=c.dob||'';
+  document.getElementById('f_next').value=c.next||'';
   document.getElementById('f_plan').value=c.plan;
   document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;
@@ -1424,19 +1494,24 @@ async function saveClient(){
   const autoNo=existingNo||(Math.max(0,...clients.map(c=>parseInt(c.no)||0))+1).toString();
 
   // A~O 컬럼 순서: no, fname, mname, lname, email, address1, city, zip, phone, plan, prod, memo, ref, (N=에이전트 빈칸), (O=durl 빈칸)
+  // 컬럼 순서: A=No B=First C=Middle D=Last E=Email F=Address G=City H=Zip
+  // I=State J=DOB K=NextContact L=Phone M=Plan N=Product O=Memo P=Ref Q=에이전트 R=상세URL
   const vals=[[
     autoNo,
     fname, mname, lname,
-    document.getElementById('f_email').value.trim(),
-    document.getElementById('f_address1').value.trim(),
-    document.getElementById('f_city').value.trim(),
-    document.getElementById('f_zip').value.trim(),
-    document.getElementById('f_phone').value.trim(),
-    plan,
-    document.getElementById('f_prod').value.trim(),
-    document.getElementById('f_memo').value.trim(),
-    document.getElementById('f_ref').value,
-    '', ''
+    document.getElementById('f_email').value.trim(),       // E
+    document.getElementById('f_address1').value.trim(),    // F
+    document.getElementById('f_city').value.trim(),        // G
+    document.getElementById('f_zip').value.trim(),         // H
+    document.getElementById('f_state').value.trim().toUpperCase(), // I
+    document.getElementById('f_dob').value.trim(),         // J
+    document.getElementById('f_next').value.trim(),        // K
+    document.getElementById('f_phone').value.trim(),       // L
+    plan,                                                  // M
+    document.getElementById('f_prod').value.trim(),        // N
+    document.getElementById('f_memo').value.trim(),        // O
+    document.getElementById('f_ref').value,                // P
+    '', '',                                                // Q=에이전트 R=상세URL
   ]];
 
   // MAPD/PDP 추가정보 수집
@@ -1463,9 +1538,10 @@ async function saveClient(){
         rowIdx:rowIdx?+rowIdx:clients.length+2,
         no:autoNo, fname, mname, lname, name,
         email:vals[0][4], address1:vals[0][5], city:vals[0][6], zip:vals[0][7],
-        phone:vals[0][8], plan:vals[0][9], prod:vals[0][10],
-        memo:vals[0][11], ref:vals[0][12],
-        durl:'', state:'', biz:'', dob:'', next:''
+        state:vals[0][8], dob:vals[0][9], next:vals[0][10],
+        phone:vals[0][11], plan:vals[0][12], prod:vals[0][13],
+        memo:vals[0][14], ref:vals[0][15],
+        durl:'', biz:''
       };
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
@@ -1481,18 +1557,36 @@ async function saveClient(){
       if(rowIdx){
         // 수정: 해당 행 덮어쓰기
         await sheetsReq('PUT',
-          `${MAIN_ID}/values/A${rowIdx}:O${rowIdx}?valueInputOption=USER_ENTERED`,
+          `${MAIN_ID}/values/A${rowIdx}:R${rowIdx}?valueInputOption=USER_ENTERED`,
           {values:vals});
       } else {
         // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
         await sheetsReq('POST',
-          `${MAIN_ID}/values/A%3AO:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+          `${MAIN_ID}/values/A%3AR:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
           {values:vals});
       }
 
       // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
       if(piVals){
         try{
+          // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
+          let planInfoExists = true;
+          try{
+            await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A1`);
+          }catch(e){
+            planInfoExists = false;
+          }
+          if(!planInfoExists){
+            // 탭 생성
+            await sheetsReq('POST',`${DETAIL_ID}:batchUpdate`,{
+              requests:[{addSheet:{properties:{title:'PlanInfo'}}}]
+            });
+            // 헤더 입력
+            await sheetsReq('PUT',
+              `${DETAIL_ID}/values/PlanInfo!A1:I1?valueInputOption=USER_ENTERED`,
+              {values:[['name','mbi','medical_no','pcp','pcp_phone','network','group_no','meds','conditions']]});
+          }
+
           // 기존 행 검색 — A열 전체 읽기
           const existingRows=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
           const rows=(existingRows.values||[]);
@@ -1500,7 +1594,7 @@ async function saveClient(){
           const matchIdx=rows.findIndex((r,i)=>i>0 && String(r[0]||'').trim()===name.trim());
 
           if(matchIdx>0){
-            // 기존 행 업데이트 (배열 인덱스 → 시트 행 번호: +1)
+            // 기존 행 업데이트
             const sheetRow=matchIdx+1;
             await sheetsReq('PUT',
               `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
@@ -1518,10 +1612,11 @@ async function saveClient(){
             pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
             meds:piVals[0][7],conditions:piVals[0][8]};
           if(localIdx>=0) allPlanInfo[localIdx]=piObj; else allPlanInfo.push(piObj);
+          toast('✅ PlanInfo 저장 완료!');
 
         } catch(piErr){
           console.warn('PlanInfo 저장 오류:', piErr.message);
-          toast('⚠️ 기본정보는 저장됨. PlanInfo 탭 확인 필요: '+piErr.message, 5000);
+          toast('⚠️ 기본정보는 저장됨. PlanInfo 오류: '+piErr.message, 5000);
         }
       }
 
@@ -1580,7 +1675,7 @@ async function saveMemo(){
       clients[ci].next=date;
       if(!isDemo){
         const rIdx=clients[ci].rowIdx;
-        await sheetsReq('PUT',`${MAIN_ID}/values/I${rIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
+        await sheetsReq('PUT',`${MAIN_ID}/values/K${rIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
       }
     }
     closeOv('memoModal');
