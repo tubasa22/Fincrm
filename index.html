@@ -349,9 +349,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         </div>
       </div>
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
+      <div id="demoBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#92400e;white-space:nowrap">
+        🎭 데모 모드 — 가상 데이터
+      </div>
       <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
-      <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
-      <button class="btn sm" onclick="signOut()" title="로그아웃" style="color:var(--red);border-color:var(--red)" id="logoutBtn">🚪</button>
       <!-- 유저 드롭다운 -->
       <div class="user-wrap" id="userWrap" style="display:none">
         <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
@@ -1070,6 +1071,9 @@ function bootApp(){
   document.getElementById('loginSpinner').style.display='none';
   document.getElementById('app').classList.add('on');
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
+  // 데모 배너
+  const banner = document.getElementById('demoBanner');
+  if(banner) banner.style.display = isDemo ? 'block' : 'none';
   // 저장된 유저 정보 복원 (항상 시도)
   const saved = localStorage.getItem('fcrm_user');
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
@@ -1579,41 +1583,67 @@ function openDetail(rowIdx){
       : '<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음 — 위 버튼으로 첫 메모를 추가하세요</p>'}
     </div>`;
 
-  if(!isDemo) loadClientDocs(c.name, rowIdx);
+  loadClientDocs(c.name, rowIdx);
 }
 
 async function loadClientDocs(clientName, rowIdx){
+  const el=document.getElementById('docsList_'+rowIdx);
+  if(!el) return;
+  // 데모 모드: 가상 서류 목록
+  if(isDemo){
+    const demoDocs = {
+      '홍 문례':   [{id:'d1',name:'[Medicare 카드] medicare_card.jpg',  date:'2025-01-15'},
+                    {id:'d2',name:'[신분증 (ID)] drivers_license.jpg',   date:'2025-01-15'}],
+      '김 철수':   [{id:'d3',name:'[보험 카드] kaiser_card.pdf',         date:'2025-03-30'},
+                    {id:'d4',name:'[신청서] mapd_application.pdf',       date:'2025-03-28'}],
+      '박 영자':   [{id:'d5',name:'[Medicare 카드] medicare_card.jpg',   date:'2024-11-10'},
+                    {id:'d6',name:'[계약서] snp_contract.pdf',           date:'2024-11-10'}],
+      '강 정숙':   [{id:'d7',name:'[보험 카드] anthem_card.jpg',         date:'2025-01-05'}],
+    };
+    const docs = demoDocs[clientName] || [];
+    if(!docs.length){
+      el.innerHTML='<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음 (데모)</p>';
+      return;
+    }
+    el.innerHTML = docs.map(f=>`
+      <div class="doc-item">
+        <span style="font-size:18px">${fileIcon(f.name)}</span>
+        <div style="flex:1;min-width:0"><div class="doc-name">${f.name}</div><div class="doc-date">${f.date}</div></div>
+        <button class="btn sm" onclick="toast('데모 모드에서는 파일 열기가 비활성화됩니다')">열기</button>
+        <button class="btn sm red" onclick="toast('데모 모드에서는 삭제가 비활성화됩니다')">🗑</button>
+      </div>`).join('');
+    return;
+  }
+  // 실제 모드
   try{
     const fq=`name='${clientName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
     const fr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(fq)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
     const fd=await fr.json();
-    const el=document.getElementById(`docsList_${rowIdx}`);
-    if(!el) return;
     if(!fd.files||fd.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
     const folderId=fd.files[0].id;
-    const lr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${folderId}' in parents and trashed=false`)}&fields=files(id,name,webViewLink,createdTime)&orderBy=createdTime desc`,{headers:{Authorization:'Bearer '+accessToken}});
+    const lr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("'"+folderId+"' in parents and trashed=false")}&fields=files(id,name,webViewLink,createdTime)&orderBy=createdTime desc`,{headers:{Authorization:'Bearer '+accessToken}});
     const ld=await lr.json();
     if(!ld.files||ld.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
     el.innerHTML=ld.files.map(f=>`
       <div class="doc-item" id="doc-${f.id}">
         <span style="font-size:18px">${fileIcon(f.name)}</span>
-        <div style="flex:1;min-width:0"><div class="doc-name">${f.name}</div><div class="doc-date">${f.createdTime?.slice(0,10)||''}</div></div>
+        <div style="flex:1;min-width:0"><div class="doc-name">${f.name}</div><div class="doc-date">${f.createdTime?f.createdTime.slice(0,10):''}</div></div>
         <a href="${f.webViewLink}" target="_blank" class="btn sm">열기</a>
         <button class="btn sm red" onclick="deleteDoc('${f.id}','${esc(f.name)}',${rowIdx},'${esc(clientName)}')" title="삭제">🗑</button>
       </div>`).join('');
   }catch(e){
-    const el=document.getElementById(`docsList_${rowIdx}`);
-    if(el) el.innerHTML=`<p style="color:var(--text3);font-size:12px">서류 목록 로드 실패</p>`;
+    el.innerHTML=`<p style="color:var(--text3);font-size:12px">서류 목록 로드 실패</p>`;
   }
 }
 
 async function deleteDoc(fileId, fileName, rowIdx, clientName){
-  if(!confirm(`"${fileName}" 파일을 삭제할까요?`)) return;
+  if(isDemo){ toast('🚫 데모 모드에서는 삭제가 비활성화됩니다'); return; }
+  if(!confirm('"'+fileName+'" 파일을 삭제할까요?')) return;
   try{
     showLoad('삭제 중...');
-    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`,{method:'DELETE',headers:{Authorization:'Bearer '+accessToken}});
-    if(!r.ok && r.status !== 204) throw new Error(`HTTP ${r.status}`);
-    const el = document.getElementById(`doc-${fileId}`);
+    const r = await fetch('https://www.googleapis.com/drive/v3/files/'+fileId,{method:'DELETE',headers:{Authorization:'Bearer '+accessToken}});
+    if(!r.ok && r.status !== 204) throw new Error('HTTP '+r.status);
+    const el = document.getElementById('doc-'+fileId);
     if(el) el.remove();
     toast('🗑 파일 삭제됨');
   }catch(e){ toast('❌ 삭제 실패: '+e.message, 4000); }
@@ -1681,14 +1711,16 @@ const DETAIL_GID_SHEET = '1613556773';   // 상세 페이지 탭
 const DETAIL_GID_PLAN  = '588166202';    // PlanInfo 탭 (MBI, PCP 등)
 
 function openSheetView(clientName, durl){
-  const baseUrl = `https://docs.google.com/spreadsheets/d/${DETAIL_ID}`;
-  // durl이 있으면 그 주소, 없으면 공통 상세 탭
+  if(isDemo){
+    toast('📋 데모 모드에서는 실제 Google Sheets에 연결되지 않습니다');
+    return;
+  }
+  const baseUrl = 'https://docs.google.com/spreadsheets/d/'+DETAIL_ID;
   const viewUrl = durl
     ? durl.replace('/edit','/preview')
-    : `${baseUrl}/preview?gid=${DETAIL_GID_SHEET}`;
-  const openUrl = durl || `${baseUrl}/edit?gid=${DETAIL_GID_SHEET}`;
-
-  document.getElementById('sheetViewTitle').textContent = `📋 ${clientName} — 상세 페이지`;
+    : baseUrl+'/preview?gid='+DETAIL_GID_SHEET;
+  const openUrl = durl || baseUrl+'/edit?gid='+DETAIL_GID_SHEET;
+  document.getElementById('sheetViewTitle').textContent = '📋 '+clientName+' — 상세 페이지';
   document.getElementById('sheetViewFrame').src = viewUrl;
   document.getElementById('sheetViewOpenLink').href = openUrl;
   document.getElementById('sheetViewModal').classList.add('on');
@@ -2178,6 +2210,7 @@ function initSmsTab() {
   updateTwilioStatus();
 }
 function saveTwilio(){
+  if(isDemo){ return; }
   const cfg={sid:document.getElementById('twilioSid').value.trim(),token:document.getElementById('twilioToken').value.trim(),from:document.getElementById('twilioFrom').value.trim()};
   localStorage.setItem('twilio',JSON.stringify(cfg));
   updateTwilioStatus();
@@ -2313,6 +2346,7 @@ function initAutomation(){
   updateZapCounts();
 }
 function saveZapUrl(){
+  if(isDemo){ toast('🚫 데모 모드에서는 저장되지 않습니다'); return; }
   zapBaseUrl=document.getElementById('zapUrl').value.trim();
   localStorage.setItem('zap_url',zapBaseUrl);
   updateZapUrls(zapBaseUrl);
@@ -2328,16 +2362,21 @@ function updateZapCounts(){
   set('zapBdayCnt',getBirthdays().filter(c=>c.daysLeft<=7).length);
 }
 async function triggerZap(type, label){
+  const el=document.getElementById('zapTestResult');
+  if(isDemo){
+    el.textContent='✅ [데모] '+label+' 시뮬레이션 완료! (실제 전송 안 됨)';
+    toast('데모 모드에서는 실제 Zapier 전송이 비활성화됩니다');
+    return;
+  }
   if(!zapBaseUrl){toast('웹훅 URL을 먼저 등록해주세요');return;}
   const suffs={bday:'?event=birthday',contact:'?event=contact_reminder',new:'?event=new_client'};
   const url=zapBaseUrl+(suffs[type]||'');
-  const el=document.getElementById('zapTestResult');
   el.textContent='발송 중...';
   try{
     await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({event:type,test:true,timestamp:new Date().toISOString(),clients:clients.slice(0,2).map(c=>({name:c.name,phone:c.phone,plan:c.plan}))})
     });
-    el.textContent=`✅ ${label} 전송 완료! Zapier에서 확인하세요.`;
+    el.textContent='✅ '+label+' 전송 완료! Zapier에서 확인하세요.';
   }catch(e){el.textContent='❌ '+e.message;}
 }
 function copyWh(id){
