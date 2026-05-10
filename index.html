@@ -898,20 +898,170 @@ function demoMode(){
   isDemo=true;
   addLoginLog('login', '데모 사용자');
   updateUserUI({name:'데모 사용자', email:'demo@fincrm.app', picture:''});
+
+  // ── 오늘 기준 날짜 계산 헬퍼 ──
+  function dAgo(days){ const d=new Date(); d.setDate(d.getDate()-days); return d.toISOString().slice(0,10); }
+  function dFrom(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+  function dobY(age){ const d=new Date(); d.setFullYear(d.getFullYear()-age); return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear(); }
+  // 생일이 N일 후가 되도록
+  function dobSoon(daysLeft, age){ const d=new Date(); d.setDate(d.getDate()+daysLeft); return (d.getMonth()+1)+'/'+d.getDate()+'/'+(d.getFullYear()-age); }
+
   clients=[
-    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',email:'',address1:'1234 Wilshire Blvd',city:'Los Angeles',zip:'90010',phone:'949-664-0113',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',ref:'FALSE',durl:'https://docs.google.com/spreadsheets/d/1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM/edit',state:'',biz:'',dob:'',next:''},
-    {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'김 철수',email:'kim@email.com',address1:'567 Main Street',city:'Irvine',zip:'92614',phone:'213-555-0100',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개',ref:'TRUE',durl:'',state:'',biz:'',dob:'',next:''},
-    {rowIdx:4,no:'3',fname:'영희',mname:'',lname:'이',name:'이 영희',email:'',address1:'',city:'',zip:'',phone:'310-555-0200',plan:'MA',prod:'Humana PPO',memo:'',ref:'FALSE',durl:'',state:'',biz:'',dob:'',next:''},
+    {rowIdx:2, no:'1', fname:'문례', mname:'', lname:'홍', name:'홍 문례',
+     email:'hong.munrye@email.com', address1:'1234 Wilshire Blvd', city:'Los Angeles', zip:'90010', state:'CA',
+     phone:'949-664-0113', phone2:'213-555-0191', plan:'PDP', prod:'Anthem Blue Cross',
+     memo:'길벗 소개. 장례보험도 관심 있음. 매달 첫째 주 통화 선호.',
+     ref:'FALSE', agent:'', dob:dobSoon(5, 72), next:dAgo(35), durl:'', biz:''},
+
+    {rowIdx:3, no:'2', fname:'철수', mname:'K', lname:'김', name:'김 철수',
+     email:'kim.cs@gmail.com', address1:'567 Main Street', city:'Irvine', zip:'92614', state:'CA',
+     phone:'213-555-0100', phone2:'', plan:'MAPD', prod:'Kaiser HMO',
+     memo:'딸 박지영 소개. 당뇨 관리 중. 처방전 갱신 매 3개월.',
+     ref:'TRUE', agent:'박지영', dob:dobSoon(12, 68), next:dAgo(8), durl:'', biz:''},
+
+    {rowIdx:4, no:'3', fname:'Grace', mname:'', lname:'Lee', name:'Lee Grace',
+     email:'grace.lee@yahoo.com', address1:'890 Orange Ave', city:'Fullerton', zip:'92832', state:'CA',
+     phone:'714-555-0230', phone2:'714-555-0231', plan:'MA', prod:'Humana PPO',
+     memo:'OC 한인회 소개. 영어 상담 가능. 남편 보험도 검토 예정.',
+     ref:'TRUE', agent:'김민수', dob:dobSoon(3, 65), next:dAgo(62), durl:'', biz:''},
+
+    {rowIdx:5, no:'4', fname:'영자', mname:'', lname:'박', name:'박 영자',
+     email:'', address1:'2200 Beach Blvd', city:'Huntington Beach', zip:'92648', state:'CA',
+     phone:'562-555-0310', phone2:'', plan:'SNP', prod:'Molina SNP',
+     memo:'저소득층 플랜. Medi-Cal 연계. 딸이 대신 전화함.',
+     ref:'FALSE', agent:'', dob:dobY(78), next:dAgo(14), durl:'', biz:''},
+
+    {rowIdx:6, no:'5', fname:'James', mname:'H', lname:'Park', name:'Park James',
+     email:'jpark@hotmail.com', address1:'3300 Katella Ave', city:'Anaheim', zip:'92804', state:'CA',
+     phone:'657-555-0420', phone2:'657-555-0421', plan:'MAPD', prod:'Blue Shield 65 Plus',
+     memo:'AEP 시즌 갱신 예정. PDP에서 MAPD로 변경 논의.',
+     ref:'FALSE', agent:'', dob:dobSoon(45, 70), next:dAgo(3), durl:'', biz:''},
+
+    {rowIdx:7, no:'6', fname:'순희', mname:'', lname:'최', name:'최 순희',
+     email:'choi.sh@naver.com', address1:'450 S Western Ave', city:'Los Angeles', zip:'90020', state:'CA',
+     phone:'323-555-0540', phone2:'', plan:'PDP', prod:'WellCare Value Script',
+     memo:'약값 부담 호소. Extra Help 신청 안내 완료.',
+     ref:'TRUE', agent:'이정호', dob:dobSoon(0, 75), next:dAgo(91), durl:'', biz:''},
+
+    {rowIdx:8, no:'7', fname:'David', mname:'', lname:'Chung', name:'Chung David',
+     email:'dchung@email.com', address1:'1100 E Valley Blvd', city:'Alhambra', zip:'91801', state:'CA',
+     phone:'626-555-0650', phone2:'626-555-0651', plan:'Medigap', prod:'AARP Medigap Plan G',
+     memo:'여행 잦음. PPO 유지 선호. 연 1회 갱신 확인.',
+     ref:'FALSE', agent:'', dob:dobSoon(20, 67), next:dAgo(5), durl:'', biz:''},
+
+    {rowIdx:9, no:'8', fname:'명숙', mname:'', lname:'윤', name:'윤 명숙',
+     email:'yoon.ms@gmail.com', address1:'780 N Vermont Ave', city:'Los Angeles', zip:'90029', state:'CA',
+     phone:'213-555-0760', phone2:'', plan:'MA', prod:'LA Care HMO',
+     memo:'한국어 상담만. 가족 동반 상담 선호. 치과 커버리지 문의.',
+     ref:'FALSE', agent:'', dob:dobSoon(60, 71), next:dAgo(22), durl:'', biz:''},
+
+    {rowIdx:10, no:'9', fname:'Robert', mname:'J', lname:'Kim', name:'Kim Robert',
+     email:'rkim@work.com', address1:'2500 Pacific Coast Hwy', city:'Torrance', zip:'90505', state:'CA',
+     phone:'310-555-0870', phone2:'310-555-0871', plan:'Life', prod:'Prudential Term Life',
+     memo:'생명보험 가입. 은퇴 후 수입 보장 목적. 배우자 추가 가입 검토.',
+     ref:'TRUE', agent:'박지영', dob:dobSoon(8, 58), next:dAgo(18), durl:'', biz:''},
+
+    {rowIdx:11, no:'10', fname:'정숙', mname:'', lname:'강', name:'강 정숙',
+     email:'kang.js@email.com', address1:'320 S Hobart Blvd', city:'Los Angeles', zip:'90020', state:'CA',
+     phone:'213-555-0980', phone2:'', plan:'MAPD', prod:'Anthem Blue Plus HMO',
+     memo:'고혈압·당뇨 복합. PCP 변경 요청. 처방약 커버 확인 필요.',
+     ref:'FALSE', agent:'', dob:dobSoon(30, 69), next:dAgo(45), durl:'', biz:''},
   ];
+
   allMemos=[
-    {name:'홍 문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30',ts:'2025. 01. 30. 14:22'},
-    {name:'홍 문례',type:'대면 미팅',text:'Total plan으로 변경 완료',date:'2025-03-18',ts:'2025. 03. 18. 10:05'},
-    {name:'김 철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10',ts:'2025. 04. 10. 16:40'},
+    {name:'홍 문례', type:'전화 상담', date:dAgo(35),
+     text:'Anthem PDP 갱신 상담. 약값 변동 없음 확인. 내년 플랜 비교 요청함.',
+     ts:'2025. 03. 25. 10:30'},
+    {name:'홍 문례', type:'대면 미팅', date:dAgo(90),
+     text:'Total Plan으로 변경 완료. 장례보험 자료 전달. 다음 달 재연락 예정.',
+     ts:'2024. 12. 30. 14:05'},
+    {name:'홍 문례', type:'서류 접수', date:dAgo(120),
+     text:'Medicare 카드 사본 수령. MBI 번호 확인 완료.',
+     ts:'2024. 11. 28. 09:15'},
+
+    {name:'김 철수', type:'전화 상담', date:dAgo(8),
+     text:'딸 박지영 소개로 연결. 현재 Original Medicare 사용 중. MAPD로 전환 희망.',
+     ts:'2025. 04. 22. 16:40'},
+    {name:'김 철수', type:'대면 미팅', date:dAgo(30),
+     text:'Kaiser MAPD 가입 완료. PCP 황인용 선생님으로 지정. 처방전 이전 처리.',
+     ts:'2025. 03. 30. 11:20'},
+
+    {name:'Lee Grace', type:'전화 상담', date:dAgo(62),
+     text:'Humana PPO 갱신 확인. 남편 보험 상담 일정 조율 중. 다음 달 부부 상담 예정.',
+     ts:'2025. 02. 27. 13:00'},
+
+    {name:'박 영자', type:'전화 상담', date:dAgo(14),
+     text:'Medi-Cal 자격 확인 완료. Molina SNP 지속 유지. 딸 연락처로 소통.',
+     ts:'2025. 04. 16. 15:30'},
+
+    {name:'Park James', type:'전화 상담', date:dAgo(3),
+     text:'AEP 시즌 안내. Blue Shield 65 Plus로 변경 검토 중. 비용 비교표 이메일 발송.',
+     ts:'2025. 04. 27. 10:00'},
+    {name:'Park James', type:'이메일', date:dAgo(2),
+     text:'플랜 비교표 발송 완료 (PDP vs MAPD). 회신 대기 중.',
+     ts:'2025. 04. 28. 09:30'},
+
+    {name:'최 순희', type:'대면 미팅', date:dAgo(91),
+     text:'Extra Help (LIS) 신청 완료. WellCare로 약값 대폭 절감. 만족도 높음.',
+     ts:'2024. 12. 29. 14:00'},
+
+    {name:'Chung David', type:'전화 상담', date:dAgo(5),
+     text:'Plan G 갱신 확인. 해외 여행 중 응급 커버리지 문의 → 설명 완료.',
+     ts:'2025. 04. 25. 11:00'},
+
+    {name:'윤 명숙', type:'전화 상담', date:dAgo(22),
+     text:'치과 커버리지 추가 문의. Dental HMO 별도 가입 안내. 딸 통역으로 상담.',
+     ts:'2025. 04. 08. 14:30'},
+
+    {name:'Kim Robert', type:'대면 미팅', date:dAgo(18),
+     text:'Prudential Term Life 가입 완료. $500K 커버리지. 배우자 추가 견적 준비 중.',
+     ts:'2025. 04. 12. 10:00'},
+
+    {name:'강 정숙', type:'전화 상담', date:dAgo(45),
+     text:'Anthem MAPD PCP 변경 처리. 처방약 Metformin·Amlodipine 커버 확인.',
+     ts:'2025. 03. 15. 15:00'},
+    {name:'강 정숙', type:'플랜 변경', date:dAgo(90),
+     text:'2025 AEP 갱신. 기존 플랜 유지 결정. 약 리스트 업데이트.',
+     ts:'2024. 12. 31. 10:00'},
   ];
+
   allPlanInfo=[
-    {name:'홍 문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',network:'센타메디칼 IPA',group_no:'GRP-1023',meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',conditions:'당뇨 2형, 고혈압'},
-    {name:'김 철수',mbi:'2AB7-RF3-XP91',medical_no:'',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',network:'Kaiser PPO',group_no:'GRP-2041',meds:'Amlodipine 5mg, Metoprolol 25mg',conditions:'고혈압, 페니실린 알레르기'},
+    {name:'홍 문례',
+     mbi:'1EG4-TE5-MK72', medical_no:'50123456A',
+     pcp:'황인용', pcp_phone:'949-321-0001',
+     network:'센타메디칼 IPA', group_no:'GRP-1023',
+     meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg, Omeprazole 20mg',
+     conditions:'당뇨 2형, 고혈압'},
+
+    {name:'김 철수',
+     mbi:'2AB7-RF3-XP91', medical_no:'',
+     pcp:'황인용', pcp_phone:'949-321-0001',
+     network:'Kaiser HMO', group_no:'GRP-2041',
+     meds:'Amlodipine 5mg, Metoprolol 25mg, Aspirin 81mg',
+     conditions:'고혈압, 페니실린 알레르기'},
+
+    {name:'박 영자',
+     mbi:'3CD5-PQ7-WX44', medical_no:'80234567B',
+     pcp:'Dr. Kim Susan', pcp_phone:'562-555-1100',
+     network:'Molina IPA', group_no:'GRP-3012',
+     meds:'Furosemide 20mg, Atorvastatin 40mg, Gabapentin 300mg',
+     conditions:'심부전, 당뇨 2형, 고혈압'},
+
+    {name:'Park James',
+     mbi:'4EF9-RT2-YZ88', medical_no:'',
+     pcp:'Dr. Johnson Mike', pcp_phone:'657-555-2200',
+     network:'Blue Shield PPO', group_no:'GRP-4055',
+     meds:'Losartan 50mg, Simvastatin 20mg',
+     conditions:'고혈압'},
+
+    {name:'강 정숙',
+     mbi:'5GH1-UV4-AB22', medical_no:'90345678C',
+     pcp:'Dr. Yoon James', pcp_phone:'213-555-3300',
+     network:'Anthem IPA', group_no:'GRP-5077',
+     meds:'Metformin 1000mg, Amlodipine 10mg, Lisinopril 20mg, Atorvastatin 40mg',
+     conditions:'당뇨 2형, 고혈압, 고지혈증'},
   ];
+
   bootApp();
 }
 function bootApp(){
