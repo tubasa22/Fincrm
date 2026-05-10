@@ -1174,8 +1174,7 @@ function renderPlanStats(){
     const paths=slices.map(s=>{
       const start=s.offset*circ;
       const len=s.pct*circ;
-      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.col}" stroke-width="${stroke}"
-        stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${circ/4-start}" transform="rotate(-90 0 0)" style="transform-origin:${cx}px ${cy}px;transform:rotate(-90deg);stroke-dashoffset:${circ/4-start}" />`;
+      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.col}" stroke-width="${stroke}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${circ/4-start}" transform="rotate(-90 ${cx} ${cy})" />`;
     });
     el.innerHTML=`<div class="donut-wrap">
       <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
