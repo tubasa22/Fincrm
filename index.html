@@ -544,7 +544,14 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="fg"><label>Middle Name</label><input id="f_mname" placeholder="M."></div>
       <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith"></div>
     </div>
-    <div class="fg"><label>주소 (Street Address)</label><input id="f_address1" placeholder="123 Main Street"></div>
+    <div class="fg"><label>주소 (Street Address)</label>
+      <div style="position:relative">
+        <input id="f_address1" placeholder="123 Main Street" autocomplete="off"
+          oninput="addrInput(this)" onkeydown="addrKeydown(event)"
+          style="width:100%">
+        <div id="addrSuggest" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1px solid var(--blue);border-radius:0 0 var(--rs) var(--rs);z-index:300;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:200px;overflow-y:auto"></div>
+      </div>
+    </div>
     <div class="fgr" style="grid-template-columns:1fr 0.6fr 0.7fr">
       <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles"></div>
       <div class="fg"><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase"></div>
@@ -555,9 +562,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next"></div>
     </div>
     <div class="fgr">
-      <div class="fg"><label>연락처 *</label><input id="f_phone" placeholder="949-000-0000"></div>
-      <div class="fg"><label>이메일</label><input id="f_email"></div>
+      <div class="fg"><label>연락처 1 * (Primary)</label><input id="f_phone" placeholder="949-000-0000" oninput="fmtPhone(this)"></div>
+      <div class="fg"><label>연락처 2 (Secondary)</label><input id="f_phone2" placeholder="213-000-0000" oninput="fmtPhone(this)"></div>
     </div>
+    <div class="fg"><label>이메일</label><input id="f_email"></div>
     <div class="fgr">
       <div class="fg"><label>플랜 구분</label>
         <select id="f_plan" onchange="togglePlanFields()"><option value="">선택</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option></select>
@@ -579,13 +587,36 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <div class="fg"><label>메디컬 네트워크 / IPA</label><input id="f_network" placeholder="HMO, PPO, 센타메디칼..."></div>
         <div class="fg"><label>그룹 번호</label><input id="f_group_no" placeholder="Group #"></div>
       </div>
-      <div class="fg"><label>복용 약 리스트 (쉼표로 구분)</label><textarea id="f_meds" style="min-height:56px" placeholder="Metformin 500mg, Lisinopril 10mg..."></textarea></div>
+      <div class="fg">
+        <label style="display:flex;align-items:center;justify-content:space-between">
+          <span>💊 복용 약 리스트</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:400">붙여넣기 후 자동 정리됩니다</span>
+        </label>
+        <textarea id="f_meds" style="min-height:80px;font-size:12px" 
+          placeholder="여러 줄 붙여넣기 가능&#10;Sucralfate 1 gm&#10;Lansoprazole Dr 30Mg&#10;Amlodipine..."
+          oninput="parseMeds(this)"></textarea>
+        <div id="medsPreview" style="display:none;margin-top:6px;padding:8px 10px;background:var(--green2);border-radius:var(--rs);font-size:11px;color:#065f46;line-height:1.8"></div>
+        <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap" id="medsTags"></div>
+      </div>
       <div class="fg"><label>특이사항 (만성질환, 알레르기 등)</label><textarea id="f_conditions" style="min-height:48px" placeholder="당뇨, 고혈압, 페니실린 알레르기..."></textarea></div>
     </div>
     <div class="fg"><label>메모</label><textarea id="f_memo"></textarea></div>
-    <div class="fgr">
-      <div class="fg"><label>에이전트 리퍼</label><select id="f_ref"><option value="FALSE">없음</option><option value="TRUE">있음</option></select></div>
-      <div class="fg"></div>
+    <div class="fg" style="background:var(--g2);border-radius:var(--rs);padding:12px 14px;margin-bottom:12px">
+      <label style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;display:block">🔗 에이전트 리퍼</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;margin:0">
+          <input type="checkbox" id="f_ref_chk" onchange="toggleAgentField()"
+            style="width:16px;height:16px;cursor:pointer;accent-color:var(--purple)">
+          리퍼 고객입니다
+        </label>
+        <span id="f_ref_badge" style="display:none" class="badge bpu">리퍼 ✓</span>
+      </div>
+      <div id="f_agent_wrap" style="display:none">
+        <input id="f_agent" placeholder="에이전트 이름 입력..."
+          style="width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 11px;font-size:13px;font-family:inherit;outline:none;background:var(--sur)"
+          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+      </div>
+      <input type="hidden" id="f_ref" value="FALSE">
     </div>
     <div style="background:var(--green2);border:1px solid #6ee7b7;border-radius:var(--rs);padding:9px 12px;font-size:12px;color:#065f46;margin-top:4px">
       💾 저장 즉시 Google Sheets에 반영됩니다
@@ -851,23 +882,27 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:R`);
-    // A=No B=First C=Middle D=Last E=Email F=Address G=City H=Zip
-    // I=State J=DOB K=NextContact L=Phone M=Plan N=Product O=Memo
-    // P=Ref Q=에이전트 R=상세URL
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:S`);
+    // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
+    // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
+    // N=Plan  O=Product  P=Memo  Q=Ref(TRUE/FALSE)  R=에이전트이름  S=상세URL
     clients=(d.values||[]).slice(1).map((r,i)=>({
-      rowIdx:i+2,no:String(r[0]||''),
-      fname:String(r[1]||''),mname:String(r[2]||''),lname:String(r[3]||''),
+      rowIdx:i+2, no:String(r[0]||''),
+      fname:String(r[1]||''), mname:String(r[2]||''), lname:String(r[3]||''),
       name:String([r[3],r[1],r[2]].filter(Boolean).join(' ')||''),
       email:String(r[4]||''),
-      address1:String(r[5]||''),city:String(r[6]||''),zip:String(r[7]||''),
+      address1:String(r[5]||''), city:String(r[6]||''), zip:String(r[7]||''),
       state:String(r[8]||''),
       dob:String(r[9]||''),
       next:String(r[10]||''),
-      phone:String(r[11]||''),plan:String(r[12]||''),
-      prod:String(r[13]||''),memo:String(r[14]||''),
-      ref:String(r[15]||'FALSE'),
-      durl:String(r[17]||''),
+      phone:String(r[11]||''),
+      phone2:String(r[12]||''),
+      plan:String(r[13]||''),
+      prod:String(r[14]||''),
+      memo:String(r[15]||''),
+      ref:String(r[16]||'FALSE'),
+      agent:String(r[17]||''),
+      durl:String(r[18]||''),
       biz:'',
     })).filter(c=>c.name.trim());
     try{
@@ -923,13 +958,13 @@ function renderClients(list){
       <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
         <div><div style="font-weight:600">${c.name}</div></div>
       </div></td>
-      <td>${c.phone||'—'}</td>
+      <td>${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3)'>${c.phone2}</div>`:''}</td>
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
       <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
       <td style="font-size:12px">${c.prod||'—'}</td>
       <td style="font-size:12px">${c.next||'—'}</td>
       <td>${dh}</td>
-      <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
+      <td>${c.ref==='TRUE'?`<span class="badge bpu">리퍼</span>${c.agent?'<div style="font-size:11px;color:var(--text3);">'+c.agent+'</div>':''}`:'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${memoEl}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
@@ -944,7 +979,7 @@ function filterClients(){
   const q=document.getElementById('cSearch').value.toLowerCase();
   const pf=document.getElementById('planF').value;
   const rf=document.getElementById('refF').value;
-  renderClients(clients.filter(c=>(!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.memo||'').toLowerCase().includes(q))&&(!pf||c.plan===pf)&&(!rf||c.ref===rf)));
+  renderClients(clients.filter(c=>(!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||c.phone2.includes(q)||(c.memo||'').toLowerCase().includes(q)||(c.agent||'').toLowerCase().includes(q))&&(!pf||c.plan===pf)&&(!rf||c.ref===rf)));
 }
 
 // ══════════════════════════════════════
@@ -1067,6 +1102,7 @@ function qfFilter(type, el){
   let filtered;
   if(!type) filtered=clients;
   else if(type==='ref') filtered=clients.filter(c=>c.ref==='TRUE');
+  // ref 필터에서 에이전트 이름 검색 가능하도록 cSearch 연동은 filterClients에서 처리
   else if(type==='urgent') filtered=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
   else if(type==='recent') filtered=[...clients].reverse();
   else filtered=clients.filter(c=>c.plan===type);
@@ -1193,10 +1229,10 @@ function openDetail(rowIdx){
     <div class="dh-av" style="background:${ac(c.name)}">${c.name[0]}</div>
     <div class="dh-info">
       <h2>${c.name}
-        ${c.ref==='TRUE'?'<span class="badge bpu" style="margin-left:8px;font-size:12px">리퍼</span>':''}
+        ${c.ref==='TRUE'?`<span class="badge bpu" style="margin-left:8px;font-size:12px">리퍼</span>${c.agent?' <span style="font-size:12px;color:var(--text2)">'+c.agent+'</span>':''}`:''}
         ${c.plan?`<span class="badge ${pb(c.plan)}" style="margin-left:6px;font-size:12px">${c.plan}</span>`:''}
       </h2>
-      <p>📞 ${c.phone||'—'} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 마지막 연락: ${c.next||'없음'} ${db}</p>
+      <p>📞 ${c.phone||'—'}${c.phone2?' / '+c.phone2:''} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 마지막 연락: ${c.next||'없음'} ${db}</p>
     </div>
     <div class="dh-right">
       ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞 전화</a>`:''}
@@ -1213,12 +1249,12 @@ function openDetail(rowIdx){
   document.getElementById('dGrid').innerHTML=`
     <div class="dc">
       <h4>기본 정보</h4>
-      ${dr('연락처',c.phone)}${dr('이메일',c.email)}
+      ${dr('연락처 1',c.phone)}${c.phone2?dr('연락처 2',c.phone2):''}${dr('이메일',c.email)}
       ${c.address1?dr('주소',`${c.address1}${c.city?', '+c.city:''}${c.zip?' '+c.zip:''}`):''}
       ${c.state?dr('State',c.state):''}
       ${c.dob?dr('생년월일 (DOB)',c.dob):''}
       ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
-      ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
+      ${dr('가입상품',c.prod)}${dr('에이전트 리퍼', c.ref==='TRUE' ? `<span class="badge bpu">리퍼 ✓</span>${c.agent?' &nbsp;<strong>'+c.agent+'</strong>':''}` : '없음')}
     </div>
     <div class="dc">
       <h4>메모 &amp; 일정
@@ -1350,7 +1386,7 @@ async function saveMemoEdit(rowIdx){
     if(!isDemo){
       // 메인 시트 L열(12번째, 0-indexed) 업데이트
       await sheetsReq('PUT',
-        `${MAIN_ID}/values/O${rowIdx}?valueInputOption=USER_ENTERED`,
+        `${MAIN_ID}/values/P${rowIdx}?valueInputOption=USER_ENTERED`,
         {values:[[newMemo]]});
     }
     // 로컬 데이터 즉시 반영
@@ -1488,7 +1524,12 @@ function openAddClient(){
   ['fname','mname','lname','address1','city','state','zip','phone','email','prod','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
   document.getElementById('f_dob').value='';
   document.getElementById('f_next').value='';
-  document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
+  document.getElementById('f_plan').value='';
+  document.getElementById('f_ref').value='FALSE';
+  document.getElementById('f_ref_chk').checked=false;
+  document.getElementById('f_agent_wrap').style.display='none';
+  document.getElementById('f_agent_badge') && (document.getElementById('f_ref_badge').style.display='none');
+  const agEl=document.getElementById('f_agent'); if(agEl) agEl.value='';
   clearPlanFields();
   document.getElementById('clientModal').classList.add('on');
 }
@@ -1504,6 +1545,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_city').value=c.city;
   document.getElementById('f_zip').value=c.zip;
   document.getElementById('f_phone').value=c.phone;
+  document.getElementById('f_phone2').value=c.phone2||'';
   document.getElementById('f_email').value=c.email;
   document.getElementById('f_state').value=c.state||'';
   document.getElementById('f_dob').value=c.dob||'';
@@ -1511,7 +1553,12 @@ function openEditClient(rowIdx){
   document.getElementById('f_plan').value=c.plan;
   document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;
+  const isRef = c.ref==='TRUE';
   document.getElementById('f_ref').value=c.ref;
+  document.getElementById('f_ref_chk').checked=isRef;
+  document.getElementById('f_agent_wrap').style.display=isRef?'block':'none';
+  document.getElementById('f_ref_badge').style.display=isRef?'inline-flex':'none';
+  const agEl=document.getElementById('f_agent'); if(agEl) agEl.value=c.agent||'';
   clearPlanFields();
   if(['MAPD','PDP'].includes(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
@@ -1522,7 +1569,10 @@ function openEditClient(rowIdx){
     document.getElementById('f_pcp_phone').value=pi.pcp_phone||'';
     document.getElementById('f_network').value=pi.network||'';
     document.getElementById('f_group_no').value=pi.group_no||'';
-    document.getElementById('f_meds').value=pi.meds||'';
+    const medsEl=document.getElementById('f_meds');
+    medsEl.value=pi.meds||'';
+    medsEl.dataset.parsed=pi.meds||'';
+    if(pi.meds) parseMeds(medsEl);
     document.getElementById('f_conditions').value=pi.conditions||'';
   }
   document.getElementById('clientModal').classList.add('on');
@@ -1544,24 +1594,27 @@ async function saveClient(){
   const autoNo=existingNo||(Math.max(0,...clients.map(c=>parseInt(c.no)||0))+1).toString();
 
   // A~O 컬럼 순서: no, fname, mname, lname, email, address1, city, zip, phone, plan, prod, memo, ref, (N=에이전트 빈칸), (O=durl 빈칸)
-  // 컬럼 순서: A=No B=First C=Middle D=Last E=Email F=Address G=City H=Zip
-  // I=State J=DOB K=NextContact L=Phone M=Plan N=Product O=Memo P=Ref Q=에이전트 R=상세URL
+  // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
+  // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
+  // N=Plan  O=Product  P=Memo  Q=Ref  R=에이전트이름  S=상세URL
   const vals=[[
     autoNo,
     fname, mname, lname,
-    document.getElementById('f_email').value.trim(),       // E
-    document.getElementById('f_address1').value.trim(),    // F
-    document.getElementById('f_city').value.trim(),        // G
-    document.getElementById('f_zip').value.trim(),         // H
-    document.getElementById('f_state').value.trim().toUpperCase(), // I
-    document.getElementById('f_dob').value.trim(),         // J
-    document.getElementById('f_next').value.trim(),        // K
-    document.getElementById('f_phone').value.trim(),       // L
-    plan,                                                  // M
-    document.getElementById('f_prod').value.trim(),        // N
-    document.getElementById('f_memo').value.trim(),        // O
-    document.getElementById('f_ref').value,                // P
-    '', '',                                                // Q=에이전트 R=상세URL
+    document.getElementById('f_email').value.trim(),                // E
+    document.getElementById('f_address1').value.trim(),             // F
+    document.getElementById('f_city').value.trim(),                 // G
+    document.getElementById('f_zip').value.trim(),                  // H
+    document.getElementById('f_state').value.trim().toUpperCase(),  // I
+    document.getElementById('f_dob').value.trim(),                  // J
+    document.getElementById('f_next').value.trim(),                 // K
+    document.getElementById('f_phone').value.trim(),                // L Phone1
+    document.getElementById('f_phone2').value.trim(),               // M Phone2
+    plan,                                                           // N
+    document.getElementById('f_prod').value.trim(),                 // O
+    document.getElementById('f_memo').value.trim(),                 // P
+    document.getElementById('f_ref').value,                         // Q TRUE/FALSE
+    document.getElementById('f_agent').value.trim(),                // R 에이전트이름
+    '',                                                             // S 상세URL
   ]];
 
   // MAPD/PDP 추가정보 수집
@@ -1575,7 +1628,7 @@ async function saveClient(){
       document.getElementById('f_pcp_phone').value.trim(),
       document.getElementById('f_network').value.trim(),
       document.getElementById('f_group_no').value.trim(),
-      document.getElementById('f_meds').value.trim(),
+      getCleanMeds(),
       document.getElementById('f_conditions').value.trim(),
     ]];
   }
@@ -1589,8 +1642,10 @@ async function saveClient(){
         no:autoNo, fname, mname, lname, name,
         email:vals[0][4], address1:vals[0][5], city:vals[0][6], zip:vals[0][7],
         state:vals[0][8], dob:vals[0][9], next:vals[0][10],
-        phone:vals[0][11], plan:vals[0][12], prod:vals[0][13],
-        memo:vals[0][14], ref:vals[0][15],
+        phone:vals[0][11], phone2:vals[0][12],
+        plan:vals[0][13], prod:vals[0][14],
+        memo:vals[0][15], ref:vals[0][16],
+        agent:vals[0][17]||'',
         durl:'', biz:''
       };
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
@@ -1607,12 +1662,12 @@ async function saveClient(){
       if(rowIdx){
         // 수정: 해당 행 덮어쓰기
         await sheetsReq('PUT',
-          `${MAIN_ID}/values/A${rowIdx}:R${rowIdx}?valueInputOption=USER_ENTERED`,
+          `${MAIN_ID}/values/A${rowIdx}:S${rowIdx}?valueInputOption=USER_ENTERED`,
           {values:vals});
       } else {
         // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
         await sheetsReq('POST',
-          `${MAIN_ID}/values/A%3AR:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+          `${MAIN_ID}/values/A%3AS:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
           {values:vals});
       }
 
@@ -2044,6 +2099,213 @@ function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span cla
 function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
 function ac(n){return AVC[(n||'A').charCodeAt(0)%AVC.length];}
+
+// ══════════════════════════════════════
+// 전화번호 자동 포맷
+// ══════════════════════════════════════
+function fmtPhone(el){
+  let v = el.value.replace(/\D/g,'');
+  if(v.length>10) v=v.slice(0,10);
+  if(v.length>=7) el.value=v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
+  else if(v.length>=4) el.value=v.slice(0,3)+'-'+v.slice(3);
+  else el.value=v;
+}
+
+// ══════════════════════════════════════
+// 주소 자동완성 (Google Places Autocomplete API)
+// ══════════════════════════════════════
+let addrSuggestList = [];
+let addrSelIdx = -1;
+let addrTimer = null;
+
+async function addrInput(el){
+  const q = el.value.trim();
+  const box = document.getElementById('addrSuggest');
+  if(q.length < 3){ box.style.display='none'; return; }
+  clearTimeout(addrTimer);
+  addrTimer = setTimeout(async()=>{
+    try{
+      // Google Places Autocomplete (무료 티어, 브라우저에서 직접 호출)
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(q)}&types=address&components=country:us&language=en&key=AIzaSyD-placeholder`,
+        {mode:'no-cors'}
+      );
+      // CORS 제한으로 직접 API 호출 불가 → nominatim (무료, CORS 허용) 사용
+    } catch(e){}
+    // ── Nominatim (OpenStreetMap) 무료 주소 검색 ──
+    try{
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=5&countrycodes=us`,
+        {headers:{'Accept-Language':'en','User-Agent':'FinCRM/1.0'}}
+      );
+      const data = await res.json();
+      addrSuggestList = data.map(d=>({
+        label: d.display_name,
+        address: [d.address.house_number, d.address.road].filter(Boolean).join(' '),
+        city: d.address.city || d.address.town || d.address.village || d.address.county || '',
+        state: d.address.state_code || d.address.state || '',
+        zip: d.address.postcode || '',
+      }));
+      renderAddrSuggest();
+    } catch(e){ addrSuggestList=[]; document.getElementById('addrSuggest').style.display='none'; }
+  }, 350);
+}
+
+function renderAddrSuggest(){
+  const box = document.getElementById('addrSuggest');
+  if(!addrSuggestList.length){ box.style.display='none'; return; }
+  box.innerHTML = addrSuggestList.map((s,i)=>`
+    <div onclick="selectAddr(${i})" style="padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--g3);line-height:1.4;transition:.1s"
+      onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background=''">
+      📍 ${s.label}
+    </div>`).join('');
+  box.style.display='block';
+}
+
+function selectAddr(i){
+  const s = addrSuggestList[i];
+  document.getElementById('f_address1').value = s.address || s.label.split(',')[0];
+  if(s.city) document.getElementById('f_city').value = s.city;
+  if(s.state){
+    const st = s.state.length > 2
+      ? (STATE_ABBR[s.state] || s.state.slice(0,2).toUpperCase())
+      : s.state.toUpperCase();
+    document.getElementById('f_state').value = st;
+  }
+  if(s.zip) document.getElementById('f_zip').value = s.zip;
+  document.getElementById('addrSuggest').style.display='none';
+}
+
+function addrKeydown(e){
+  const box = document.getElementById('addrSuggest');
+  const items = box.querySelectorAll('div');
+  if(e.key==='ArrowDown'){ addrSelIdx=Math.min(addrSelIdx+1,items.length-1); highlightAddr(items); e.preventDefault(); }
+  else if(e.key==='ArrowUp'){ addrSelIdx=Math.max(addrSelIdx-1,0); highlightAddr(items); e.preventDefault(); }
+  else if(e.key==='Enter' && addrSelIdx>=0){ selectAddr(addrSelIdx); e.preventDefault(); }
+  else if(e.key==='Escape'){ box.style.display='none'; }
+}
+function highlightAddr(items){
+  items.forEach((el,i)=>{ el.style.background = i===addrSelIdx?'var(--blue2)':''; });
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('#f_address1') && !e.target.closest('#addrSuggest'))
+    document.getElementById('addrSuggest').style.display='none';
+});
+
+const STATE_ABBR = {
+  'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA',
+  'Colorado':'CO','Connecticut':'CT','Delaware':'DE','Florida':'FL','Georgia':'GA',
+  'Hawaii':'HI','Idaho':'ID','Illinois':'IL','Indiana':'IN','Iowa':'IA','Kansas':'KS',
+  'Kentucky':'KY','Louisiana':'LA','Maine':'ME','Maryland':'MD','Massachusetts':'MA',
+  'Michigan':'MI','Minnesota':'MN','Mississippi':'MS','Missouri':'MO','Montana':'MT',
+  'Nebraska':'NE','Nevada':'NV','New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM',
+  'New York':'NY','North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK',
+  'Oregon':'OR','Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC',
+  'South Dakota':'SD','Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT',
+  'Virginia':'VA','Washington':'WA','West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY'
+};
+
+// ══════════════════════════════════════
+// 약 리스트 스마트 파싱
+// ══════════════════════════════════════
+function parseMeds(el){
+  const raw = el.value;
+  // 줄바꿈 또는 쉼표로 분리
+  const lines = raw.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+  if(lines.length < 2){ 
+    document.getElementById('medsTags').innerHTML='';
+    document.getElementById('medsPreview').style.display='none';
+    return;
+  }
+  const parsed = lines.map(line => {
+    // 약 이름과 용량 분리: "Metformin 500mg" → {name:"Metformin", dose:"500mg"}
+    const m = line.match(/^([A-Za-z][A-Za-z\s\-\/]+?)[\s]+(\d[\d\.]*\s*(?:mg|gm|g|mcg|ml|iu|units?|%|dr|hcl|tab|cap)?[\w\/]*)$/i);
+    if(m){
+      const name = toTitleCase(m[1].trim());
+      const dose = m[2].trim().toLowerCase().replace(/\s+/,'');
+      return {name, dose, full:`${name} ${dose}`};
+    }
+    // 용량 없는 경우
+    return {name: toTitleCase(line.trim()), dose:'', full: toTitleCase(line.trim())};
+  });
+
+  // 중복 제거 (이름 기준, 대소문자 무시)
+  const seen = new Set();
+  const unique = parsed.filter(p=>{
+    const k = p.name.toLowerCase().replace(/\s+/g,'');
+    if(seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+
+  // 알파벳 정렬
+  unique.sort((a,b)=>a.name.localeCompare(b.name));
+
+  // 태그 렌더
+  const tags = document.getElementById('medsTags');
+  tags.innerHTML = unique.map((p,i)=>`
+    <span style="display:inline-flex;align-items:center;gap:4px;background:var(--blue2);color:var(--blue);
+      border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:4px">
+      💊 ${p.full}
+      <button onclick="removeMed(${i})" style="border:none;background:none;cursor:pointer;color:var(--blue);font-size:13px;line-height:1;padding:0 0 0 2px">✕</button>
+    </span>`).join('');
+
+  // 프리뷰
+  const preview = document.getElementById('medsPreview');
+  const resultStr = unique.map(p=>p.full).join(', ');
+  // textarea 값도 정리된 값으로 업데이트 (포커스 잃을 때)
+  el.dataset.parsed = resultStr;
+  preview.innerHTML = `✅ ${unique.length}개 정리됨 → 저장 시 자동 반영`;
+  preview.style.display = 'block';
+}
+
+function removeMed(idx){
+  const ta = document.getElementById('f_meds');
+  const lines = ta.value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+  // 중복제거+정렬 후 idx 제거
+  const seen = new Set(); 
+  const unique = [];
+  lines.forEach(l=>{
+    const k = l.toLowerCase().replace(/\s+/g,'');
+    if(!seen.has(k)){seen.add(k);unique.push(l);}
+  });
+  unique.sort((a,b)=>a.localeCompare(b));
+  unique.splice(idx,1);
+  ta.value = unique.join('\n');
+  parseMeds(ta);
+}
+
+function toTitleCase(str){
+  // 알려진 약어는 대문자 유지
+  const keepUpper = ['HCL','DR','SR','XR','ER','LA','SA','EC','OTC','MBI'];
+  return str.split(/\s+/).map(w=>{
+    if(keepUpper.includes(w.toUpperCase())) return w.toUpperCase();
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  }).join(' ');
+}
+
+// 저장 직전 meds textarea 값 정리된 값으로 교체
+function getCleanMeds(){
+  const ta = document.getElementById('f_meds');
+  if(ta.dataset.parsed) return ta.dataset.parsed;
+  // dataset 없으면 현재 값 그대로 한줄로
+  return ta.value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean).join(', ');
+}
+
+// ══════════════════════════════════════
+// 에이전트 리퍼 토글
+// ══════════════════════════════════════
+function toggleAgentField(){
+  const chk = document.getElementById('f_ref_chk').checked;
+  document.getElementById('f_ref').value = chk ? 'TRUE' : 'FALSE';
+  document.getElementById('f_agent_wrap').style.display = chk ? 'block' : 'none';
+  document.getElementById('f_ref_badge').style.display = chk ? 'inline-flex' : 'none';
+  if(!chk){
+    const agEl = document.getElementById('f_agent');
+    if(agEl) agEl.value = '';
+  }
+}
+
 function populateMemoSel(){}
 </script>
 </body>
