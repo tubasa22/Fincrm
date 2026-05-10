@@ -876,6 +876,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="sv-acts">
         <a id="sheetViewOpenLink" href="#" target="_blank" class="sv-link">🔗 새 탭</a>
         <button class="sv-ctrl" onclick="sheetViewReload()" title="새로고침">↺</button>
+        <button class="sv-ctrl" onclick="sheetViewCenter()" title="화면 중앙으로 이동" style="font-size:11px">⊞</button>
         <div class="sv-divider"></div>
         <button class="sv-ctrl min" id="svMinBtn" onclick="sheetViewMinimize()" title="최소화">—</button>
         <button class="sv-ctrl max" id="svMaxBtn" onclick="sheetViewMaximize()" title="최대화">⛶</button>
@@ -1873,6 +1874,28 @@ function sheetViewReload(){
   setTimeout(function(){ f.src = s; }, 100);
 }
 
+function sheetViewCenter(){
+  var win = document.getElementById('sheetViewWin');
+  if(svState.maximized) return;
+  win.classList.remove('minimized');
+  svState.minimized = false;
+  // 현재 창 크기 유지하면서 화면 중앙으로
+  var w = win.offsetWidth;
+  var h = win.offsetHeight;
+  var nx = Math.max(0, (window.innerWidth  - w) / 2);
+  var ny = Math.max(0, (window.innerHeight - h) / 2);
+  win.style.transform = 'none';
+  win.style.left = nx + 'px';
+  win.style.top  = ny + 'px';
+  try{
+    localStorage.setItem('sv_pos', JSON.stringify({
+      left: nx+'px', top: ny+'px',
+      w: win.style.width, h: win.style.height
+    }));
+  }catch(e){}
+  toast('📋 창을 화면 중앙으로 이동했습니다');
+}
+
 // ══════════════════════════════════════
 // SHEET VIEW WINDOW — 브라우저 창 방식
 // ══════════════════════════════════════
@@ -2001,9 +2024,21 @@ function sheetViewMinimize(){
 
   document.addEventListener('mousemove', function(e){
     if(dragging){
-      // 좌표 제한 없음 → 멀티모니터에서 화면 밖으로 자유롭게 이동
-      win.style.left = (wx + e.clientX - ox)+'px';
-      win.style.top  = (wy + e.clientY - oy)+'px';
+      var nx = wx + e.clientX - ox;
+      var ny = wy + e.clientY - oy;
+      // 헤더가 항상 화면 안에 있도록 제한
+      // 상단: 0px 이상 (헤더가 화면 위로 못 나감)
+      // 하단: 화면 높이 - 헤더높이(44px) 이상 못 내려감
+      // 좌우: 창 너비의 최소 120px는 화면 안에 있어야 함
+      var winW = win.offsetWidth || 800;
+      var minLeft = -(winW - 120);          // 왼쪽으로 (winW-120)px까지만
+      var maxLeft = window.innerWidth - 120; // 오른쪽으로 120px만 남기고
+      var minTop  = 0;
+      var maxTop  = window.innerHeight - 44; // 헤더 높이만큼 항상 보임
+      nx = Math.max(minLeft, Math.min(maxLeft, nx));
+      ny = Math.max(minTop,  Math.min(maxTop,  ny));
+      win.style.left = nx+'px';
+      win.style.top  = ny+'px';
     }
     if(resizing){
       var nw = Math.max(360, rw + e.clientX - rox);
@@ -2042,8 +2077,13 @@ function sheetViewMinimize(){
   document.addEventListener('touchmove', function(e){
     if(!dragging) return;
     var t = e.touches[0];
-    win.style.left = (wx + t.clientX - ox)+'px';
-    win.style.top  = (wy + t.clientY - oy)+'px';
+    var nx = wx + t.clientX - ox;
+    var ny = wy + t.clientY - oy;
+    var winW = win.offsetWidth || 800;
+    nx = Math.max(-(winW-120), Math.min(window.innerWidth-120, nx));
+    ny = Math.max(0, Math.min(window.innerHeight-44, ny));
+    win.style.left = nx+'px';
+    win.style.top  = ny+'px';
   },{passive:true});
 
   document.addEventListener('touchend', function(){
