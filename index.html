@@ -404,8 +404,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <button class="qf on" onclick="qfFilter('',this)">전체</button>
       <button class="qf" onclick="qfFilter('MAPD',this)">MAPD만</button>
       <button class="qf" onclick="qfFilter('PDP',this)">PDP만</button>
-      <button class="qf" onclick="qfFilter('MA',this)">MA만</button>
-      <button class="qf" onclick="qfFilter('SNP',this)">SNP만</button>
+      <button class="qf" onclick="qfFilter('Medigap',this)">Medigap만</button>
       <button class="qf" onclick="qfFilter('ref',this)">리퍼 고객</button>
       <button class="qf" onclick="qfFilter('urgent',this)">🚨 즉시 연락 (30일↑)</button>
       <button class="qf" onclick="qfFilter('recent',this)">최근 등록순</button>
@@ -452,7 +451,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="sa">
         <input class="srch" id="cSearch" placeholder="🔍 이름·연락처·메모 검색" oninput="filterClients()">
         <select class="sf" id="planF" onchange="filterClients()">
-          <option value="">전체 플랜</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option>
+          <option value="">전체 플랜</option>
+          <option>MAPD</option>
+          <option>PDP</option>
+          <option>Medigap</option>
         </select>
         <select class="sf" id="refF" onchange="filterClients()">
           <option value="">전체</option><option value="TRUE">리퍼만</option><option value="FALSE">일반만</option>
@@ -637,9 +639,32 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <div class="fg"><label>이메일</label><input id="f_email"></div>
     <div class="fgr">
       <div class="fg"><label>플랜 구분</label>
-        <select id="f_plan" onchange="togglePlanFields()"><option value="">선택</option><option>PDP</option><option>MAPD</option><option>MA</option><option>SNP</option><option>Medigap</option><option>Life</option></select>
+        <select id="f_plan" onchange="togglePlanFields()">
+          <option value="">선택</option>
+          <option>MAPD</option>
+          <option>PDP</option>
+          <option>Medigap</option>
+        </select>
       </div>
-      <div class="fg"><label>가입 상품</label><input id="f_prod" placeholder="Anthem, Kaiser..."></div>
+      <div class="fg">
+        <label>가입 상품</label>
+        <select id="f_prod_sel" onchange="prodSelChange()">
+          <option value="">선택...</option>
+          <option>Aetna</option>
+          <option>Alignment</option>
+          <option>Anthem</option>
+          <option>Blue Shield</option>
+          <option>CleverCare</option>
+          <option>Humana</option>
+          <option>SCAN</option>
+          <option>UCLA Health</option>
+          <option>UnitedHealth</option>
+          <option value="__other__">기타 (직접 입력)</option>
+        </select>
+        <input id="f_prod" placeholder="상품명 직접 입력..."
+          style="display:none;margin-top:6px;width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 11px;font-size:13px;font-family:inherit;outline:none"
+          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+      </div>
     </div>
     <!-- MAPD/PDP 전용 추가 정보 -->
     <div id="planExtraFields" style="display:none;background:var(--blue2);border:1px solid #bfdbfe;border-radius:var(--rs);padding:14px;margin-bottom:12px">
@@ -1810,6 +1835,9 @@ async function uploadFiles(){
 function togglePlanFields(){
   const plan=document.getElementById('f_plan').value;
   document.getElementById('planExtraFields').style.display=['MAPD','PDP'].includes(plan)?'block':'none';
+  // 플랜에 따라 프로덕 셀렉트 힌트 업데이트
+  const sel = document.getElementById('f_prod_sel');
+  if(sel && !sel.value) sel.value = '';
 }
 function clearPlanFields(){
   ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
@@ -1819,9 +1847,12 @@ function clearPlanFields(){
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
-  ['fname','mname','lname','address1','city','state','zip','phone','email','prod','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
+  ['fname','mname','lname','address1','city','state','zip','phone','phone2','email','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
   document.getElementById('f_dob').value='';
   document.getElementById('f_next').value='';
+  document.getElementById('f_prod_sel').value='';
+  document.getElementById('f_prod').value='';
+  document.getElementById('f_prod').style.display='none';
   document.getElementById('f_plan').value='';
   document.getElementById('f_ref').value='FALSE';
   document.getElementById('f_ref_chk').checked=false;
@@ -1849,6 +1880,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_dob').value=c.dob||'';
   document.getElementById('f_next').value=c.next||'';
   document.getElementById('f_plan').value=c.plan;
+  setProdValue(c.prod||'');
   document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;
   const isRef = c.ref==='TRUE';
@@ -1908,7 +1940,7 @@ async function saveClient(){
     document.getElementById('f_phone').value.trim(),                // L Phone1
     document.getElementById('f_phone2').value.trim(),               // M Phone2
     plan,                                                           // N
-    document.getElementById('f_prod').value.trim(),                 // O
+    getProdValue(),                                                 // O
     document.getElementById('f_memo').value.trim(),                 // P
     document.getElementById('f_ref').value,                         // Q TRUE/FALSE
     document.getElementById('f_agent').value.trim(),                // R 에이전트이름
@@ -2757,6 +2789,51 @@ setInterval(function(){
     signOut();
   }
 }, 5*60*1000);
+
+// ══════════════════════════════════════
+// 가입상품 셀렉트 + 직접입력 연동
+// ══════════════════════════════════════
+function prodSelChange(){
+  const sel = document.getElementById('f_prod_sel');
+  const inp = document.getElementById('f_prod');
+  if(sel.value === '__other__'){
+    inp.style.display = 'block';
+    inp.value = '';
+    inp.focus();
+  } else {
+    inp.style.display = 'none';
+    inp.value = sel.value;
+  }
+}
+
+function getProdValue(){
+  const sel = document.getElementById('f_prod_sel');
+  const inp = document.getElementById('f_prod');
+  if(sel.value === '__other__' || sel.value === ''){
+    return inp.value.trim();
+  }
+  return sel.value;
+}
+
+function setProdValue(val){
+  if(!val){ 
+    document.getElementById('f_prod_sel').value='';
+    document.getElementById('f_prod').value='';
+    document.getElementById('f_prod').style.display='none';
+    return;
+  }
+  const opts = ['Aetna','Alignment','Anthem','Blue Shield','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth'];
+  const match = opts.find(o => o.toLowerCase() === val.toLowerCase());
+  if(match){
+    document.getElementById('f_prod_sel').value = match;
+    document.getElementById('f_prod').value = match;
+    document.getElementById('f_prod').style.display = 'none';
+  } else {
+    document.getElementById('f_prod_sel').value = '__other__';
+    document.getElementById('f_prod').value = val;
+    document.getElementById('f_prod').style.display = 'block';
+  }
+}
 
 function populateMemoSel(){}
 </script>
