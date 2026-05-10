@@ -349,8 +349,9 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         </div>
       </div>
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
-      <button class="btn sm" onclick="loadAll()">🔄</button>
+      <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
       <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
+      <button class="btn sm" onclick="signOut()" title="로그아웃" style="color:var(--red);border-color:var(--red)" id="logoutBtn">🚪</button>
       <!-- 유저 드롭다운 -->
       <div class="user-wrap" id="userWrap" style="display:none">
         <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
@@ -1069,11 +1070,11 @@ function bootApp(){
   document.getElementById('loginSpinner').style.display='none';
   document.getElementById('app').classList.add('on');
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
-  // 저장된 유저 정보 복원
-  if(!isDemo){
-    const saved = localStorage.getItem('fcrm_user');
-    if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
-  }
+  // 저장된 유저 정보 복원 (항상 시도)
+  const saved = localStorage.getItem('fcrm_user');
+  if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
+  // 저장 정보 없어도 userWrap 표시 (로그아웃 버튼 접근 가능하게)
+  document.getElementById('userWrap').style.display = 'block';
   if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
 }
 
