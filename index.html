@@ -151,6 +151,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap}
 #toast.on{opacity:1}
+#sheetViewModal .modal{overflow:hidden;padding:16px}
 #loadOv{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:300;flex-direction:column;gap:12px}
 #loadOv.on{display:flex}
 #loadOv .spin{width:36px;height:36px;border-width:3px}
@@ -649,6 +650,33 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 </div>
 
+<!-- MODAL: 상세 페이지 열람 -->
+<div class="ov" id="sheetViewModal">
+  <div class="modal" style="max-width:1100px;width:96vw;height:90vh;padding:16px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0">
+      <div>
+        <div style="font-size:15px;font-weight:700" id="sheetViewTitle">📋 상세 페이지</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">읽기 전용 — 수정은 Google Sheets에서 직접 하세요</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a id="sheetViewOpenLink" href="#" target="_blank" class="btn sm pri">🔗 새 탭에서 열기</a>
+        <button class="btn sm" onclick="closeOv('sheetViewModal')">✕ 닫기</button>
+      </div>
+    </div>
+    <div style="flex:1;border-radius:var(--rs);overflow:hidden;border:1px solid var(--g3)">
+      <iframe id="sheetViewFrame"
+        src=""
+        style="width:100%;height:100%;border:none"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+      </iframe>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;flex-shrink:0">
+      ⚠️ Google 계정 로그인이 필요할 수 있습니다. 로드가 안 되면 위 "새 탭에서 열기"를 이용하세요.
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: 생일 문자 -->
 <div class="ov" id="bdSmsModal">
   <div class="modal">
@@ -850,7 +878,7 @@ async function loadAll(){
       })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     }catch(e){ allMemos=[]; }
     try{
-      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`);
+      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`); // gid=588166202 탭
       allPlanInfo=(pi.values||[]).slice(1).map(r=>({
         name:String(r[0]||''),mbi:String(r[1]||''),medical_no:String(r[2]||''),
         pcp:String(r[3]||''),pcp_phone:String(r[4]||''),
@@ -1175,7 +1203,7 @@ function openDetail(rowIdx){
       <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}')">📝 메모</button>
       <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">📎 서류 업로드</button>
       <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
-      ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세 페이지</a>`:`<a href="https://docs.google.com/spreadsheets/d/${MAIN_ID}/edit#gid=0&range=A${c.rowIdx}" target="_blank" class="btn sm">📋 메인 시트</a>`}
+      <button class="btn sm pri" onclick="openSheetView('${esc(c.name)}','${c.durl||''}')">📋 상세 페이지</button>
     </div>`;
 
   const docsHtml = isDemo
@@ -1341,6 +1369,28 @@ async function saveMemoEdit(rowIdx){
   }finally{
     hideLoad();
   }
+}
+
+// ══════════════════════════════════════
+// SHEET VIEW MODAL (열람 전용)
+// ══════════════════════════════════════
+// gid=1613556773 → 고객 상세 탭 (공통)
+// durl이 있으면 해당 고객 개인 시트 우선
+const DETAIL_GID_SHEET = '1613556773';   // 상세 페이지 탭
+const DETAIL_GID_PLAN  = '588166202';    // PlanInfo 탭 (MBI, PCP 등)
+
+function openSheetView(clientName, durl){
+  const baseUrl = `https://docs.google.com/spreadsheets/d/${DETAIL_ID}`;
+  // durl이 있으면 그 주소, 없으면 공통 상세 탭
+  const viewUrl = durl
+    ? durl.replace('/edit','/preview')
+    : `${baseUrl}/preview?gid=${DETAIL_GID_SHEET}`;
+  const openUrl = durl || `${baseUrl}/edit?gid=${DETAIL_GID_SHEET}`;
+
+  document.getElementById('sheetViewTitle').textContent = `📋 ${clientName} — 상세 페이지`;
+  document.getElementById('sheetViewFrame').src = viewUrl;
+  document.getElementById('sheetViewOpenLink').href = openUrl;
+  document.getElementById('sheetViewModal').classList.add('on');
 }
 
 function closeDetail(){
