@@ -1294,7 +1294,10 @@ function openFileUpload(clientName){
   pendingFiles = [];
   document.getElementById('fileClientName').textContent = '👤 ' + clientName;
   document.getElementById('pendingFiles').innerHTML = '';
-  document.getElementById('uploadBtn').style.display = 'none';
+  const btn = document.getElementById('uploadBtn');
+  btn.style.display = 'none';
+  btn.disabled = false;
+  document.getElementById('uploadProgFill').style.width = '0%';
   document.getElementById('uploadStatus').textContent = '';
   document.getElementById('uploadProg').classList.remove('on');
   document.getElementById('fileInput').value = '';
@@ -1325,9 +1328,10 @@ async function uploadFiles(){
   const progWrap = document.getElementById('uploadProg');
   const progFill = document.getElementById('uploadProgFill');
   const status   = document.getElementById('uploadStatus');
+  const btn      = document.getElementById('uploadBtn');
   progWrap.classList.add('on');
-  document.getElementById('uploadBtn').disabled = true;
-  let done=0;
+  btn.disabled = true;
+  let done = 0;
   for(const f of pendingFiles){
     status.textContent = `업로드 중: ${f.name} (${done+1}/${pendingFiles.length})`;
     try{
@@ -1336,16 +1340,18 @@ async function uploadFiles(){
       progFill.style.width = Math.round(done/pendingFiles.length*100)+'%';
     }catch(e){
       status.textContent = '❌ 실패: '+e.message;
-      document.getElementById('uploadBtn').disabled=false;
+      btn.disabled = false;
       return;
     }
   }
   status.textContent = `✅ ${done}개 파일 업로드 완료!`;
-  document.getElementById('uploadBtn').style.display='none';
-  pendingFiles=[];
-  document.getElementById('pendingFiles').innerHTML='';
+  btn.style.display = 'none';
+  btn.disabled = false;
+  pendingFiles = [];
+  document.getElementById('pendingFiles').innerHTML = '';
+  document.getElementById('fileInput').value = '';
   toast('✅ '+done+'개 파일이 Google Drive에 업로드되었습니다!');
-  const c=clients.find(x=>x.name===currentUploadClient);
+  const c = clients.find(x=>x.name===currentUploadClient);
   if(c) setTimeout(()=>loadClientDocs(currentUploadClient, c.rowIdx), 1000);
 }
 
