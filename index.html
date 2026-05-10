@@ -788,11 +788,11 @@ function signOut(){
 function demoMode(){
   isDemo=true;
   clients=[
-    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',address1:'1234 Wilshire Blvd',city:'Los Angeles',state:'CA',zip:'90010',biz:'',dob:'08/05/1939',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:''},
-    {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'김 철수',address1:'567 Main Street',city:'Irvine',state:'CA',zip:'92614',biz:'',dob:'05/15/1958',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE',durl:''},
-    {rowIdx:4,no:'3',fname:'영희',mname:'',lname:'이',name:'이 영희',address1:'890 Olympic Blvd',city:'Koreatown',state:'CA',zip:'90006',biz:'Seoul Market',dob:'',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE',durl:''},
-    {rowIdx:5,no:'4',fname:'민준',mname:'',lname:'박',name:'박 민준',address1:'',city:'',state:'',zip:'',biz:'',dob:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
-    {rowIdx:6,no:'5',fname:'수연',mname:'',lname:'최',name:'최 수연',address1:'2100 Colorado Ave',city:'Santa Monica',state:'CA',zip:'90404',biz:'',dob:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
+    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',address1:'1234 Wilshire Blvd',city:'Los Angeles',state:'CA',zip:'90010',biz:'',dob:'08/05/1939',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',next:'2025-05-08',ref:'FALSE'},
+    {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'김 철수',address1:'567 Main Street',city:'Irvine',state:'CA',zip:'92614',biz:'',dob:'05/15/1958',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE'},
+    {rowIdx:4,no:'3',fname:'영희',mname:'',lname:'이',name:'이 영희',address1:'890 Olympic Blvd',city:'Koreatown',state:'CA',zip:'90006',biz:'Seoul Market',dob:'',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE'},
+    {rowIdx:5,no:'4',fname:'민준',mname:'',lname:'박',name:'박 민준',address1:'',city:'',state:'',zip:'',biz:'',dob:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE'},
+    {rowIdx:6,no:'5',fname:'수연',mname:'',lname:'최',name:'최 수연',address1:'2100 Colorado Ave',city:'Santa Monica',state:'CA',zip:'90404',biz:'',dob:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE'},
   ];
   allMemos=[
     {name:'홍 문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30',ts:'2025. 01. 30. 14:22'},
@@ -890,7 +890,7 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:R`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:Q`);
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2,no:String(r[0]||''),
       fname:String(r[1]||''),mname:String(r[2]||''),lname:String(r[3]||''),
@@ -899,7 +899,7 @@ async function loadAll(){
       biz:String(r[8]||''),dob:String(r[9]||''),
       phone:String(r[10]||''),email:String(r[11]||''),plan:String(r[12]||''),
       prod:String(r[13]||''),memo:String(r[14]||''),next:String(r[15]||''),
-      ref:String(r[16]||'FALSE'),durl:String(r[17]||''),
+      ref:String(r[16]||'FALSE'),
     })).filter(c=>c.name.trim());
     // 상담 메모 로드 (DETAIL 시트 Sheet1, A:F)
     try{
@@ -1264,7 +1264,7 @@ function openDetail(rowIdx){
       <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}')">📝 메모</button>
       <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">📎 서류 업로드</button>
       <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
-      ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세시트</a>`:''}
+      <a href="https://docs.google.com/spreadsheets/d/${MAIN_ID}/edit#gid=0&range=A${c.rowIdx}:R${c.rowIdx}" target="_blank" class="btn sm pri">📋 시트 바로가기</a>
     </div>`;
 
   // Drive 파일 목록 로드
@@ -1533,14 +1533,14 @@ async function saveClient(){
   const plan=document.getElementById('f_plan').value;
   const mname=document.getElementById('f_mname').value.trim();
   const name=[lname,fname,mname].filter(Boolean).join(' ');
-  // 컬럼: A=no B=fname C=mname D=lname E=address1 F=city G=state H=zip I=biz J=dob K=phone L=email M=plan N=prod O=memo P=next Q=ref R=durl(빈값)
+  // 컬럼: A=no B=fname C=mname D=lname E=address1 F=city G=state H=zip I=biz J=dob K=phone L=email M=plan N=prod O=memo P=next Q=ref
   const vals=[[document.getElementById('eNo').value||'',fname,mname,lname,
     document.getElementById('f_address1').value,document.getElementById('f_city').value,
     document.getElementById('f_state').value.toUpperCase(),document.getElementById('f_zip').value,
     document.getElementById('f_biz').value,document.getElementById('f_dob').value,
     document.getElementById('f_phone').value,document.getElementById('f_email').value,
     plan,document.getElementById('f_prod').value,document.getElementById('f_memo').value,
-    document.getElementById('f_next').value,document.getElementById('f_ref').value,'']];
+    document.getElementById('f_next').value,document.getElementById('f_ref').value]];
   // MAPD/PDP 추가 정보 — 컬럼: name, mbi, medical_no, pcp, pcp_phone, network, group_no, meds, conditions
   let piVals=null;
   if(['MAPD','PDP'].includes(plan)){
@@ -1561,7 +1561,7 @@ async function saveClient(){
       const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
         fname,mname,lname,name,address1:vals[0][4],city:vals[0][5],state:vals[0][6],zip:vals[0][7],
         biz:vals[0][8],dob:vals[0][9],phone:vals[0][10],email:vals[0][11],plan:vals[0][12],
-        prod:vals[0][13],memo:vals[0][14],next:vals[0][15],ref:vals[0][16],durl:''};
+        prod:vals[0][13],memo:vals[0][14],next:vals[0][15],ref:vals[0][16]};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
       // 데모: planInfo 메모리 저장
@@ -1572,8 +1572,8 @@ async function saveClient(){
         if(pi_i>=0) allPlanInfo[pi_i]=pi; else allPlanInfo.push(pi);
       }
     }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:R${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:R:append?valueInputOption=USER_ENTERED`,{values:vals});
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:Q${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:Q:append?valueInputOption=USER_ENTERED`,{values:vals});
       // MAPD/PDP 추가 정보 저장 (PlanInfo 탭)
       if(piVals){
         try{
