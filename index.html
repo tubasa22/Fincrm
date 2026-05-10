@@ -110,7 +110,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .mi{background:var(--g2);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
 .mi:last-child{margin-bottom:0}.mi-d{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px}.mi-t{font-size:13px;line-height:1.7}
 
-/* FOLLOWUP - UX 개선 */
+/* FOLLOWUP */
 .fu{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);transition:.15s}
 .fu:hover{background:#f8f9ff}
 .fu-bar{width:4px;height:44px;border-radius:4px;flex-shrink:0}
@@ -144,8 +144,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .file-icon{font-size:20px;flex-shrink:0}
 .file-name{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-size{font-size:11px;color:var(--text3);flex-shrink:0}
-.file-status{font-size:11px;font-weight:600;flex-shrink:0}
-.file-status.done{color:var(--green)}.file-status.uploading{color:var(--amber)}.file-status.err{color:var(--red)}
 .doc-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--g2);border-radius:var(--rs);margin-bottom:7px}
 .doc-item:last-child{margin-bottom:0}
 .doc-name{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -157,6 +155,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 #loadOv.on{display:flex}
 #loadOv .spin{width:36px;height:36px;border-width:3px}
 #loadOv p{font-size:14px;color:var(--text2);font-weight:500}
+
 /* BIRTHDAY */
 .bday-item{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh)}
 .bday-item:hover{background:#f8f9ff}
@@ -166,6 +165,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .bday-info{font-size:12px;color:var(--text2)}
 .bday-dd{font-size:20px;font-weight:700;min-width:60px;text-align:right}
 .bday-acts{display:flex;gap:6px;flex-shrink:0}
+
 /* SMS */
 .sms-template{background:var(--g2);border:1px solid var(--g3);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:.15s;font-size:13px;line-height:1.6}
 .sms-template:hover{border-color:var(--blue);background:var(--blue2)}
@@ -173,6 +173,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .sms-recip{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--g2);border-radius:var(--rs);margin-bottom:6px;font-size:13px}
 .sms-recip .rm{margin-left:auto;cursor:pointer;color:var(--text3);font-size:16px;border:none;background:none}
 .sms-recip .rm:hover{color:var(--red)}
+
 /* AUTOMATION */
 .zap-card{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:18px 20px;margin-bottom:12px;box-shadow:var(--sh)}
 .zap-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -200,7 +201,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .gsr-name{font-weight:600;font-size:13px}
 .gsr-sub{font-size:11px;color:var(--text2)}
 
-/* NOTIFICATION BELL */
+/* NOTIFICATION */
 .notif-wrap{position:relative}
 .notif-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--g3);background:var(--sur);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;position:relative}
 .notif-btn:hover{background:var(--g2)}
@@ -250,7 +251,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .cal-ev.bday{background:var(--red2);color:var(--red)}
 .cal-ev.memo{background:var(--green2);color:var(--green)}
 
-/* MOBILE RESPONSIVE */
+/* MOBILE */
 @media(max-width:768px){
   .topbar{padding:0 10px;gap:1px;height:auto;min-height:54px;flex-wrap:wrap}
   .logo{font-size:15px;margin-right:6px}
@@ -267,7 +268,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   .dh-right{margin-left:0;width:100%}
   .cal-day{min-height:50px}
   .cal-ev{display:none}
-  .cal-day .cal-dot{display:block}
   table{font-size:12px}
   th,td{padding:7px 8px}
   .qf-wrap{gap:4px}
@@ -330,7 +330,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="kpi"><div class="kpi-l">📞 장기 미연락 (30일↑)</div><div class="kpi-v" id="kC" style="color:var(--red)">—</div><div class="kpi-s warn" id="kCs"></div></div>
       <div class="kpi"><div class="kpi-l">🔗 에이전트 리퍼</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRs"></div></div>
     </div>
-    <!-- 퀵 필터 -->
     <div class="qf-wrap" id="qfWrap">
       <button class="qf on" onclick="qfFilter('',this)">전체</button>
       <button class="qf" onclick="qfFilter('MAPD',this)">MAPD만</button>
@@ -357,7 +356,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
       </div>
     </div>
-    <!-- 캘린더 -->
     <div style="margin-top:20px">
       <div class="sh">
         <div class="st">📅 일정 캘린더</div>
@@ -393,8 +391,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       </div>
     </div>
     <div class="tw"><table>
-      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
-      <tbody id="cBody"><tr class="spin-row"><td colspan="10"><div class="spin"></div></td></tr></tbody>
+      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
+      <tbody id="cBody"><tr class="spin-row"><td colspan="11"><div class="spin"></div></td></tr></tbody>
     </table></div>
   </div>
 
@@ -437,7 +435,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <!-- SMS -->
   <div class="pg" id="pg-sms">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <!-- 왼쪽: 발송 설정 -->
       <div>
         <div class="sh"><div class="st">💬 문자 발송</div></div>
         <div class="dc" style="margin-bottom:14px;box-shadow:var(--sh)">
@@ -447,21 +444,16 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
           <div class="fg"><label>발신 번호 (Twilio 번호)</label><input id="twilioFrom" placeholder="+11234567890" oninput="saveTwilio()"></div>
           <div id="twilioStatus" style="font-size:12px;color:var(--text3);margin-top:6px"></div>
         </div>
-
         <div class="dc" style="box-shadow:var(--sh)">
           <h4>수신자</h4>
           <div style="display:flex;gap:8px;margin-bottom:10px">
-            <select class="sf" id="smsClientSel" style="flex:1">
-              <option value="">고객 선택...</option>
-            </select>
+            <select class="sf" id="smsClientSel" style="flex:1"><option value="">고객 선택...</option></select>
             <button class="btn sm" onclick="addSmsRecip()">추가</button>
           </div>
           <div id="smsRecipList" style="max-height:200px;overflow-y:auto"></div>
           <div style="font-size:11px;color:var(--text3);margin-top:6px" id="smsRecipCount"></div>
         </div>
       </div>
-
-      <!-- 오른쪽: 메시지 -->
       <div>
         <div class="sh"><div class="st">메시지 작성</div></div>
         <div class="dc" style="margin-bottom:14px;box-shadow:var(--sh)">
@@ -478,8 +470,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         </div>
       </div>
     </div>
-
-    <!-- 발송 이력 -->
     <div class="sh" style="margin-top:20px"><div class="st">발송 이력</div></div>
     <div class="tw"><table>
       <thead><tr><th>시간</th><th>수신자</th><th>연락처</th><th>메시지</th><th>상태</th></tr></thead>
@@ -490,13 +480,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <!-- AUTOMATION -->
   <div class="pg" id="pg-automation">
     <div class="sh"><div class="st">⚡ Zapier 자동화 연동</div><a href="https://zapier.com" target="_blank" class="btn">Zapier 열기 →</a></div>
-
     <div style="background:var(--amber2);border:1px solid #fcd34d;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--amber);margin-bottom:18px;line-height:1.7">
       💡 <strong>연동 방법:</strong> Zapier → Trigger: Webhooks (Catch Hook) → URL 복사 → 아래 등록<br>
       Action: Gmail, Twilio SMS, 카카오, Slack 등 자유롭게 연결
     </div>
-
-    <!-- Zapier URL 등록 -->
     <div class="dc" style="margin-bottom:16px;box-shadow:var(--sh)">
       <h4>기본 웹훅 URL 등록</h4>
       <div style="display:flex;gap:8px;margin-top:10px">
@@ -505,47 +492,28 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       </div>
       <div id="zapSaved" style="font-size:12px;color:var(--green);margin-top:6px;display:none">✅ 저장됨</div>
     </div>
-
-    <!-- 자동화 카드들 -->
     <div class="zap-card">
-      <div class="zap-head">
-        <div class="zap-title">🎂 생일 D-7 → 자동 문자/이메일</div>
-        <button class="tog on" id="zap_bday" onclick="this.classList.toggle('on')"></button>
-      </div>
-      <div class="zap-desc">생일 7일 전 자동 감지 → Twilio SMS 또는 이메일 자동 발송<br>전송 데이터: 이름, 연락처, 생일, 플랜</div>
+      <div class="zap-head"><div class="zap-title">🎂 생일 D-7 → 자동 문자/이메일</div><button class="tog on" id="zap_bday" onclick="this.classList.toggle('on')"></button></div>
+      <div class="zap-desc">생일 7일 전 자동 감지 → Twilio SMS 또는 이메일 자동 발송</div>
       <div class="wh-box"><span id="wh_bday">웹훅 URL을 위에서 먼저 등록해주세요</span><button class="btn sm" onclick="copyWh('wh_bday')">📋</button></div>
       <div style="font-size:11px;color:var(--text3);margin-top:8px">7일 내 생일: <strong id="zapBdayCnt" style="color:var(--amber)">0</strong>명</div>
     </div>
-
     <div class="zap-card">
-      <div class="zap-head">
-        <div class="zap-title">📅 마지막 연락 D+30 → 알림 → 알림</div>
-        <button class="tog on" id="zap_contact" onclick="this.classList.toggle('on')"></button>
-      </div>
-      <div class="zap-desc">마지막 연락일 기준 3일 경과 자동 감지 → SMS 또는 Slack 알림<br>전송 데이터: 이름, 연락처, 플랜, 메모</div>
+      <div class="zap-head"><div class="zap-title">📅 마지막 연락 D+30 → 알림</div><button class="tog on" id="zap_contact" onclick="this.classList.toggle('on')"></button></div>
+      <div class="zap-desc">마지막 연락일 기준 30일 경과 자동 감지 → SMS 또는 Slack 알림</div>
       <div class="wh-box"><span id="wh_contact">웹훅 URL을 위에서 먼저 등록해주세요</span><button class="btn sm" onclick="copyWh('wh_contact')">📋</button></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px">D-3 이내: <strong id="zapContactCnt" style="color:var(--amber)">0</strong>명</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px">D+30 이상: <strong id="zapContactCnt" style="color:var(--amber)">0</strong>명</div>
     </div>
-
     <div class="zap-card">
-      <div class="zap-head">
-        <div class="zap-title">👤 신규 고객 등록 → 환영 문자</div>
-        <button class="tog on" id="zap_new" onclick="this.classList.toggle('on')"></button>
-      </div>
-      <div class="zap-desc">CRM에서 신규 고객 등록 시 자동 환영 문자 발송<br>전송 데이터: 이름, 연락처, 플랜, 가입상품</div>
+      <div class="zap-head"><div class="zap-title">👤 신규 고객 등록 → 환영 문자</div><button class="tog on" id="zap_new" onclick="this.classList.toggle('on')"></button></div>
+      <div class="zap-desc">CRM에서 신규 고객 등록 시 자동 환영 문자 발송</div>
       <div class="wh-box"><span id="wh_new">웹훅 URL을 위에서 먼저 등록해주세요</span><button class="btn sm" onclick="copyWh('wh_new')">📋</button></div>
     </div>
-
     <div class="zap-card">
-      <div class="zap-head">
-        <div class="zap-title">📋 보험 만료 D-30 → 갱신 알림</div>
-        <button class="tog on" id="zap_expire" onclick="this.classList.toggle('on')"></button>
-      </div>
+      <div class="zap-head"><div class="zap-title">📋 보험 만료 D-30 → 갱신 알림</div><button class="tog on" id="zap_expire" onclick="this.classList.toggle('on')"></button></div>
       <div class="zap-desc">플랜 갱신 시즌(AEP/OEP) 자동 알림 → 고객 문자 + 에이전트 Slack</div>
       <div class="wh-box"><span id="wh_expire">웹훅 URL을 위에서 먼저 등록해주세요</span><button class="btn sm" onclick="copyWh('wh_expire')">📋</button></div>
     </div>
-
-    <!-- 수동 트리거 -->
     <div class="dc" style="margin-top:8px;box-shadow:var(--sh)">
       <h4>수동 트리거 테스트</h4>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
@@ -652,21 +620,12 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <div class="modal" style="max-width:520px">
     <h3>📎 고객 서류 업로드</h3>
     <div id="fileClientName" style="font-size:13px;color:var(--text2);margin-bottom:16px;padding:8px 12px;background:var(--blue2);border-radius:var(--rs);color:var(--blue);font-weight:600"></div>
-
-    <!-- 파일 종류 선택 -->
     <div class="fg">
       <label>서류 종류</label>
       <select id="fileType">
-        <option>보험 카드</option>
-        <option>신분증 (ID)</option>
-        <option>Medicare 카드</option>
-        <option>계약서</option>
-        <option>신청서</option>
-        <option>기타 서류</option>
+        <option>보험 카드</option><option>신분증 (ID)</option><option>Medicare 카드</option><option>계약서</option><option>신청서</option><option>기타 서류</option>
       </select>
     </div>
-
-    <!-- 드래그앤드롭 업로드 -->
     <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()"
          ondragover="event.preventDefault();this.classList.add('drag')"
          ondragleave="this.classList.remove('drag')"
@@ -676,16 +635,11 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <p><strong>클릭</strong>하거나 파일을 여기에 드래그하세요</p>
       <p style="font-size:11px;color:var(--text3);margin-top:4px">PDF, JPG, PNG, HEIC · 파일당 최대 10MB</p>
     </div>
-
-    <!-- 업로드 대기 파일 목록 -->
     <div id="pendingFiles" style="margin-top:12px"></div>
-
-    <!-- 업로드 진행 -->
     <div style="margin-top:12px">
       <div class="prog-wrap" id="uploadProg"><div class="prog-fill" id="uploadProgFill" style="width:0%"></div></div>
       <div id="uploadStatus" style="font-size:12px;color:var(--text2);margin-top:6px"></div>
     </div>
-
     <div class="mf">
       <button class="btn" onclick="closeOv('fileModal')">닫기</button>
       <button class="btn pri" id="uploadBtn" onclick="uploadFiles()" style="display:none">📤 Google Drive에 업로드</button>
@@ -723,7 +677,7 @@ let accessToken = '';
 let tokenExpiry  = 0;
 let clients      = [];
 let allMemos     = [];
-let allPlanInfo  = []; // MAPD/PDP 추가 정보
+let allPlanInfo  = [];
 let isDemo       = false;
 let tokenClient  = null;
 let pendingFiles = [];
@@ -759,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
           bootApp();
         }
       });
-      // 로그인 버튼 활성화
       const btn = document.getElementById('signInBtn');
       if(btn){
         btn.disabled = false;
@@ -784,7 +737,7 @@ function signOut(){
 function demoMode(){
   isDemo=true;
   clients=[
-    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',email:'',address1:'1234 Wilshire Blvd',city:'Los Angeles',zip:'90010',phone:'949-664-0113',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',ref:'FALSE',durl:'https://docs.google.com/spreadsheets/d/1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM/edit?gid=1613556773',state:'',biz:'',dob:'',next:''},
+    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',email:'',address1:'1234 Wilshire Blvd',city:'Los Angeles',zip:'90010',phone:'949-664-0113',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',ref:'FALSE',durl:'https://docs.google.com/spreadsheets/d/1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM/edit',state:'',biz:'',dob:'',next:''},
     {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'김 철수',email:'kim@email.com',address1:'567 Main Street',city:'Irvine',zip:'92614',phone:'213-555-0100',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개',ref:'TRUE',durl:'',state:'',biz:'',dob:'',next:''},
     {rowIdx:4,no:'3',fname:'영희',mname:'',lname:'이',name:'이 영희',email:'',address1:'',city:'',zip:'',phone:'310-555-0200',plan:'MA',prod:'Humana PPO',memo:'',ref:'FALSE',durl:'',state:'',biz:'',dob:'',next:''},
   ];
@@ -794,12 +747,8 @@ function demoMode(){
     {name:'김 철수',type:'전화 상담',text:'딸 소개. 비용 절감 원함',date:'2025-04-10',ts:'2025. 04. 10. 16:40'},
   ];
   allPlanInfo=[
-    {name:'홍 문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',
-      network:'센타메디칼 IPA',group_no:'GRP-1023',
-      meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',conditions:'당뇨 2형, 고혈압'},
-    {name:'김 철수',mbi:'2AB7-RF3-XP91',medical_no:'',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',
-      network:'Kaiser PPO',group_no:'GRP-2041',
-      meds:'Amlodipine 5mg, Metoprolol 25mg',conditions:'고혈압, 페니실린 알레르기'},
+    {name:'홍 문례',mbi:'1EG4-TE5-MK72',medical_no:'50123456A',pcp:'황인용',pcp_phone:'949-321-0001',network:'센타메디칼 IPA',group_no:'GRP-1023',meds:'Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg',conditions:'당뇨 2형, 고혈압'},
+    {name:'김 철수',mbi:'2AB7-RF3-XP91',medical_no:'',pcp:'Dr. Park Sungil',pcp_phone:'213-444-0002',network:'Kaiser PPO',group_no:'GRP-2041',meds:'Amlodipine 5mg, Metoprolol 25mg',conditions:'고혈압, 페니실린 알레르기'},
   ];
   bootApp();
 }
@@ -821,37 +770,30 @@ async function sheetsReq(method,path,body=null){
 }
 
 // ══════════════════════════════════════
-// DRIVE API — 파일 업로드
+// DRIVE API
 // ══════════════════════════════════════
 async function driveUpload(file, clientName, fileType) {
   if(!accessToken) throw new Error('로그인이 필요합니다');
-  // 1. FinCRM 루트 폴더
   let folderId = await findOrCreateFolder('FinCRM_고객서류');
-  // 2. 고객별 폴더
   let clientFolderId = await findOrCreateFolder(clientName, folderId);
-  // 3. 파일 업로드 (multipart)
   const meta = {name:`[${fileType}] ${file.name}`,parents:[clientFolderId]};
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)],{type:'application/json'}));
   form.append('file', file);
   const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{
-    method:'POST',
-    headers:{Authorization:'Bearer '+accessToken},
-    body:form
+    method:'POST',headers:{Authorization:'Bearer '+accessToken},body:form
   });
   if(!r.ok){
     const e=await r.json().catch(()=>({}));
     const msg=e?.error?.message||`HTTP ${r.status}`;
     if(r.status===401) throw new Error('인증 만료 — 페이지를 새로고침 후 다시 로그인해주세요');
-    if(r.status===403) throw new Error('Drive 권한 없음 — 로그아웃 후 다시 로그인해주세요 (권한 재승인 필요)');
+    if(r.status===403) throw new Error('Drive 권한 없음 — 로그아웃 후 다시 로그인해주세요');
     throw new Error(msg);
   }
   const data = await r.json();
-  // 4. 링크 공유 설정 (에러 무시)
   try{
     await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`,{
-      method:'POST',
-      headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+      method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
       body:JSON.stringify({role:'reader',type:'anyone'})
     });
   }catch(e){}
@@ -862,17 +804,12 @@ async function findOrCreateFolder(name, parentId=null) {
   const q = parentId
     ? `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
     : `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
-  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,{
-    headers:{Authorization:'Bearer '+accessToken}
-  });
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
   const d = await r.json();
   if(d.files && d.files.length>0) return d.files[0].id;
-  // 폴더 생성
   const meta = {name, mimeType:'application/vnd.google-apps.folder',...(parentId?{parents:[parentId]}:{})};
   const cr = await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{
-    method:'POST',
-    headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-    body:JSON.stringify(meta)
+    method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(meta)
   });
   const cd = await cr.json();
   return cd.id;
@@ -897,7 +834,6 @@ async function loadAll(){
       durl:String(r[14]||''),
       state:'',biz:'',dob:'',next:'',
     })).filter(c=>c.name.trim());
-    // 상담 메모 로드 (DETAIL 시트 Sheet1, A:F)
     try{
       const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
       allMemos=(md.values||[]).slice(1).map(r=>({
@@ -905,7 +841,6 @@ async function loadAll(){
         date:String(r[4]||''),ts:String(r[5]||''),
       })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
     }catch(e){ allMemos=[]; }
-    // MAPD/PDP 플랜 추가 정보 로드 (DETAIL 시트 2번째 탭: PlanInfo)
     try{
       const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`);
       allPlanInfo=(pi.values||[]).slice(1).map(r=>({
@@ -914,7 +849,7 @@ async function loadAll(){
         network:String(r[5]||''),group_no:String(r[6]||''),
         meds:String(r[7]||''),conditions:String(r[8]||''),
       })).filter(p=>p.name.trim());
-    }catch(e){ allPlanInfo=[]; } // 시트 없으면 무시
+    }catch(e){ allPlanInfo=[]; }
     setSyncStatus('연결됨',true);
     renderAll();
   }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
@@ -941,7 +876,7 @@ function renderClients(list){
   const data=list||clients;
   set('cntBadge','('+data.length+'명)');
   const tb=document.getElementById('cBody');
-  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="10">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
+  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="11">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
   tb.innerHTML=data.map(c=>{
     const el_d=elapsed(c.next);
     const dh=el_d===null?'—':`<span class="badge ${el_d>=30?'bre':el_d>=14?'bam':'bgr'}">D+${el_d}</span>`;
@@ -950,13 +885,14 @@ function renderClients(list){
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
       <td style="font-size:11px;color:var(--text3)">${c.no}</td>
       <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
-        <div><div style="font-weight:600">${c.name}</div>${c.biz?`<div style="font-size:11px;color:var(--text3)">${c.biz}</div>`:''}</div>
+        <div><div style="font-weight:600">${c.name}</div></div>
       </div></td>
       <td>${c.phone||'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
       <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
       <td style="font-size:12px">${c.prod||'—'}</td>
-      <td style="font-size:12px">${c.next||'—'}</td><td>${dh}</td>
+      <td style="font-size:12px">${c.next||'—'}</td>
+      <td>${dh}</td>
       <td>${c.ref==='TRUE'?'<span class="badge bpu">리퍼</span>':'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${memoEl}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
       <td onclick="event.stopPropagation()"><div class="ra">
@@ -1002,18 +938,13 @@ function renderSchedule(){
 }
 
 // ══════════════════════════════════════
-// MEMOS
-// ══════════════════════════════════════
-function populateMemoSel(){} // 호환성 유지용 빈 함수
-
-// ══════════════════════════════════════
-// FOLLOWUP — UX 개선
+// FOLLOWUP
 // ══════════════════════════════════════
 function renderFollowup(){
   const items=clients.filter(c=>c.next).map(c=>({...c,d:elapsed(c.next)})).filter(c=>c.d!==null&&c.d>=7).sort((a,b)=>b.d-a.d).slice(0,8);
   set('fuCnt',items.length+'명');
   const el=document.getElementById('fuList');
-  if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 14일 내 연락 없음</div>`;return;}
+  if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 7일 이상 미연락 없음</div>`;return;}
   el.innerHTML=items.map(c=>`
     <div class="fu">
       <div class="fu-bar ${c.d>=30?'urgent':c.d>=14?'soon':'fine'}"></div>
@@ -1028,9 +959,7 @@ function renderFollowup(){
         <a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>
         <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모">📝</button>
       </div>
-      <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">
-        D+${c.d}
-      </div>
+      <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">D+${c.d}</div>
     </div>`).join('');
 }
 
@@ -1059,9 +988,9 @@ let notifs=[];
 function buildNotifs(){
   notifs=[];
   const urgent=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
-  if(urgent.length) notifs.push({icon:'📞',title:`장기 미연락 ${urgent.length}명`,sub:'30일 이상 연락 없는 고객',action:()=>qfFilter('urgent',null)});
+  if(urgent.length) notifs.push({icon:'📞',title:`장기 미연락 ${urgent.length}명`,sub:'30일 이상 연락 없는 고객'});
   const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
-  if(bdays.length) notifs.push({icon:'🎂',title:`이번 주 생일 ${bdays.length}명`,sub:bdays.map(c=>c.name).join(', '),action:()=>showTab('birthday',document.querySelector('.tab:nth-child(5))'))});
+  if(bdays.length) notifs.push({icon:'🎂',title:`이번 주 생일 ${bdays.length}명`,sub:bdays.map(c=>c.name).join(', ')});
   const newRef=clients.filter(c=>c.ref==='TRUE');
   if(newRef.length) notifs.push({icon:'🔗',title:`리퍼 고객 ${newRef.length}명`,sub:'에이전트 리퍼 연결 고객'});
   renderNotifs();
@@ -1072,19 +1001,11 @@ function renderNotifs(){
   if(!notifs.length){badge.classList.remove('on');list.innerHTML='<div class="notif-empty">새 알림 없음</div>';return;}
   badge.textContent=notifs.length;badge.classList.add('on');
   list.innerHTML=notifs.map((n,i)=>`
-    <div class="notif-item" data-idx="${i}">
+    <div class="notif-item">
       <div class="ni-title">${n.icon} ${n.title}</div>
       <div class="ni-sub">${n.sub}</div>
     </div>`).join('');
-  // 이벤트 리스너 등록
-  document.querySelectorAll('.notif-item').forEach(el=>{
-    el.addEventListener('click',()=>{
-      const idx=parseInt(el.getAttribute('data-idx'));
-      if(notifs[idx]&&notifs[idx].action){closeNotif();notifs[idx].action();}
-    });
-  });
 }
-function n_click(i){if(notifs[i]&&notifs[i].action){closeNotif();notifs[i].action();}}
 function toggleNotif(){document.getElementById('notifPanel').classList.toggle('on');}
 function closeNotif(){document.getElementById('notifPanel').classList.remove('on');}
 function clearNotifs(){notifs=[];renderNotifs();closeNotif();}
@@ -1094,22 +1015,17 @@ document.addEventListener('click',e=>{if(!e.target.closest('.notif-wrap'))closeN
 // QUICK FILTER
 // ══════════════════════════════════════
 function qfFilter(type, el){
-  // 고객 목록 페이지로 전환
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-clients').classList.add('on');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   const clientsTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.textContent.includes('고객 목록'));
   if(clientsTab) clientsTab.classList.add('on');
-  
-  // 기존 필터/검색 초기화
   const searchInput = document.getElementById('cSearch');
   const planFilter = document.getElementById('planF');
   const refFilter = document.getElementById('refF');
   if(searchInput) searchInput.value = '';
   if(planFilter) planFilter.value = '';
   if(refFilter) refFilter.value = '';
-  
-  // 필터 적용
   document.querySelectorAll('.qf').forEach(b=>b.classList.remove('on'));
   if(el) el.classList.add('on');
   let filtered;
@@ -1133,25 +1049,17 @@ function renderCalendar(){
   const first=new Date(calYear,calMonth,1).getDay();
   const days=new Date(calYear,calMonth+1,0).getDate();
   const today=new Date();
-  // 이벤트 맵 생성
   const evMap={};
-  // 마지막 연락일
   clients.filter(c=>c.next).forEach(c=>{
-    const d=elapsed(c.next);
-    if(d!==null&&d>=0){
-      const k=c.next;
-      if(!evMap[k])evMap[k]=[];
-      evMap[k].push({type:'contact',label:c.name,rowIdx:c.rowIdx});
-    }
+    const k=c.next;
+    if(!evMap[k])evMap[k]=[];
+    evMap[k].push({type:'contact',label:c.name,rowIdx:c.rowIdx});
   });
-  // 생일
   getBirthdays().forEach(c=>{
-    const bd=new Date(calYear,c.bdMonth-1,c.bdDay);
     const k=`${calYear}-${String(c.bdMonth).padStart(2,'0')}-${String(c.bdDay).padStart(2,'0')}`;
     if(!evMap[k])evMap[k]=[];
     evMap[k].push({type:'bday',label:'🎂'+c.name});
   });
-  // 상담 메모
   allMemos.forEach(m=>{
     if(!m.date)return;
     const [y,mo,d]=m.date.split('-').map(Number);
@@ -1161,23 +1069,23 @@ function renderCalendar(){
     }
   });
   let cells='';
-  // 이전 달 빈 칸
   const prevDays=new Date(calYear,calMonth,0).getDate();
   for(let i=first-1;i>=0;i--) cells+=`<div class="cal-day other"><div class="cal-dn" style="color:var(--text3)">${prevDays-i}</div></div>`;
-  // 이번 달
   for(let d=1;d<=days;d++){
     const isToday=d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
     const k=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const evs=evMap[k]||[];
-    const evsHtml=evs.slice(0,3).map(e=>`<div class="cal-ev ${e.type==='bday'?'bday':e.type==='memo'?'memo':''}" onclick="event.stopPropagation();${e.rowIdx?`openDetail(${e.rowIdx})`:''}"> ${e.label}</div>`).join('');
+    const evsHtml=evs.slice(0,3).map(e=>`<div class="cal-ev ${e.type==='bday'?'bday':e.type==='memo'?'memo':''}" onclick="event.stopPropagation();${e.rowIdx?`openDetail(${e.rowIdx})`:''}">${e.label}</div>`).join('');
     const more=evs.length>3?`<div style="font-size:9px;color:var(--text3)">+${evs.length-3}개</div>`:'';
     cells+=`<div class="cal-day${isToday?' today':''}"><div class="cal-dn">${d}</div>${evsHtml}${more}</div>`;
   }
-  // 다음 달 빈 칸
   const total=first+days;const remain=(7-total%7)%7;
   for(let i=1;i<=remain;i++) cells+=`<div class="cal-day other"><div class="cal-dn" style="color:var(--text3)">${i}</div></div>`;
   document.getElementById('calGrid').innerHTML=cells;
 }
+
+// ══════════════════════════════════════
+// CHART
 // ══════════════════════════════════════
 let chartMode = 'bar';
 function switchChart(mode, el){
@@ -1194,7 +1102,6 @@ function renderPlanStats(){
   const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
   const el=document.getElementById('planStats');
   if(chartMode==='donut'){
-    // SVG 도넛 차트
     const r=54,cx=70,cy=70,stroke=22;
     const circ=2*Math.PI*r;
     let offset=0;
@@ -1249,7 +1156,7 @@ function openDetail(rowIdx){
   document.getElementById('dHead').innerHTML=`
     <div class="dh-av" style="background:${ac(c.name)}">${c.name[0]}</div>
     <div class="dh-info">
-      <h2>${c.name}${c.biz?` <span style="font-size:14px;font-weight:400;color:var(--text2)">(${c.biz})</span>`:''}
+      <h2>${c.name}
         ${c.ref==='TRUE'?'<span class="badge bpu" style="margin-left:8px;font-size:12px">리퍼</span>':''}
         ${c.plan?`<span class="badge ${pb(c.plan)}" style="margin-left:6px;font-size:12px">${c.plan}</span>`:''}
       </h2>
@@ -1263,7 +1170,6 @@ function openDetail(rowIdx){
       ${c.durl?`<a href="${c.durl}" target="_blank" class="btn sm pri">📋 상세 페이지</a>`:`<a href="https://docs.google.com/spreadsheets/d/${MAIN_ID}/edit#gid=0&range=A${c.rowIdx}" target="_blank" class="btn sm">📋 메인 시트</a>`}
     </div>`;
 
-  // Drive 파일 목록 로드
   const docsHtml = isDemo
     ? `<div class="doc-item"><span style="font-size:18px">📄</span><div><div class="doc-name">[보험카드] anthem_card.jpg</div><div class="doc-date">2025-03-18</div></div><a href="#" class="btn sm">열기</a></div>`
     : `<div style="color:var(--text3);font-size:13px;text-align:center;padding:12px" id="docsList_${rowIdx}">서류 불러오는 중...</div>`;
@@ -1287,7 +1193,7 @@ function openDetail(rowIdx){
         <button class="btn sm" onclick="openEditClient(${c.rowIdx})" style="font-size:11px">✏️ 수정</button>
       </h4>
       ${(()=>{
-        const pi=allPlanInfo.find(p=>p.name===c.name)||{};
+        const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
         const hasPi=pi.mbi||pi.medical_no||pi.pcp||pi.network||pi.meds||pi.conditions;
         if(!hasPi) return `<p style="color:var(--text3);font-size:13px;padding:8px 0">추가 정보 없음 — 수정 버튼을 눌러 입력해주세요</p>`;
         return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
@@ -1330,8 +1236,6 @@ function openDetail(rowIdx){
 
 async function loadClientDocs(clientName, rowIdx){
   try{
-    const q=`'FinCRM_고객서류' in parents`;
-    // 고객 폴더 찾기
     const fq=`name='${clientName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
     const fr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(fq)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
     const fd=await fr.json();
@@ -1345,10 +1249,7 @@ async function loadClientDocs(clientName, rowIdx){
     el.innerHTML=ld.files.map(f=>`
       <div class="doc-item" id="doc-${f.id}">
         <span style="font-size:18px">${fileIcon(f.name)}</span>
-        <div style="flex:1;min-width:0">
-          <div class="doc-name">${f.name}</div>
-          <div class="doc-date">${f.createdTime?.slice(0,10)||''}</div>
-        </div>
+        <div style="flex:1;min-width:0"><div class="doc-name">${f.name}</div><div class="doc-date">${f.createdTime?.slice(0,10)||''}</div></div>
         <a href="${f.webViewLink}" target="_blank" class="btn sm">열기</a>
         <button class="btn sm red" onclick="deleteDoc('${f.id}','${esc(f.name)}',${rowIdx},'${esc(clientName)}')" title="삭제">🗑</button>
       </div>`).join('');
@@ -1362,9 +1263,7 @@ async function deleteDoc(fileId, fileName, rowIdx, clientName){
   if(!confirm(`"${fileName}" 파일을 삭제할까요?`)) return;
   try{
     showLoad('삭제 중...');
-    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`,{
-      method:'DELETE', headers:{Authorization:'Bearer '+accessToken}
-    });
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`,{method:'DELETE',headers:{Authorization:'Bearer '+accessToken}});
     if(!r.ok && r.status !== 204) throw new Error(`HTTP ${r.status}`);
     const el = document.getElementById(`doc-${fileId}`);
     if(el) el.remove();
@@ -1401,21 +1300,11 @@ function openFileUpload(clientName){
   document.getElementById('fileInput').value = '';
   document.getElementById('fileModal').classList.add('on');
 }
-
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('fileDrop').classList.remove('drag');
-  handleFiles(e.dataTransfer.files);
-}
-
+function handleDrop(e){e.preventDefault();document.getElementById('fileDrop').classList.remove('drag');handleFiles(e.dataTransfer.files);}
 function handleFiles(files){
-  for(const f of files){
-    if(f.size > 10*1024*1024){ toast('❌ '+f.name+' — 10MB 초과'); continue; }
-    pendingFiles.push(f);
-  }
+  for(const f of files){if(f.size>10*1024*1024){toast('❌ '+f.name+' — 10MB 초과');continue;}pendingFiles.push(f);}
   renderPendingFiles();
 }
-
 function renderPendingFiles(){
   const el=document.getElementById('pendingFiles');
   if(!pendingFiles.length){el.innerHTML='';document.getElementById('uploadBtn').style.display='none';return;}
@@ -1428,9 +1317,7 @@ function renderPendingFiles(){
     </div>`).join('');
   document.getElementById('uploadBtn').style.display = 'inline-flex';
 }
-
 function removePending(i){ pendingFiles.splice(i,1); renderPendingFiles(); }
-
 async function uploadFiles(){
   if(!pendingFiles.length) return;
   if(isDemo){ toast('데모 모드에서는 실제 업로드가 안 됩니다'); return; }
@@ -1441,12 +1328,10 @@ async function uploadFiles(){
   progWrap.classList.add('on');
   document.getElementById('uploadBtn').disabled = true;
   let done=0;
-  const results=[];
   for(const f of pendingFiles){
     status.textContent = `업로드 중: ${f.name} (${done+1}/${pendingFiles.length})`;
     try{
-      const res = await driveUpload(f, currentUploadClient, fileType);
-      results.push(res);
+      await driveUpload(f, currentUploadClient, fileType);
       done++;
       progFill.style.width = Math.round(done/pendingFiles.length*100)+'%';
     }catch(e){
@@ -1455,23 +1340,21 @@ async function uploadFiles(){
       return;
     }
   }
-  status.textContent = `✅ ${done}개 파일 업로드 완료! Google Drive에 저장되었습니다.`;
+  status.textContent = `✅ ${done}개 파일 업로드 완료!`;
   document.getElementById('uploadBtn').style.display='none';
   pendingFiles=[];
   document.getElementById('pendingFiles').innerHTML='';
   toast('✅ '+done+'개 파일이 Google Drive에 업로드되었습니다!');
-  // 상세 페이지 서류 목록 새로고침
   const c=clients.find(x=>x.name===currentUploadClient);
   if(c) setTimeout(()=>loadClientDocs(currentUploadClient, c.rowIdx), 1000);
 }
 
 // ══════════════════════════════════════
-// ADD / EDIT / DELETE
+// ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
 function togglePlanFields(){
   const plan=document.getElementById('f_plan').value;
-  const show=['MAPD','PDP'].includes(plan);
-  document.getElementById('planExtraFields').style.display=show?'block':'none';
+  document.getElementById('planExtraFields').style.display=['MAPD','PDP'].includes(plan)?'block':'none';
 }
 function clearPlanFields(){
   ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
@@ -1489,22 +1372,24 @@ function openAddClient(){
 function openEditClient(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   set('mTitle','✏️ 고객 정보 수정');
-  document.getElementById('eRow').value=rowIdx;document.getElementById('eNo').value=c.no;
+  document.getElementById('eRow').value=rowIdx;
+  document.getElementById('eNo').value=c.no;
   document.getElementById('f_fname').value=c.fname;
   document.getElementById('f_mname').value=c.mname;
   document.getElementById('f_lname').value=c.lname;
   document.getElementById('f_address1').value=c.address1;
   document.getElementById('f_city').value=c.city;
   document.getElementById('f_zip').value=c.zip;
-  document.getElementById('f_phone').value=c.phone;document.getElementById('f_email').value=c.email;
-  document.getElementById('f_plan').value=c.plan;document.getElementById('f_prod').value=c.prod;
+  document.getElementById('f_phone').value=c.phone;
+  document.getElementById('f_email').value=c.email;
+  document.getElementById('f_plan').value=c.plan;
+  document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;
   document.getElementById('f_ref').value=c.ref;
-  // MAPD/PDP 추가 정보 로드
   clearPlanFields();
   if(['MAPD','PDP'].includes(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
-    const pi=allPlanInfo.find(p=>p.name===c.name)||{};
+    const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
     document.getElementById('f_mbi').value=pi.mbi||'';
     document.getElementById('f_medical_no').value=pi.medical_no||'';
     document.getElementById('f_pcp').value=pi.pcp||'';
@@ -1516,76 +1401,140 @@ function openEditClient(rowIdx){
   }
   document.getElementById('clientModal').classList.add('on');
 }
+
 async function saveClient(){
   const fname=document.getElementById('f_fname').value.trim();
   const lname=document.getElementById('f_lname').value.trim();
   if(!fname||!lname){alert('First Name과 Last Name은 필수입니다');return;}
+
   const rowIdx=document.getElementById('eRow').value;
   const plan=document.getElementById('f_plan').value;
   const mname=document.getElementById('f_mname').value.trim();
+  // 이름 조합: 성 이름 미들
   const name=[lname,fname,mname].filter(Boolean).join(' ');
-  // 컬럼: A=no B=fname C=mname D=lname E=email F=address1 G=city H=zip I=phone J=plan K=prod L=memo M=ref N=빈칸 O=durl
-  const vals=[[document.getElementById('eNo').value||'',fname,mname,lname,
-    document.getElementById('f_email').value,
-    document.getElementById('f_address1').value,document.getElementById('f_city').value,
-    document.getElementById('f_zip').value,
-    document.getElementById('f_phone').value,
-    plan,document.getElementById('f_prod').value,document.getElementById('f_memo').value,
-    document.getElementById('f_ref').value,'','']];
-  // MAPD/PDP 추가 정보 — 컬럼: name, mbi, medical_no, pcp, pcp_phone, network, group_no, meds, conditions
+
+  // No(A열) 자동 부여 — 수정 시 기존 번호 유지, 신규 시 최대값+1
+  const existingNo=document.getElementById('eNo').value.trim();
+  const autoNo=existingNo||(Math.max(0,...clients.map(c=>parseInt(c.no)||0))+1).toString();
+
+  // A~O 컬럼 순서: no, fname, mname, lname, email, address1, city, zip, phone, plan, prod, memo, ref, (N=에이전트 빈칸), (O=durl 빈칸)
+  const vals=[[
+    autoNo,
+    fname, mname, lname,
+    document.getElementById('f_email').value.trim(),
+    document.getElementById('f_address1').value.trim(),
+    document.getElementById('f_city').value.trim(),
+    document.getElementById('f_zip').value.trim(),
+    document.getElementById('f_phone').value.trim(),
+    plan,
+    document.getElementById('f_prod').value.trim(),
+    document.getElementById('f_memo').value.trim(),
+    document.getElementById('f_ref').value,
+    '', ''
+  ]];
+
+  // MAPD/PDP 추가정보 수집
   let piVals=null;
   if(['MAPD','PDP'].includes(plan)){
-    piVals=[[name,
-      document.getElementById('f_mbi').value,
-      document.getElementById('f_medical_no').value,
-      document.getElementById('f_pcp').value,
-      document.getElementById('f_pcp_phone').value,
-      document.getElementById('f_network').value,
-      document.getElementById('f_group_no').value,
-      document.getElementById('f_meds').value,
-      document.getElementById('f_conditions').value,
+    piVals=[[
+      name,
+      document.getElementById('f_mbi').value.trim(),
+      document.getElementById('f_medical_no').value.trim(),
+      document.getElementById('f_pcp').value.trim(),
+      document.getElementById('f_pcp_phone').value.trim(),
+      document.getElementById('f_network').value.trim(),
+      document.getElementById('f_group_no').value.trim(),
+      document.getElementById('f_meds').value.trim(),
+      document.getElementById('f_conditions').value.trim(),
     ]];
   }
+
   showLoad('저장 중...');
   try{
     if(isDemo){
-      const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
-        fname,mname,lname,name,email:vals[0][4],address1:vals[0][5],city:vals[0][6],zip:vals[0][7],
-        phone:vals[0][8],plan:vals[0][9],prod:vals[0][10],memo:vals[0][11],ref:vals[0][12],
-        durl:'',state:'',biz:'',dob:'',next:''};
+      // 데모 모드: 메모리에만 저장
+      const obj={
+        rowIdx:rowIdx?+rowIdx:clients.length+2,
+        no:autoNo, fname, mname, lname, name,
+        email:vals[0][4], address1:vals[0][5], city:vals[0][6], zip:vals[0][7],
+        phone:vals[0][8], plan:vals[0][9], prod:vals[0][10],
+        memo:vals[0][11], ref:vals[0][12],
+        durl:'', state:'', biz:'', dob:'', next:''
+      };
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
-      // 데모: planInfo 메모리 저장
       if(piVals){
-        const pi={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],pcp_phone:piVals[0][4],
-          network:piVals[0][5],group_no:piVals[0][6],meds:piVals[0][7],conditions:piVals[0][8]};
-        const pi_i=allPlanInfo.findIndex(p=>p.name===name);
-        if(pi_i>=0) allPlanInfo[pi_i]=pi; else allPlanInfo.push(pi);
+        const pi={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],
+          pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
+          meds:piVals[0][7],conditions:piVals[0][8]};
+        const idx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
+        if(idx>=0) allPlanInfo[idx]=pi; else allPlanInfo.push(pi);
       }
-    }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:O${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:O:append?valueInputOption=USER_ENTERED`,{values:vals});
-      // MAPD/PDP 추가 정보 저장 (PlanInfo 탭)
+    } else {
+      // ── 1. 메인 시트 저장 ──
+      if(rowIdx){
+        // 수정: 해당 행 덮어쓰기
+        await sheetsReq('PUT',
+          `${MAIN_ID}/values/A${rowIdx}:O${rowIdx}?valueInputOption=USER_ENTERED`,
+          {values:vals});
+      } else {
+        // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
+        await sheetsReq('POST',
+          `${MAIN_ID}/values/A%3AO:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+          {values:vals});
+      }
+
+      // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
       if(piVals){
         try{
-          // 기존 행 찾기
-          const existing=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
-          const rows=existing.values||[];
-          const piRow=rows.findIndex((r,i)=>i>0&&r[0]===name);
-          if(piRow>=0){
-            await sheetsReq('PUT',`${DETAIL_ID}/values/PlanInfo!A${piRow+1}:I${piRow+1}?valueInputOption=USER_ENTERED`,{values:piVals});
-          }else{
-            await sheetsReq('POST',`${DETAIL_ID}/values/PlanInfo!A:I:append?valueInputOption=USER_ENTERED`,{values:piVals});
+          // 기존 행 검색 — A열 전체 읽기
+          const existingRows=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
+          const rows=(existingRows.values||[]);
+          // 헤더(0번) 제외, 이름 일치 행 찾기
+          const matchIdx=rows.findIndex((r,i)=>i>0 && String(r[0]||'').trim()===name.trim());
+
+          if(matchIdx>0){
+            // 기존 행 업데이트 (배열 인덱스 → 시트 행 번호: +1)
+            const sheetRow=matchIdx+1;
+            await sheetsReq('PUT',
+              `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
+              {values:piVals});
+          } else {
+            // 신규 행 추가
+            await sheetsReq('POST',
+              `${DETAIL_ID}/values/PlanInfo!A%3AI:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+              {values:piVals});
           }
-        }catch(e){ /* PlanInfo 탭 없으면 무시 */ }
+
+          // 로컬 allPlanInfo 즉시 반영
+          const localIdx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
+          const piObj={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],
+            pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
+            meds:piVals[0][7],conditions:piVals[0][8]};
+          if(localIdx>=0) allPlanInfo[localIdx]=piObj; else allPlanInfo.push(piObj);
+
+        } catch(piErr){
+          console.warn('PlanInfo 저장 오류:', piErr.message);
+          toast('⚠️ 기본정보는 저장됨. PlanInfo 탭 확인 필요: '+piErr.message, 5000);
+        }
       }
+
+      // ── 3. 전체 리로드 ──
       await loadAll();
     }
-    closeOv('clientModal');renderAll();
+
+    closeOv('clientModal');
+    renderAll();
     toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장됨!');
-  }catch(e){toast('❌ '+e.message,4000);}
-  finally{hideLoad();}
+
+  } catch(e){
+    toast('❌ 저장 실패: '+e.message, 5000);
+    console.error('saveClient error:', e);
+  } finally {
+    hideLoad();
+  }
 }
+
 async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
   if(isDemo){clients=clients.filter(c=>c.rowIdx!==rowIdx);renderAll();toast('삭제됨');return;}
@@ -1618,20 +1567,18 @@ async function saveMemo(){
   const ts=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A:F:append?valueInputOption=USER_ENTERED`,{values:[[Date.now(),name,type,text,date,ts]]});
+    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A%3AF:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{values:[[Date.now(),name,type,text,date,ts]]});
     allMemos.unshift({name,type,text,date,ts});
-    // 마지막 연락일 자동 갱신
     const ci=clients.findIndex(c=>c.name===name);
     if(ci>=0){
       clients[ci].next=date;
       if(!isDemo){
-        const rowIdx=clients[ci].rowIdx;
-        await sheetsReq('PUT',`${MAIN_ID}/values/I${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
+        const rIdx=clients[ci].rowIdx;
+        await sheetsReq('PUT',`${MAIN_ID}/values/I${rIdx}?valueInputOption=USER_ENTERED`,{values:[[date]]});
       }
     }
     closeOv('memoModal');
     renderAll();
-    // 상세 페이지가 열려 있으면 새로고침
     if(document.getElementById('detailPg').classList.contains('on')){
       const c=clients.find(x=>x.name===name);
       if(c) openDetail(c.rowIdx);
@@ -1642,93 +1589,67 @@ async function saveMemo(){
 }
 
 // ══════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════
-
-// ══════════════════════════════════════
 // BIRTHDAY
 // ══════════════════════════════════════
-// DOB 파싱 유틸 — MM/DD/YYYY, YYYY-MM-DD, Sheets 시리얼 숫자 모두 처리
 function parseDob(raw) {
   if (!raw) return null;
   const s = String(raw).trim();
   if (!s) return null;
-
-  // MM/DD/YYYY
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
     const [mm, dd, yyyy] = s.split('/').map(Number);
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
   }
-  // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const [yyyy, mm, dd] = s.split('-').map(Number);
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy, display:s};
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
   }
-  // M/D/YYYY (월/일 한자리)
   if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
     const parts = s.split('/').map(Number);
     const [mm, dd, yyyy] = parts;
     const fullY = yyyy < 100 ? (yyyy > 30 ? 1900+yyyy : 2000+yyyy) : yyyy;
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:fullY, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${fullY}`};
+    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:fullY};
   }
-  // Google Sheets 날짜 시리얼 숫자 (1900-01-01 기준)
   if (/^\d+$/.test(s)) {
     const serial = parseInt(s);
     if (serial > 1000 && serial < 80000) {
       const base = new Date(1899, 11, 30);
       const date = new Date(base.getTime() + serial * 86400000);
-      const mm = date.getMonth()+1, dd = date.getDate(), yyyy = date.getFullYear();
-      return {m:mm, d:dd, y:yyyy, display:`${String(mm).padStart(2,'0')}/${String(dd).padStart(2,'0')}/${yyyy}`};
+      return {m:date.getMonth()+1, d:date.getDate(), y:date.getFullYear()};
     }
   }
   return null;
 }
-
 function getBirthdays() {
-  return clients
-    .map(c => {
-      const parsed = parseDob(c.dob);
-      if (!parsed) return null;
-      const {m, d, y, display} = parsed;
-      const today = new Date(); today.setHours(0,0,0,0);
-      const thisYear = today.getFullYear();
-      let bday = new Date(thisYear, m-1, d); bday.setHours(0,0,0,0);
-      if (bday < today) bday = new Date(thisYear+1, m-1, d);
-      const daysLeft = Math.ceil((bday - today) / 864e5);
-      const age = thisYear - y - (bday.getFullYear()===thisYear && bday>today ? 1 : 0);
-      return {...c, dob:display, bdMonth:m, bdDay:d, daysLeft, age};
-    })
-    .filter(Boolean)
-    .sort((a,b) => a.daysLeft - b.daysLeft);
+  return clients.map(c => {
+    const parsed = parseDob(c.dob);
+    if (!parsed) return null;
+    const {m, d, y} = parsed;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const thisYear = today.getFullYear();
+    let bday = new Date(thisYear, m-1, d); bday.setHours(0,0,0,0);
+    if (bday < today) bday = new Date(thisYear+1, m-1, d);
+    const daysLeft = Math.ceil((bday - today) / 864e5);
+    const age = thisYear - y - (bday.getFullYear()===thisYear && bday>today ? 1 : 0);
+    return {...c, bdMonth:m, bdDay:d, daysLeft, age};
+  }).filter(Boolean).sort((a,b) => a.daysLeft - b.daysLeft);
 }
-
 function renderBirthday() {
   const filter = document.getElementById('bdFilter')?.value || '30';
   const all = getBirthdays();
-  const today = all.filter(c=>c.daysLeft===0).length;
-  const week  = all.filter(c=>c.daysLeft<=7).length;
-  const month = all.filter(c=>c.daysLeft<=30).length;
-  set('bdToday', today); set('bdWeek', week); set('bdMonth', month);
-  set('zapBdayCnt', week);
-
+  set('bdToday', all.filter(c=>c.daysLeft===0).length);
+  set('bdWeek',  all.filter(c=>c.daysLeft<=7).length);
+  set('bdMonth', all.filter(c=>c.daysLeft<=30).length);
+  set('zapBdayCnt', all.filter(c=>c.daysLeft<=7).length);
   let data = filter==='all' ? all : all.filter(c=>c.daysLeft<=(+filter||30));
   const el = document.getElementById('bdList');
-
   if (!clients.some(c=>c.dob)) {
     el.innerHTML = `<div class="dc" style="text-align:center;padding:24px;box-shadow:var(--sh)">
       <p style="font-size:14px;font-weight:600;margin-bottom:8px">생일 정보가 없습니다</p>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7">
-        고객 등록 시 생일을 입력하거나<br>
-        기존 고객 수정에서 생일을 추가해주세요.<br>
-        상세 시트의 DOB 이미지에서 날짜를 확인 후<br>
-        고객 정보 수정(✏️)에서 입력하시면 됩니다.
-      </p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7">고객 수정(✏️)에서 생일을 입력해주세요</p>
     </div>`;
     return;
   }
-
   if (!data.length) { el.innerHTML=`<div style="text-align:center;padding:30px;color:var(--text3)">해당 기간 생일 없음</div>`; return; }
-
   el.innerHTML = data.map(c => {
     const isToday = c.daysLeft === 0;
     const isSoon  = c.daysLeft <= 7;
@@ -1753,11 +1674,10 @@ function renderBirthday() {
 }
 
 // ══════════════════════════════════════
-// SMS (Twilio)
+// SMS
 // ══════════════════════════════════════
 let smsRecipients = [];
 let smsHistory = JSON.parse(localStorage.getItem('sms_history')||'[]');
-
 const SMS_TEMPLATES = [
   {label:'생일 축하', text:'안녕하세요 {이름}님! 생일을 진심으로 축하드립니다 🎂 항상 건강하고 행복하세요!'},
   {label:'연락일 리마인더', text:'안녕하세요 {이름}님, 저는 담당 에이전트입니다. 플랜 관련 업데이트가 있어 연락드렸습니다. 편한 시간에 통화 가능하실까요?'},
@@ -1765,29 +1685,20 @@ const SMS_TEMPLATES = [
   {label:'신규 가입 환영', text:'안녕하세요 {이름}님, 가입을 환영합니다! 궁금한 사항이 있으시면 언제든지 연락해주세요.'},
   {label:'서류 안내', text:'안녕하세요 {이름}님! 보험 관련 서류를 준비해 주셔서 감사합니다. 검토 후 연락드리겠습니다.'},
 ];
-
 function initSmsTab() {
-  // 템플릿 렌더
-  document.getElementById('smsTemplates').innerHTML = SMS_TEMPLATES.map((t,i)=>`
-    <div class="sms-template" onclick="selectTemplate(${i})">${t.label}</div>`).join('');
-  // 고객 셀렉트
-  populateMemoSel();
+  document.getElementById('smsTemplates').innerHTML = SMS_TEMPLATES.map((t,i)=>`<div class="sms-template" onclick="selectTemplate(${i})">${t.label}</div>`).join('');
   document.getElementById('smsClientSel').innerHTML = '<option value="">고객 선택...</option>'+
     clients.map(c=>`<option value="${esc(c.name)}|${c.phone}">${c.name} (${c.phone||'번호없음'})</option>`).join('');
-  // 발송 이력
   renderSmsHistory();
-  // char count
   document.getElementById('smsMsg').addEventListener('input', ()=>{
     set('smsCharCount', document.getElementById('smsMsg').value.length+'자');
   });
-  // Twilio 저장값 복원
   const t = JSON.parse(localStorage.getItem('twilio')||'{}');
   if(t.sid) document.getElementById('twilioSid').value = t.sid;
   if(t.token) document.getElementById('twilioToken').value = t.token;
   if(t.from) document.getElementById('twilioFrom').value = t.from;
   updateTwilioStatus();
 }
-
 function saveTwilio(){
   const cfg={sid:document.getElementById('twilioSid').value.trim(),token:document.getElementById('twilioToken').value.trim(),from:document.getElementById('twilioFrom').value.trim()};
   localStorage.setItem('twilio',JSON.stringify(cfg));
@@ -1795,16 +1706,13 @@ function saveTwilio(){
 }
 function updateTwilioStatus(){
   const t=JSON.parse(localStorage.getItem('twilio')||'{}');
-  const ok=t.sid&&t.token&&t.from;
-  set('twilioStatus', ok?'✅ Twilio 설정 완료':'⚠️ Account SID, Token, 발신번호를 모두 입력해주세요');
+  set('twilioStatus', (t.sid&&t.token&&t.from)?'✅ Twilio 설정 완료':'⚠️ Account SID, Token, 발신번호를 모두 입력해주세요');
 }
-
 function selectTemplate(i){
   document.querySelectorAll('.sms-template').forEach((el,j)=>el.classList.toggle('sel',i===j));
   document.getElementById('smsMsg').value = SMS_TEMPLATES[i].text;
   set('smsCharCount', SMS_TEMPLATES[i].text.length+'자');
 }
-
 function addSmsRecip(){
   const val=document.getElementById('smsClientSel').value;
   if(!val) return;
@@ -1814,7 +1722,6 @@ function addSmsRecip(){
   smsRecipients.push({name,phone});
   renderSmsRecips();
 }
-
 function renderSmsRecips(){
   const el=document.getElementById('smsRecipList');
   if(!smsRecipients.length){el.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px">수신자를 추가해주세요</div>';set('smsRecipCount','');return;}
@@ -1827,9 +1734,7 @@ function renderSmsRecips(){
     </div>`).join('');
   set('smsRecipCount',`${smsRecipients.length}명 선택됨`);
 }
-
 function removeSmsRecip(i){smsRecipients.splice(i,1);renderSmsRecips();}
-
 function openSingleSms(name, phone, type='general'){
   showTab('sms', document.querySelectorAll('.tab')[4]);
   setTimeout(()=>{
@@ -1838,7 +1743,6 @@ function openSingleSms(name, phone, type='general'){
     if(type==='birthday') selectTemplate(0);
   },100);
 }
-
 function openBulkSms(type){
   const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
   if(!bdays.length){toast('7일 내 생일인 고객이 없습니다');return;}
@@ -1848,7 +1752,6 @@ function openBulkSms(type){
     <span class="badge bam" style="margin-left:auto">D-${c.daysLeft}</span></div>`).join('');
   document.getElementById('bdSmsModal').classList.add('on');
 }
-
 async function sendSms(){
   if(!smsRecipients.length){toast('수신자를 추가해주세요');return;}
   const msg=document.getElementById('smsMsg').value.trim();
@@ -1861,7 +1764,7 @@ async function sendSms(){
     });
     localStorage.setItem('sms_history',JSON.stringify(smsHistory.slice(0,100)));
     renderSmsHistory(); smsRecipients=[]; renderSmsRecips();
-    toast('✅ 데모: '+smsRecipients.length||1+'건 발송됨');
+    toast('✅ 데모: 발송 시뮬레이션 완료');
     return;
   }
   showLoad('문자 발송 중...');
@@ -1875,11 +1778,10 @@ async function sendSms(){
         body:new URLSearchParams({To:r.phone,From:t.from,Body:text})
       });
       const d=await res.json();
-      const status=d.sid?'✅ 발송됨':'❌ 실패: '+(d.message||'오류');
-      smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:text.slice(0,30)+'…',status});
+      smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:text.slice(0,30)+'…',status:d.sid?'✅ 발송됨':'❌ 실패: '+(d.message||'오류')});
       if(d.sid) ok++; else fail++;
     }catch(e){
-      smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:text.slice(0,30)+'…',status:'❌ '+e.message});
+      smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:'…',status:'❌ '+e.message});
       fail++;
     }
   }
@@ -1887,7 +1789,6 @@ async function sendSms(){
   hideLoad(); renderSmsHistory(); smsRecipients=[]; renderSmsRecips();
   toast(`✅ ${ok}건 발송${fail?` / ❌ ${fail}건 실패`:''}`);
 }
-
 async function sendBulkBdaySms(){
   const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
   const msg=document.getElementById('bdSmsMsg').value.trim();
@@ -1913,7 +1814,6 @@ async function sendBulkBdaySms(){
   hideLoad(); closeOv('bdSmsModal'); renderSmsHistory();
   toast(`🎂 ${ok}명에게 생일 문자 발송됨!`);
 }
-
 function renderSmsHistory(){
   const tb=document.getElementById('smsHistory');
   if(!tb) return;
@@ -1927,15 +1827,13 @@ function renderSmsHistory(){
 }
 
 // ══════════════════════════════════════
-// AUTOMATION (Zapier)
+// AUTOMATION
 // ══════════════════════════════════════
 let zapBaseUrl = localStorage.getItem('zap_url')||'';
-
 function initAutomation(){
   if(zapBaseUrl){ document.getElementById('zapUrl').value=zapBaseUrl; updateZapUrls(zapBaseUrl); }
   updateZapCounts();
 }
-
 function saveZapUrl(){
   zapBaseUrl=document.getElementById('zapUrl').value.trim();
   localStorage.setItem('zap_url',zapBaseUrl);
@@ -1943,22 +1841,14 @@ function saveZapUrl(){
   document.getElementById('zapSaved').style.display='block';
   setTimeout(()=>document.getElementById('zapSaved').style.display='none',2000);
 }
-
 function updateZapUrls(base){
   const suffs={bday:'?event=birthday',contact:'?event=contact_reminder',new:'?event=new_client',expire:'?event=plan_expire'};
-  Object.entries(suffs).forEach(([k,s])=>{
-    const el=document.getElementById('wh_'+k);
-    if(el) el.textContent=base+s;
-  });
+  Object.entries(suffs).forEach(([k,s])=>{const el=document.getElementById('wh_'+k);if(el) el.textContent=base+s;});
 }
-
 function updateZapCounts(){
-  const d3=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length;
-  set('zapContactCnt',d3);
-  const bd=getBirthdays().filter(c=>c.daysLeft<=7).length;
-  set('zapBdayCnt',bd);
+  set('zapContactCnt',clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length);
+  set('zapBdayCnt',getBirthdays().filter(c=>c.daysLeft<=7).length);
 }
-
 async function triggerZap(type, label){
   if(!zapBaseUrl){toast('웹훅 URL을 먼저 등록해주세요');return;}
   const suffs={bday:'?event=birthday',contact:'?event=contact_reminder',new:'?event=new_client'};
@@ -1972,14 +1862,13 @@ async function triggerZap(type, label){
     el.textContent=`✅ ${label} 전송 완료! Zapier에서 확인하세요.`;
   }catch(e){el.textContent='❌ '+e.message;}
 }
-
 function copyWh(id){
   const txt=document.getElementById(id)?.textContent||'';
   navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됨')).catch(()=>{});
 }
 
 // ══════════════════════════════════════
-// SHOW TAB 수정 (초기화 추가)
+// TAB / UI
 // ══════════════════════════════════════
 function showTab(id,el){
   document.getElementById('detailPg').classList.remove('on');
@@ -1992,21 +1881,19 @@ function showTab(id,el){
   if(id==='automation') initAutomation();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
-// 모달 외부 클릭으로 닫기 제거 - X 버튼이나 취소 버튼으로만 닫기
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
 function showLoad(t){set('loadTxt',t);document.getElementById('loadOv').classList.add('on');}
 function hideLoad(){document.getElementById('loadOv').classList.remove('on');}
 let _tid;
 function toast(msg,dur=2600){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tid);_tid=setTimeout(()=>e.classList.remove('on'),dur);}
-function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=v||'';}
-function dd(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((d-t)/864e5);}
-// 마지막 연락일로부터 경과일 (오래될수록 큰 숫자)
+function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=(v===undefined||v===null)?'':v;}
 function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((t-d)/864e5);}
 function pb(p){return{PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
 function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
 function ac(n){return AVC[(n||'A').charCodeAt(0)%AVC.length];}
+function populateMemoSel(){}
 </script>
 </body>
 </html>
