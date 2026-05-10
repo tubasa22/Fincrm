@@ -152,6 +152,35 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap}
 #toast.on{opacity:1}
 #sheetViewModal .modal{overflow:hidden;padding:16px}
+
+/* USER DROPDOWN */
+.user-wrap{position:relative}
+.user-btn{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border:1px solid var(--g3);border-radius:30px;background:var(--sur);cursor:pointer;transition:.15s;font-family:inherit}
+.user-btn:hover{background:var(--g2);border-color:var(--blue)}
+.user-btn-name{font-size:12px;font-weight:600;color:var(--text);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-dropdown{position:absolute;top:calc(100%+8px);right:0;width:260px;background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;display:none;overflow:hidden}
+.user-dropdown.on{display:block}
+.ud-head{padding:16px;background:linear-gradient(135deg,var(--blue2),#fff);border-bottom:1px solid var(--g3)}
+.ud-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);margin-bottom:8px}
+.ud-avatar-placeholder{width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;margin-bottom:8px}
+.ud-name{font-size:14px;font-weight:700;color:var(--text)}
+.ud-email{font-size:11px;color:var(--text3);margin-top:2px;word-break:break-all}
+.ud-body{padding:8px 0}
+.ud-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;cursor:pointer;transition:.1s;color:var(--text)}
+.ud-item:hover{background:var(--g2)}
+.ud-item.danger:hover{background:var(--red2);color:var(--red)}
+.ud-item .ud-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.ud-divider{height:1px;background:var(--g3);margin:4px 0}
+.ud-log{padding:8px 16px 12px;border-top:1px solid var(--g3)}
+.ud-log-title{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.ud-log-item{font-size:11px;color:var(--text2);padding:3px 0;display:flex;align-items:center;gap:6px}
+.ud-log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ud-log-dot.in{background:var(--green)}
+.ud-log-dot.out{background:var(--red)}
+/* 로그인 화면 개선 */
+.lbox-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--g3)}
+.last-login{font-size:12px;color:var(--text3);text-align:center;line-height:1.6}
+.login-spinner{display:none;margin:8px auto 0;width:20px;height:20px;border:2px solid var(--g3);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 #loadOv{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:300;flex-direction:column;gap:12px}
 #loadOv.on{display:flex}
 #loadOv .spin{width:36px;height:36px;border-width:3px}
@@ -283,12 +312,16 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <div class="lbox">
     <div class="llogo">🏦 FinCRM</div>
     <p class="lsub">보험 에이전트 고객관리 시스템<br>Google 계정으로 로그인해주세요</p>
-    <button class="google-btn" id="signInBtn" onclick="signIn()" disabled style="opacity:0.5;cursor:not-allowed">
+    <button class="google-btn" id="signInBtn" onclick="signInClick()" disabled style="opacity:0.5;cursor:not-allowed">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Google 계정 로드 중...
+      <span id="signInBtnTxt">Google 계정 로드 중...</span>
     </button>
+    <div class="login-spinner" id="loginSpinner"></div>
     <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기</button>
     <p class="login-note">Sheets 읽기/쓰기 + Drive 파일 업로드 권한이 요청됩니다</p>
+    <div class="lbox-footer">
+      <div class="last-login" id="lastLoginInfo"></div>
+    </div>
   </div>
 </div>
 
@@ -318,8 +351,42 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
       <button class="btn sm" onclick="loadAll()">🔄</button>
       <button class="btn sm pri" onclick="openAddClient()">+ 고객 등록</button>
-      <img id="userAvatar" class="user-av" style="display:none">
-      <button class="btn sm" onclick="signOut()" id="signOutBtn" style="display:none">로그아웃</button>
+      <!-- 유저 드롭다운 -->
+      <div class="user-wrap" id="userWrap" style="display:none">
+        <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
+          <img id="userAvatar" class="user-av" style="display:none;width:26px;height:26px;border:none">
+          <div id="userAvatarPlaceholder" style="width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">?</div>
+          <span class="user-btn-name" id="userBtnName">사용자</span>
+          <span style="font-size:10px;color:var(--text3)">▾</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="ud-head">
+            <img id="udAvatar" class="ud-avatar" style="display:none">
+            <div id="udAvatarPlaceholder" class="ud-avatar-placeholder">?</div>
+            <div class="ud-name" id="udName">—</div>
+            <div class="ud-email" id="udEmail">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px" id="udLoginTime"></div>
+          </div>
+          <div class="ud-body">
+            <div class="ud-item" onclick="loadAll();toggleUserMenu()">
+              <span class="ud-icon">🔄</span> 데이터 새로고침
+            </div>
+            <div class="ud-divider"></div>
+            <div class="ud-item" onclick="showLoginLog()">
+              <span class="ud-icon">📋</span> 로그인 이력
+            </div>
+          </div>
+          <div class="ud-log" id="udLogArea">
+            <div class="ud-log-title">최근 활동</div>
+            <div id="udLogList"></div>
+          </div>
+          <div style="padding:8px 12px;border-top:1px solid var(--g3)">
+            <button class="btn red" style="width:100%;justify-content:center" onclick="signOut()">
+              🚪 로그아웃
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -768,8 +835,10 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fcrm_exp', tokenExpiry);
           fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
             .then(r=>r.json()).then(u=>{
-              if(u.picture){document.getElementById('userAvatar').src=u.picture;document.getElementById('userAvatar').style.display='block';}
-              document.getElementById('signOutBtn').style.display='block';
+              const name = u.name||u.email||'사용자';
+              localStorage.setItem('fcrm_user', JSON.stringify({name, email:u.email||'', picture:u.picture||''}));
+              addLoginLog('login', name);
+              updateUserUI(u);
             });
           bootApp();
         }
@@ -779,24 +848,56 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = false;
         btn.style.opacity = '1';
         btn.style.cursor = 'pointer';
-        btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Google 계정으로 로그인`;
+        btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg><span id="signInBtnTxt">Google 계정으로 로그인</span>`;
+        renderLastLoginInfo();
       }
     }
   }, 200);
 });
 
-function signIn(){ if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'}); }
+// ══════════════════════════════════════
+// LOGIN LOG
+// ══════════════════════════════════════
+function getLoginLog(){ return JSON.parse(localStorage.getItem('fcrm_login_log')||'[]'); }
+function addLoginLog(type, userName){
+  const log = getLoginLog();
+  log.unshift({type, user: userName||'알 수 없음', time: new Date().toLocaleString('ko-KR')});
+  localStorage.setItem('fcrm_login_log', JSON.stringify(log.slice(0,20)));
+}
+
+function signInClick(){
+  const btn = document.getElementById('signInBtn');
+  const spinner = document.getElementById('loginSpinner');
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  document.getElementById('signInBtnTxt').textContent = '로그인 중...';
+  spinner.style.display = 'block';
+  if(tokenClient) tokenClient.requestAccessToken({prompt:''});
+}
+function signIn(){ signInClick(); }
+
 function signOut(){
-  if(accessToken) google.accounts.oauth2.revoke(accessToken,()=>{});
-  accessToken=''; localStorage.removeItem('fcrm_token'); localStorage.removeItem('fcrm_exp');
+  const userName = document.getElementById('udName')?.textContent || '';
+  addLoginLog('logout', userName);
+  if(accessToken && !isDemo) google.accounts.oauth2.revoke(accessToken,()=>{});
+  accessToken='';
+  localStorage.removeItem('fcrm_token');
+  localStorage.removeItem('fcrm_exp');
   document.getElementById('app').classList.remove('on');
   document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('userAvatar').style.display='none';
-  document.getElementById('signOutBtn').style.display='none';
+  document.getElementById('userWrap').style.display='none';
   clients=[]; allMemos=[]; isDemo=false;
+  renderLastLoginInfo();
+  // 로그인 버튼 복구
+  const btn = document.getElementById('signInBtn');
+  if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+  document.getElementById('loginSpinner').style.display='none';
+  document.getElementById('signInBtnTxt').textContent='Google 계정으로 로그인';
 }
 function demoMode(){
   isDemo=true;
+  addLoginLog('login', '데모 사용자');
+  updateUserUI({name:'데모 사용자', email:'demo@fincrm.app', picture:''});
   clients=[
     {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'홍 문례',email:'',address1:'1234 Wilshire Blvd',city:'Los Angeles',zip:'90010',phone:'949-664-0113',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',ref:'FALSE',durl:'https://docs.google.com/spreadsheets/d/1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM/edit',state:'',biz:'',dob:'',next:''},
     {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'김 철수',email:'kim@email.com',address1:'567 Main Street',city:'Irvine',zip:'92614',phone:'213-555-0100',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개',ref:'TRUE',durl:'',state:'',biz:'',dob:'',next:''},
@@ -815,8 +916,14 @@ function demoMode(){
 }
 function bootApp(){
   document.getElementById('loginScreen').style.display='none';
+  document.getElementById('loginSpinner').style.display='none';
   document.getElementById('app').classList.add('on');
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
+  // 저장된 유저 정보 복원
+  if(!isDemo){
+    const saved = localStorage.getItem('fcrm_user');
+    if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
+  }
   if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
 }
 
@@ -2366,6 +2473,100 @@ function renderPlanInfo(clientName){
   }
   return html;
 }
+
+// ══════════════════════════════════════
+// USER UI 함수들
+// ══════════════════════════════════════
+function updateUserUI(u){
+  const name = u.name || u.email || '사용자';
+  const email = u.email || '';
+  const picture = u.picture || '';
+  const initials = name.charAt(0).toUpperCase();
+  const loginTime = new Date().toLocaleString('ko-KR');
+
+  // 상단바 버튼
+  document.getElementById('userWrap').style.display = 'block';
+  document.getElementById('userBtnName').textContent = name.split(' ')[0];
+
+  // 아바타
+  if(picture){
+    const av = document.getElementById('userAvatar');
+    av.src = picture; av.style.display='block';
+    document.getElementById('userAvatarPlaceholder').style.display='none';
+    document.getElementById('udAvatar').src = picture;
+    document.getElementById('udAvatar').style.display='block';
+    document.getElementById('udAvatarPlaceholder').style.display='none';
+  } else {
+    document.getElementById('userAvatarPlaceholder').textContent = initials;
+    document.getElementById('udAvatarPlaceholder').textContent = initials;
+  }
+
+  // 드롭다운 정보
+  document.getElementById('udName').textContent = name;
+  document.getElementById('udEmail').textContent = email;
+  document.getElementById('udLoginTime').textContent = '🕐 로그인: ' + loginTime;
+
+  // 로그 렌더
+  renderUdLog();
+}
+
+function toggleUserMenu(){
+  const dd = document.getElementById('userDropdown');
+  dd.classList.toggle('on');
+  if(dd.classList.contains('on')) renderUdLog();
+}
+
+function renderUdLog(){
+  const log = getLoginLog();
+  const el = document.getElementById('udLogList');
+  if(!log.length){ el.innerHTML='<div style="font-size:11px;color:var(--text3)">이력 없음</div>'; return; }
+  el.innerHTML = log.slice(0,5).map(l=>
+    '<div class="ud-log-item">'
+    + '<div class="ud-log-dot '+(l.type==='login'?'in':'out')+'"></div>'
+    + '<span style="flex:1">'+(l.type==='login'?'로그인':'로그아웃')+' — '+l.user+'</span>'
+    + '<span style="color:var(--text3);font-size:10px;white-space:nowrap">'+l.time+'</span>'
+    + '</div>'
+  ).join('');
+}
+
+function showLoginLog(){
+  var log = getLoginLog();
+  if(!log.length){ toast('로그인 이력 없음'); return; }
+  var nl = String.fromCharCode(10);
+  var rows = log.map(function(l){
+    return (l.type==='login'?'[IN] ':'[OUT]')+' '+l.time+' '+l.user;
+  }).join(nl);
+  alert('로그인 이력 (최근 20건)'+nl+nl+rows);
+}
+
+function renderLastLoginInfo(){
+  const log = getLoginLog();
+  const el = document.getElementById('lastLoginInfo');
+  if(!el) return;
+  if(!log.length){ el.textContent=''; return; }
+  const last = log.find(l=>l.type==='login');
+  if(last) el.innerHTML = '마지막 로그인: <strong>'+last.user+'</strong><br>'+last.time;
+}
+
+// 드롭다운 외부 클릭 닫기
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.user-wrap')) {
+    const dd = document.getElementById('userDropdown');
+    if(dd) dd.classList.remove('on');
+  }
+});
+
+// 토큰 만료 감지 (5분마다 체크)
+setInterval(function(){
+  if(!accessToken || isDemo) return;
+  const remaining = tokenExpiry - Date.now();
+  if(remaining < 5*60*1000 && remaining > 0){
+    toast('⚠️ 로그인 세션이 곧 만료됩니다. 페이지를 새로고침해주세요.', 6000);
+  } else if(remaining <= 0){
+    toast('❌ 세션이 만료되었습니다. 다시 로그인해주세요.', 6000);
+    signOut();
+  }
+}, 5*60*1000);
 
 function populateMemoSel(){}
 </script>
