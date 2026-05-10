@@ -1296,21 +1296,7 @@ function openDetail(rowIdx){
       <h4 style="color:var(--blue)">🏥 ${c.plan} 플랜 상세 정보
         <button class="btn sm" onclick="openEditClient(${c.rowIdx})" style="font-size:11px">✏️ 수정</button>
       </h4>
-      ${(()=>{
-        const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
-        const hasPi=pi.mbi||pi.medical_no||pi.pcp||pi.network||pi.meds||pi.conditions;
-        if(!hasPi) return `<p style="color:var(--text3);font-size:13px;padding:8px 0">추가 정보 없음 — 수정 버튼을 눌러 입력해주세요</p>`;
-        return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
-          ${pi.mbi?dr('🪪 MBI (Medicare ID)', `<span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:1px">${pi.mbi}</span>`):''}
-          ${pi.medical_no?dr('🏥 Medical # (Medi-Cal)', `<span style="font-family:monospace;font-size:13px;font-weight:700">${pi.medical_no}</span>`):''}
-          ${dr('PCP 이름', pi.pcp||'—')}${dr('PCP 연락처', pi.pcp_phone||'—')}
-          ${dr('메디컬 네트워크 / IPA', pi.network||'—')}${dr('그룹 번호', pi.group_no||'—')}
-        </div>
-        ${pi.meds?`<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">💊 복용 약 리스트</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">${pi.meds.split(',').map(m=>`<span class="badge bbl">${m.trim()}</span>`).join('')}</div>
-        </div>`:''}
-        ${pi.conditions?`<div style="margin-top:8px">${dr('⚠️ 특이사항 / 만성질환', pi.conditions)}</div>`:''}`;
-      })()}
+      ${renderPlanInfo(c.name)}
     </div>`:''
     }
     <div class="dc">
@@ -2333,6 +2319,52 @@ function toggleAgentField(){
     const agEl = document.getElementById('f_agent');
     if(agEl) agEl.value = '';
   }
+}
+
+// ══════════════════════════════════════
+// PlanInfo 상세 렌더 함수 (백틱 중첩 방지)
+// ══════════════════════════════════════
+function renderPlanInfo(clientName){
+  const pi = allPlanInfo.find(p=>p.name.trim()===clientName.trim())||{};
+  const hasPi = pi.mbi||pi.medical_no||pi.pcp||pi.network||pi.meds||pi.conditions;
+  if(!hasPi) return '<p style="color:var(--text3);font-size:13px;padding:8px 0">추가 정보 없음 — 수정 버튼을 눌러 입력해주세요</p>';
+
+  const piRows = [
+    pi.mbi        ? {label:'🪪 MBI (Medicare ID)',       val:'<span style="font-family:monospace;font-size:14px;font-weight:700;letter-spacing:1.5px;color:var(--blue)">'+pi.mbi+'</span>'} : null,
+    pi.medical_no ? {label:'🏥 Medical # (Medi-Cal)',    val:'<span style="font-family:monospace;font-size:14px;font-weight:700">'+pi.medical_no+'</span>'} : null,
+    {label:'👨‍⚕️ PCP 이름',             val: pi.pcp||'—'},
+    {label:'📞 PCP 연락처',             val: pi.pcp_phone||'—'},
+    {label:'🏨 메디컬 네트워크 / IPA',  val: pi.network||'—'},
+    {label:'🔢 그룹 번호',              val: pi.group_no||'—'},
+  ].filter(Boolean);
+
+  const mb = (pi.meds||pi.conditions) ? '14px' : '0';
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--g3);border-radius:var(--rs);overflow:hidden;margin-bottom:'+mb+'">';
+  piRows.forEach(function(row, i){
+    const bg = i%2===0 ? '#f8fbff' : '#fff';
+    html += '<div style="background:'+bg+';padding:10px 14px;display:flex;flex-direction:column;gap:3px">'
+          + '<span style="font-size:11px;color:var(--text3);font-weight:600">'+row.label+'</span>'
+          + '<span style="font-size:13px;font-weight:500;color:var(--text)">'+row.val+'</span>'
+          + '</div>';
+  });
+  html += '</div>';
+
+  if(pi.meds){
+    const medList = pi.meds.split(',').map(function(m){return m.trim();}).filter(Boolean).sort();
+    html += '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--rs);padding:12px 14px;margin-bottom:10px">'
+          + '<div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">💊 복용 약 리스트 <span style="font-weight:400;color:var(--text3)">('+medList.length+'개)</span></div>'
+          + '<div style="display:flex;flex-wrap:wrap;gap:5px">'
+          + medList.map(function(m){ return '<span style="background:#dbeafe;color:#1e40af;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:500">💊 '+m+'</span>'; }).join('')
+          + '</div></div>';
+  }
+
+  if(pi.conditions){
+    html += '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--rs);padding:12px 14px">'
+          + '<div style="font-size:11px;font-weight:700;color:#c2410c;margin-bottom:6px">⚠️ 특이사항 / 만성질환</div>'
+          + '<div style="font-size:13px;color:var(--text);line-height:1.7">'+pi.conditions+'</div>'
+          + '</div>';
+  }
+  return html;
 }
 
 function populateMemoSel(){}
