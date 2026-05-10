@@ -570,9 +570,22 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   <div class="modal">
     <h3 id="mTitle">👤 신규 고객 등록</h3>
     <input type="hidden" id="eRow"><input type="hidden" id="eNo">
+    <div class="fgr" style="grid-template-columns:1fr 0.8fr 1fr">
+      <div class="fg"><label>First Name *</label><input id="f_fname" placeholder="John"></div>
+      <div class="fg"><label>Middle Name</label><input id="f_mname" placeholder="M."></div>
+      <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith"></div>
+    </div>
+    <div class="fg"><label>주소 (Street Address)</label><input id="f_address1" placeholder="123 Main Street"></div>
     <div class="fgr">
-      <div class="fg"><label>고객명 *</label><input id="f_name" placeholder="홍길동"></div>
+      <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles"></div>
+      <div class="fg" style="grid-column:span 1;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase"></div>
+        <div><label>ZIP Code</label><input id="f_zip" placeholder="90001"></div>
+      </div>
+    </div>
+    <div class="fgr">
       <div class="fg"><label>비즈니스</label><input id="f_biz"></div>
+      <div class="fg"><label>생년월일 (DOB)</label><input id="f_dob" placeholder="MM/DD/YYYY"></div>
     </div>
     <div class="fgr">
       <div class="fg"><label>연락처 *</label><input id="f_phone" placeholder="949-000-0000"></div>
@@ -606,10 +619,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <div class="fgr">
       <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next" title="상담/연락한 날짜"></div>
       <div class="fg"><label>에이전트 리퍼</label><select id="f_ref"><option value="FALSE">없음</option><option value="TRUE">있음</option></select></div>
-    </div>
-    <div class="fgr">
-      <div class="fg"><label>생년월일 (DOB)</label><input id="f_dob" placeholder="MM/DD/YYYY 또는 YYYY-MM-DD"></div>
-      <div class="fg"></div>
     </div>
     <div style="background:var(--green2);border:1px solid #6ee7b7;border-radius:var(--rs);padding:9px 12px;font-size:12px;color:#065f46;margin-top:4px">
       💾 저장 즉시 Google Sheets에 반영됩니다
@@ -779,11 +788,11 @@ function signOut(){
 function demoMode(){
   isDemo=true;
   clients=[
-    {rowIdx:2,no:'1',name:'홍문례',biz:'',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:'',dob:'08/05/1939'},
-    {rowIdx:3,no:'2',name:'김철수',biz:'',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE',durl:'',dob:'05/15/1958'},
-    {rowIdx:4,no:'3',name:'이영희',biz:'Seoul Market',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE',durl:''},
-    {rowIdx:5,no:'4',name:'박민준',biz:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
-    {rowIdx:6,no:'5',name:'최수연',biz:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
+    {rowIdx:2,no:'1',fname:'문례',mname:'',lname:'홍',name:'문례 홍',address1:'1234 Wilshire Blvd',city:'Los Angeles',state:'CA',zip:'90010',biz:'',dob:'08/05/1939',phone:'949-664-0113',email:'',plan:'PDP',prod:'Anthem Prime',memo:'길벗 소개. 장례보험 관심',next:'2025-05-08',ref:'FALSE',durl:''},
+    {rowIdx:3,no:'2',fname:'철수',mname:'',lname:'김',name:'철수 김',address1:'567 Main Street',city:'Irvine',state:'CA',zip:'92614',biz:'',dob:'05/15/1958',phone:'213-555-0100',email:'kim@email.com',plan:'MAPD',prod:'Kaiser HMO',memo:'딸 소개. 은퇴플랜 관심',next:'2025-05-20',ref:'TRUE',durl:''},
+    {rowIdx:4,no:'3',fname:'영희',mname:'',lname:'이',name:'영희 이',address1:'890 Olympic Blvd',city:'Koreatown',state:'CA',zip:'90006',biz:'Seoul Market',dob:'',phone:'310-555-0200',email:'',plan:'MA',prod:'Humana PPO',memo:'사업주 특별플랜',next:'2025-06-01',ref:'FALSE',durl:''},
+    {rowIdx:5,no:'4',fname:'민준',mname:'',lname:'박',name:'민준 박',address1:'',city:'',state:'',zip:'',biz:'',dob:'',phone:'714-555-0300',email:'',plan:'SNP',prod:'Molina',memo:'저소득 지원',next:'2025-05-03',ref:'TRUE',durl:''},
+    {rowIdx:6,no:'5',fname:'수연',mname:'',lname:'최',name:'수연 최',address1:'2100 Colorado Ave',city:'Santa Monica',state:'CA',zip:'90404',biz:'',dob:'',phone:'626-555-0400',email:'choi@naver.com',plan:'Medigap',prod:'Blue Shield',memo:'',next:'2025-07-10',ref:'FALSE',durl:''},
   ];
   allMemos=[
     {name:'홍문례',type:'전화 상담',text:'FEMA 가입 가능. 추후 SSBCI 신청 예정',date:'2025-01-30',ts:'2025. 01. 30. 14:22'},
@@ -881,12 +890,16 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:L`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:R`);
     clients=(d.values||[]).slice(1).map((r,i)=>({
-      rowIdx:i+2,no:String(r[0]||''),name:String(r[1]||''),biz:String(r[2]||''),
-      phone:String(r[3]||''),email:String(r[4]||''),plan:String(r[5]||''),
-      prod:String(r[6]||''),memo:String(r[7]||''),next:String(r[8]||''),
-      ref:String(r[9]||'FALSE'),durl:String(r[10]||''),dob:String(r[11]||''),
+      rowIdx:i+2,no:String(r[0]||''),
+      fname:String(r[1]||''),mname:String(r[2]||''),lname:String(r[3]||''),
+      name:String([r[1],r[2],r[3]].filter(Boolean).join(' ')||''),
+      address1:String(r[4]||''),city:String(r[5]||''),state:String(r[6]||''),zip:String(r[7]||''),
+      biz:String(r[8]||''),dob:String(r[9]||''),
+      phone:String(r[10]||''),email:String(r[11]||''),plan:String(r[12]||''),
+      prod:String(r[13]||''),memo:String(r[14]||''),next:String(r[15]||''),
+      ref:String(r[16]||'FALSE'),durl:String(r[17]||''),
     })).filter(c=>c.name.trim());
     // 상담 메모 로드 (DETAIL 시트 Sheet1, A:F)
     try{
@@ -1246,7 +1259,9 @@ function openDetail(rowIdx){
   document.getElementById('dGrid').innerHTML=`
     <div class="dc">
       <h4>기본 정보</h4>
-      ${dr('연락처',c.phone)}${dr('이메일',c.email)}${dr('비즈니스',c.biz)}
+      ${dr('연락처',c.phone)}${dr('이메일',c.email)}
+      ${c.address1?dr('주소',`${c.address1}${c.city?', '+c.city:''}${c.state?' '+c.state:''}${c.zip?' '+c.zip:''}`):''}
+      ${dr('비즈니스',c.biz)}
       ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
       ${dr('가입상품',c.prod)}${dr('에이전트 리퍼',c.ref==='TRUE'?'<span class="badge bpu">있음</span>':'없음')}
       ${dr('생년월일', (()=>{ const p=parseDob(c.dob); return p ? `${p.display} <span style="color:var(--text3);font-size:12px">(만 ${new Date().getFullYear()-p.y}세)</span>` : '—'; })())}
@@ -1456,7 +1471,7 @@ function clearPlanFields(){
 function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
-  ['name','biz','phone','email','prod','memo','next'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';});
+  ['fname','mname','lname','address1','city','state','zip','biz','dob','phone','email','prod','memo','next'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';});
   document.getElementById('f_plan').value='';document.getElementById('f_ref').value='FALSE';
   clearPlanFields();
   document.getElementById('clientModal').classList.add('on');
@@ -1465,12 +1480,19 @@ function openEditClient(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
   set('mTitle','✏️ 고객 정보 수정');
   document.getElementById('eRow').value=rowIdx;document.getElementById('eNo').value=c.no;
-  document.getElementById('f_name').value=c.name;document.getElementById('f_biz').value=c.biz;
+  document.getElementById('f_fname').value=c.fname;
+  document.getElementById('f_mname').value=c.mname;
+  document.getElementById('f_lname').value=c.lname;
+  document.getElementById('f_address1').value=c.address1;
+  document.getElementById('f_city').value=c.city;
+  document.getElementById('f_state').value=c.state;
+  document.getElementById('f_zip').value=c.zip;
+  document.getElementById('f_biz').value=c.biz;
+  document.getElementById('f_dob').value=c.dob||'';
   document.getElementById('f_phone').value=c.phone;document.getElementById('f_email').value=c.email;
   document.getElementById('f_plan').value=c.plan;document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;document.getElementById('f_next').value=c.next;
   document.getElementById('f_ref').value=c.ref;
-  document.getElementById('f_dob').value=c.dob||'';
   // MAPD/PDP 추가 정보 로드
   clearPlanFields();
   if(['MAPD','PDP'].includes(c.plan)){
@@ -1488,17 +1510,21 @@ function openEditClient(rowIdx){
   document.getElementById('clientModal').classList.add('on');
 }
 async function saveClient(){
-  const name=document.getElementById('f_name').value.trim();
-  if(!name){alert('고객명 입력 필요');return;}
+  const fname=document.getElementById('f_fname').value.trim();
+  const lname=document.getElementById('f_lname').value.trim();
+  if(!fname||!lname){alert('First Name과 Last Name은 필수입니다');return;}
   const rowIdx=document.getElementById('eRow').value;
   const plan=document.getElementById('f_plan').value;
-  // 컬럼: A=no B=name C=biz D=phone E=email F=plan G=prod H=memo I=next J=ref K=durl(빈값) L=dob
-  const vals=[[document.getElementById('eNo').value||'',name,
-    document.getElementById('f_biz').value,document.getElementById('f_phone').value,
-    document.getElementById('f_email').value,plan,
-    document.getElementById('f_prod').value,document.getElementById('f_memo').value,
-    document.getElementById('f_next').value,document.getElementById('f_ref').value,'',
-    document.getElementById('f_dob').value]];
+  const mname=document.getElementById('f_mname').value.trim();
+  const name=[fname,mname,lname].filter(Boolean).join(' ');
+  // 컬럼: A=no B=fname C=mname D=lname E=address1 F=city G=state H=zip I=biz J=dob K=phone L=email M=plan N=prod O=memo P=next Q=ref R=durl(빈값)
+  const vals=[[document.getElementById('eNo').value||'',fname,mname,lname,
+    document.getElementById('f_address1').value,document.getElementById('f_city').value,
+    document.getElementById('f_state').value.toUpperCase(),document.getElementById('f_zip').value,
+    document.getElementById('f_biz').value,document.getElementById('f_dob').value,
+    document.getElementById('f_phone').value,document.getElementById('f_email').value,
+    plan,document.getElementById('f_prod').value,document.getElementById('f_memo').value,
+    document.getElementById('f_next').value,document.getElementById('f_ref').value,'']];
   // MAPD/PDP 추가 정보 — 컬럼: name, mbi, medical_no, pcp, pcp_phone, network, group_no, meds, conditions
   let piVals=null;
   if(['MAPD','PDP'].includes(plan)){
@@ -1517,8 +1543,9 @@ async function saveClient(){
   try{
     if(isDemo){
       const obj={rowIdx:rowIdx?+rowIdx:clients.length+2,no:vals[0][0]||String(clients.length+1),
-        name,biz:vals[0][2],phone:vals[0][3],email:vals[0][4],plan:vals[0][5],
-        prod:vals[0][6],memo:vals[0][7],next:vals[0][8],ref:vals[0][9],durl:'',dob:vals[0][11]||''};
+        fname,mname,lname,name,address1:vals[0][4],city:vals[0][5],state:vals[0][6],zip:vals[0][7],
+        biz:vals[0][8],dob:vals[0][9],phone:vals[0][10],email:vals[0][11],plan:vals[0][12],
+        prod:vals[0][13],memo:vals[0][14],next:vals[0][15],ref:vals[0][16],durl:''};
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
       // 데모: planInfo 메모리 저장
@@ -1529,8 +1556,8 @@ async function saveClient(){
         if(pi_i>=0) allPlanInfo[pi_i]=pi; else allPlanInfo.push(pi);
       }
     }else{
-      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:L${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
-      else await sheetsReq('POST',`${MAIN_ID}/values/A:L:append?valueInputOption=USER_ENTERED`,{values:vals});
+      if(rowIdx) await sheetsReq('PUT',`${MAIN_ID}/values/A${rowIdx}:R${rowIdx}?valueInputOption=USER_ENTERED`,{values:vals});
+      else await sheetsReq('POST',`${MAIN_ID}/values/A:R:append?valueInputOption=USER_ENTERED`,{values:vals});
       // MAPD/PDP 추가 정보 저장 (PlanInfo 탭)
       if(piVals){
         try{
