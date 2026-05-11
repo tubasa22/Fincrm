@@ -560,6 +560,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
           <option>MAPD</option>
           <option>PDP</option>
           <option>Medigap</option>
+          <option value="C-SNP">C-SNP</option>
+          <option value="D-SNP">D-SNP</option>
         </select>
         <select class="sf" id="refF" onchange="filterClients()">
           <option value="">전체</option><option value="TRUE">리퍼만</option><option value="FALSE">일반만</option>
@@ -809,6 +811,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
           <option>MAPD</option>
           <option>PDP</option>
           <option>Medigap</option>
+          <option value="C-SNP">C-SNP (만성질환자 HMO)</option>
+          <option value="D-SNP">D-SNP (메디칼+메디케어 HMO)</option>
         </select>
       </div>
       <div class="fg">
@@ -2718,76 +2722,103 @@ function togglePlanFields(){
   const sel = document.getElementById('f_prod_sel');
   const prev = getProdValue();
 
-  // ── 캘리포니아 LA·OC·SB·Riverside 서비스 보험사 (2025 CMS 기준) ──
   const OPTS = {
     'MAPD': [
-      // 대형 전국 보험사
-      'Aetna Medicare',
-      'Anthem Blue Cross',
-      'Anthem Blue Cross MedBlue',
-      // 캘리포니아 특화
-      'Alignment Health Plan',
-      'Blue Shield 65 Plus',
-      'Brand New Day',
-      'CIGNA HealthSpring',
-      'CleverCare Health Plan',
-      'Devoted Health',
-      'Health Net',
-      'Humana Gold Plus HMO',
-      'Humana Choice PPO',
-      'Kaiser Permanente',
-      'LA Care Health Plan',
-      'Molina Medicare',
-      'SCAN Health Plan',
-      'UCLA Health Medicare',
-      'UnitedHealthcare AARP',
-      'WellCare Medicare',
+      'Aetna HMO',
+      'Aetna PPO',
+      'Anthem HMO',
+      'Anthem PPO',
+      'Alignment HMO',
+      'Alignment PPO',
+      'Blue Shield HMO',
+      'Blue Shield PPO',
+      'CleverCare HMO',
+      'Humana HMO',
+      'Humana PPO',
+      'Molina HMO',
+      'SCAN HMO',
+      'AARP / UnitedHealthcare HMO',
+      'AARP / UnitedHealthcare PPO',
+      'WellCare HMO',
+      'WellCare PPO',
     ],
     'PDP': [
-      // 2025 현재 California 서비스 PDP
       'Aetna SilverScript Choice',
       'Cigna Assurance Rx',
       'Cigna Extra Rx',
-      'Humana Basic Rx',
-      'Humana Premier Rx',
-      'Humana Value Rx',
+      'WellCare Value Script',
+      'WellCare Classic',
       'AARP Medicare Rx Preferred (UHC)',
       'AARP Medicare Rx Saver (UHC)',
-      'WellCare Classic',
-      'WellCare Value Script',
     ],
     'Medigap': [
-      'Aetna Medicare Supplement',
-      'Anthem Blue Cross Medigap',
-      'Blue Shield Medigap',
-      'CIGNA Medigap',
-      'Humana Medicare Supplement',
-      'Mutual of Omaha Medigap',
-      'UnitedHealthcare AARP Medigap',
+      'Aetna Medigap Plan A',
+      'Aetna Medigap Plan F',
+      'Aetna Medigap Plan G',
+      'Aetna Medigap Plan N',
+      'Anthem Medigap Plan F',
+      'Anthem Medigap Plan G',
+      'Anthem Medigap Plan N',
+      'Blue Shield Medigap Plan F',
+      'Blue Shield Medigap Plan G',
+      'Blue Shield Medigap Plan N',
+      'Humana Medigap Plan F',
+      'Humana Medigap Plan G',
+      'Humana Medigap Plan N',
+      'AARP Medigap Plan F (UHC)',
+      'AARP Medigap Plan G (UHC)',
+      'AARP Medigap Plan N (UHC)',
     ],
     'SNP': [
-      'Anthem Full Dual Advantage (D-SNP)',
-      'Health Net Salud y Más (D-SNP)',
-      'Humana Gold Plus SNP',
-      'Kaiser D-SNP',
-      'LA Care Medicare Plus (D-SNP)',
-      'Molina Medicare Dual Care (D-SNP)',
-      'SCAN Balance (D-SNP)',
-      'WellCare Dual Access (D-SNP)',
+      // C-SNP: 만성질환자 플랜 (HMO)
+      'Aetna C-SNP HMO',
+      'Anthem C-SNP HMO',
+      'Alignment C-SNP HMO',
+      'Humana C-SNP HMO',
+      'SCAN C-SNP HMO',
+      'WellCare C-SNP HMO',
+      // D-SNP: 메디칼+메디케어 동시 보유자 플랜 (HMO)
+      'Aetna D-SNP HMO',
+      'Anthem D-SNP HMO',
+      'Blue Shield D-SNP HMO',
+      'Humana D-SNP HMO',
+      'LA Care D-SNP HMO',
+      'Molina D-SNP HMO',
+      'SCAN D-SNP HMO',
+      'WellCare D-SNP HMO',
+    ],
+    'C-SNP': [
+      'Aetna C-SNP HMO',
+      'Anthem C-SNP HMO',
+      'Alignment C-SNP HMO',
+      'Humana C-SNP HMO',
+      'SCAN C-SNP HMO',
+      'WellCare C-SNP HMO',
+    ],
+    'D-SNP': [
+      'Aetna D-SNP HMO',
+      'Anthem D-SNP HMO',
+      'Blue Shield D-SNP HMO',
+      'Humana D-SNP HMO',
+      'LA Care D-SNP HMO',
+      'Molina D-SNP HMO',
+      'SCAN D-SNP HMO',
+      'WellCare D-SNP HMO',
     ],
     '': [
-      'Aetna Medicare', 'Alignment Health Plan', 'Anthem Blue Cross',
-      'Blue Shield 65 Plus', 'Brand New Day', 'CIGNA HealthSpring',
-      'CleverCare Health Plan', 'Devoted Health', 'Health Net',
-      'Humana', 'Kaiser Permanente', 'LA Care Health Plan',
-      'Molina Medicare', 'SCAN Health Plan', 'UCLA Health Medicare',
-      'UnitedHealthcare AARP', 'WellCare Medicare',
+      'Aetna HMO', 'Aetna PPO',
+      'Anthem HMO', 'Anthem PPO',
+      'Alignment HMO', 'Blue Shield HMO', 'Blue Shield PPO',
+      'CleverCare HMO', 'Humana HMO', 'Humana PPO',
+      'Molina HMO', 'SCAN HMO',
+      'AARP / UnitedHealthcare HMO', 'AARP / UnitedHealthcare PPO',
+      'WellCare HMO', 'WellCare PPO',
     ],
   };
 
   const opts = OPTS[plan] || OPTS[''];
   sel.innerHTML = '<option value="">선택...</option>'
-    + opts.map(o=>`<option${prev===o?' selected':''}>${o}</option>`).join('')
+    + opts.map(o => `<option${prev===o?' selected':''}>${o}</option>`).join('')
     + '<option value="__other__"'+((!opts.includes(prev)&&prev)?' selected':'')+'>기타 (직접 입력)</option>';
 
   if(prev && opts.includes(prev)) sel.value = prev;
@@ -3711,7 +3742,7 @@ let _tid;
 function toast(msg,dur=2600){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tid);_tid=setTimeout(()=>e.classList.remove('on'),dur);}
 function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=(v===undefined||v===null)?'':v;}
 function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((t-d)/864e5);}
-function pb(p){return{PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre'}[p]||'bgy';}
+function pb(p){return{'PDP':'bbl','MAPD':'bgr','MA':'bte','SNP':'bpu','C-SNP':'bpu','D-SNP':'bte','Medigap':'bam','Life':'bre'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
 function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
