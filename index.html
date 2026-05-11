@@ -33,7 +33,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .login-note{font-size:11px;color:var(--text3);margin-top:16px;line-height:1.6}
 
 /* APP */
-#app{display:none;min-height:100vh;flex-direction:column}
+#app{display:none;min-height:100vh;flex-direction:column;position:relative}
 #app.on{display:flex}
 .topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:0 20px;height:54px;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
 .logo{font-size:17px;font-weight:800;color:var(--blue);margin-right:14px;white-space:nowrap;flex-shrink:0}
@@ -686,7 +686,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 
   <!-- DETAIL (완전 독립 오버레이) -->
-  <div id="detailPg" style="display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:100;padding:22px 24px;">
+  <div id="detailPg" style="display:none;position:absolute;top:54px;left:0;right:0;min-height:calc(100vh - 54px);background:var(--bg);overflow-y:auto;z-index:100;padding:22px 24px;">
     <div style="max-width:1100px;margin:0 auto;">
       <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
       <div id="dHead"></div>
