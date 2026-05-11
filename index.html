@@ -64,8 +64,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .sf{padding:7px 10px;border:1px solid var(--g3);border-radius:var(--rs);font-size:13px;background:var(--sur);color:var(--text);outline:none;font-family:inherit;cursor:pointer}
 .tw{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
 table{width:100%;border-collapse:collapse}
-th{background:var(--g2);padding:9px 13px;text-align:left;font-size:12px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--g3);white-space:nowrap}
-td{padding:10px 13px;border-bottom:1px solid var(--g3);vertical-align:middle}
+th{background:var(--g2);padding:8px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--g3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td{padding:8px 10px;border-bottom:1px solid var(--g3);vertical-align:middle;font-size:13px;overflow:hidden}
 tr:last-child td{border-bottom:none}
 tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .empty td{text-align:center;padding:40px;color:var(--text3);font-size:13px}
@@ -567,8 +567,35 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <button class="btn pri" onclick="openAddClient()">+ 고객 등록</button>
       </div>
     </div>
-    <div class="tw"><table>
-      <thead><tr><th>No</th><th>고객명</th><th>나이</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
+    <div class="tw"><table style="table-layout:fixed">
+      <colgroup>
+        <col style="width:42px"><!-- No -->
+        <col style="width:140px"><!-- 고객명 -->
+        <col style="width:70px"> <!-- 나이 -->
+        <col style="width:130px"><!-- 연락처 -->
+        <col style="width:150px"><!-- 이메일 -->
+        <col style="width:70px"> <!-- 플랜 -->
+        <col style="width:110px"><!-- 가입상품 -->
+        <col style="width:100px"><!-- 마지막 연락일 -->
+        <col style="width:68px"> <!-- D-Day -->
+        <col style="width:60px"> <!-- 리퍼 -->
+        <col style="width:auto"> <!-- 메모 -->
+        <col style="width:152px"><!-- 관리 -->
+      </colgroup>
+      <thead><tr>
+        <th style="text-align:center">No</th>
+        <th>고객명</th>
+        <th style="text-align:center">나이</th>
+        <th>연락처</th>
+        <th>이메일</th>
+        <th style="text-align:center">플랜</th>
+        <th>가입상품</th>
+        <th style="text-align:center">마지막 연락일</th>
+        <th style="text-align:center">D-Day</th>
+        <th style="text-align:center">리퍼</th>
+        <th>메모</th>
+        <th style="text-align:center">관리</th>
+      </tr></thead>
       <tbody id="cBody"><tr class="spin-row"><td colspan="12"><div class="spin"></div></td></tr></tbody>
     </table></div>
   </div>
@@ -647,14 +674,37 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
             <span style="font-size:11px;color:var(--text3);margin-left:8px">JPG·PNG·GIF·HEIC (최대 5MB)</span>
             <div id="smsMediaPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
           </div>
+          <div style="margin-top:10px;border:1px solid var(--g3);border-radius:var(--rs);padding:10px;background:var(--g2)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer">
+                <input type="checkbox" id="smsScheduleChk" onchange="toggleSmsSchedule()" style="accent-color:var(--blue)">
+                🕐 예약 발송
+              </label>
+            </div>
+            <div id="smsScheduleFields" style="display:none;display:none">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <input type="date" id="smsSchedDate" style="border:1px solid var(--g3);border-radius:var(--rs);padding:6px 10px;font-size:13px;font-family:inherit;outline:none;background:var(--sur)">
+                <input type="time" id="smsSchedTime" style="border:1px solid var(--g3);border-radius:var(--rs);padding:6px 10px;font-size:13px;font-family:inherit;outline:none;background:var(--sur)">
+                <span style="font-size:11px;color:var(--text3)">에 발송 예약</span>
+              </div>
+            </div>
+          </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
             <span id="smsCharCount" style="font-size:11px;color:var(--text3)">0자</span>
-            <button class="btn pri" onclick="sendSms()">📤 문자 발송</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn pri" onclick="sendSms()">📤 즉시 발송</button>
+              <button class="btn" id="smsSchedBtn" style="display:none" onclick="scheduleSms()">🕐 예약 등록</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="sh" style="margin-top:20px"><div class="st">발송 이력</div></div>
+    <div class="sh" style="margin-top:20px">
+      <div class="st">🕐 예약 발송 목록</div>
+      <span id="smsSchedCount" style="font-size:12px;color:var(--text3)"></span>
+    </div>
+    <div id="smsSchedList" style="margin-bottom:20px"></div>
+    <div class="sh" style="margin-top:4px"><div class="st">발송 이력</div></div>
     <div class="tw"><table>
       <thead><tr><th>시간</th><th>수신자</th><th>연락처</th><th>메시지</th><th>상태</th></tr></thead>
       <tbody id="smsHistory"><tr class="empty"><td colspan="5">발송 이력 없음</td></tr></tbody>
@@ -1479,24 +1529,24 @@ function renderClients(list){
         + (showMedicare ? `<div style="font-size:10px;background:#dbeafe;color:#1e40af;border-radius:3px;padding:1px 5px;margin-top:2px;white-space:nowrap">🏥 New Medicare D-${daysTo65}</div>` : '');
     }
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
-      <td style="font-size:11px;color:var(--text3)">${c.no}</td>
-      <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
-        <div><div style="font-weight:600">${c.name}</div></div>
+      <td style="text-align:center;font-size:11px;color:var(--text3)">${c.no}</td>
+      <td><div class="nc"><div class="av" style="background:${ac(c.name)};flex-shrink:0">${c.name[0]}</div>
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
       </div></td>
-      <td style="font-size:12px">${ageHtml}</td>
-      <td>${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3)'>${c.phone2}</div>`:''}</td>
-      <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
-      <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
-      <td style="font-size:12px">${c.prod||'—'}</td>
-      <td style="font-size:12px">${c.next||'—'}</td>
-      <td>${dh}</td>
-      <td>${c.ref==='TRUE'?`<span class="badge bpu">리퍼</span>${c.agent?'<div style="font-size:11px;color:var(--text3);">'+c.agent+'</div>':''}`:'—'}</td>
-      <td style="font-size:12px;color:var(--text2)">${memoEl}${mc?` <span class="badge bgy">${mc}</span>`:''}</td>
-      <td onclick="event.stopPropagation()"><div class="ra">
+      <td style="text-align:center;font-size:12px">${ageHtml}</td>
+      <td style="font-size:12px">${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3);margin-top:2px'>${c.phone2}</div>`:''}</td>
+      <td style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.email||'—'}</td>
+      <td style="text-align:center">${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
+      <td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.prod||'—'}</td>
+      <td style="text-align:center;font-size:12px">${c.next||'—'}</td>
+      <td style="text-align:center">${dh}</td>
+      <td style="text-align:center">${c.ref==='TRUE'?`<span class="badge bpu" style="font-size:10px">리퍼</span>${c.agent?`<div style="font-size:10px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.agent}</div>`:''}`:'—'}</td>
+      <td style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${memoEl}${mc?` <span class="badge bgy" style="font-size:10px">${mc}</span>`:''}</td>
+      <td style="text-align:center" onclick="event.stopPropagation()"><div class="ra" style="justify-content:center">
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
         <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
-        ${c.phone?`<a href="tel:${c.phone}" class="ib" title="전화" style="text-decoration:none">📞</a>`:''}
-        ${c.phone?`<button class="ib" onclick="openSingleSms('${esc(c.name)}','${c.phone}');event.stopPropagation()" title="문자">💬</button>`:''}
+        ${c.phone?`<a href="tel:${c.phone}" class="ib" title="전화" style="text-decoration:none" onclick="setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
+        ${c.phone?`<button class="ib" onclick="smsAndReset('${esc(c.name)}','${c.phone}',${c.rowIdx});event.stopPropagation()" title="문자">💬</button>`:''}
         <button class="ib" onclick="openFileUpload('${esc(c.name)}')" title="파일 업로드">📎</button>
         <button class="ib del" onclick="delClient(${c.rowIdx},'${esc(c.name)}')" title="삭제">🗑</button>
       </div></td>
@@ -1575,8 +1625,8 @@ function renderFollowup(){
         <div class="fu-sub">${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,22)+'…':''}</div>
       </div>
       <div class="fu-acts">
-        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>`:''}
-        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="openSingleSms('${esc(c.name)}','${c.phone}');event.stopPropagation()" title="문자">💬</button>`:''}
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation();setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
+        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="smsAndReset('${esc(c.name)}','${c.phone}',${c.rowIdx});event.stopPropagation()" title="문자">💬</button>`:''}
         <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모">📝</button>
       </div>
       <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">D+${c.d}</div>
@@ -1618,8 +1668,8 @@ function renderBdThisMonth(){
         <div class="fu-sub">🎂 ${c.bdMonth}월 ${c.bdDay}일 ${isToday?'· 오늘!':isPast?'· 지남':'· D-'+c.daysLeft}</div>
       </div>
       <div class="fu-acts">
-        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation()">📞</a>`:''}
-        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="openSingleSms('${esc(c.name)}','${c.phone}','birthday');event.stopPropagation()">💬</button>`:''}
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation();setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
+        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="smsAndReset('${esc(c.name)}','${c.phone}',${c.rowIdx},'birthday');event.stopPropagation()">💬</button>`:''}
       </div>
       <div class="fu-dd" style="color:${isToday?'var(--red)':isPast?'var(--text3)':'var(--amber)'}">
         ${isToday?'🎂 오늘':isPast?'지남':'D-'+c.daysLeft}
@@ -1671,7 +1721,8 @@ function renderMedicareReminder(){
         <div class="fu-sub">65세 생일: ${c.bday65.getFullYear()}년 ${c.bday65.getMonth()+1}월 ${c.bday65.getDate()}일 · ${c.phone||'—'}</div>
       </div>
       <div class="fu-acts">
-        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation()">📞</a>`:''}
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation();setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
+        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="smsAndReset('${esc(c.name)}','${c.phone}',${c.rowIdx});event.stopPropagation()">💬</button>`:''}
         <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()">📝</button>
       </div>
       <div class="fu-dd" style="color:${urgent?'var(--red)':'var(--blue)'}">D-${c.daysTo65}</div>
@@ -1947,7 +1998,7 @@ function openDetail(rowIdx){
         '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next||'없음')+' '+db+'</p>' +
       '</div>' +
       '<div class="dh-right">' +
-        (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn">📞 전화</a>' : '') +
+        (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',false),1000)">📞 전화</a>' : '') +
         '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
         '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
         '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +
@@ -2974,9 +3025,151 @@ const SMS_TEMPLATES = [
   {label:'신규 가입 환영', text:'안녕하세요 {이름}님, 가입을 환영합니다! 궁금한 사항이 있으시면 언제든지 연락해주세요.'},
   {label:'서류 안내', text:'안녕하세요 {이름}님! 보험 관련 서류를 준비해 주셔서 감사합니다. 검토 후 연락드리겠습니다.'},
 ];
+// ══════════════════════════════════════
+// SMS 예약 발송
+// ══════════════════════════════════════
+let smsSchedTimer = null;
+
+function toggleSmsSchedule(){
+  const on = document.getElementById('smsScheduleChk').checked;
+  const fields = document.getElementById('smsScheduleFields');
+  const schedBtn = document.getElementById('smsSchedBtn');
+  fields.style.display = on ? 'block' : 'none';
+  schedBtn.style.display = on ? 'inline-flex' : 'none';
+  if(on){
+    // 기본값: 지금으로부터 1시간 후
+    const d = new Date(Date.now() + 3600000);
+    document.getElementById('smsSchedDate').value = d.toISOString().slice(0,10);
+    document.getElementById('smsSchedTime').value = d.toTimeString().slice(0,5);
+  }
+}
+
+function getScheduledSms(){
+  try{ return JSON.parse(localStorage.getItem('fcrm_sms_sched')||'[]'); }catch(e){ return []; }
+}
+function saveScheduledSms(list){
+  localStorage.setItem('fcrm_sms_sched', JSON.stringify(list));
+}
+
+function scheduleSms(){
+  if(!smsRecipients.length){ toast('수신자를 추가해주세요'); return; }
+  const msg = document.getElementById('smsMsg').value.trim();
+  if(!msg){ toast('메시지를 입력해주세요'); return; }
+  const date = document.getElementById('smsSchedDate').value;
+  const time = document.getElementById('smsSchedTime').value;
+  if(!date||!time){ toast('날짜와 시간을 선택해주세요'); return; }
+  const sendAt = new Date(date+'T'+time).getTime();
+  if(sendAt <= Date.now()){ toast('❌ 예약 시간은 현재보다 미래여야 합니다'); return; }
+  const entry = {
+    id: 'sched_'+Date.now(),
+    sendAt,
+    sendAtStr: date+' '+time,
+    recipients: [...smsRecipients],
+    msg,
+    mediaCount: smsMediaFiles.length,
+    status: 'pending'
+  };
+  const list = getScheduledSms();
+  list.push(entry);
+  list.sort((a,b)=>a.sendAt-b.sendAt);
+  saveScheduledSms(list);
+  // 체크박스 리셋
+  document.getElementById('smsScheduleChk').checked = false;
+  toggleSmsSchedule();
+  smsRecipients=[]; renderSmsRecips();
+  smsMediaFiles=[]; renderSmsMediaPreview();
+  document.getElementById('smsMsg').value='';
+  renderSmsSchedList();
+  toast(`✅ ${entry.recipients.length}명에게 ${date} ${time} 예약 완료`);
+  startSchedWatcher();
+}
+
+function cancelScheduledSms(id){
+  if(!confirm('이 예약을 취소할까요?')) return;
+  const list = getScheduledSms().filter(s=>s.id!==id);
+  saveScheduledSms(list);
+  renderSmsSchedList();
+  toast('🗑 예약이 취소되었습니다');
+}
+
+function renderSmsSchedList(){
+  const el = document.getElementById('smsSchedList');
+  if(!el) return;
+  const list = getScheduledSms().filter(s=>s.status==='pending');
+  set('smsSchedCount', list.length ? list.length+'건 대기 중' : '');
+  if(!list.length){
+    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0">예약된 발송 없음</div>';
+    return;
+  }
+  el.innerHTML = list.map(s=>{
+    const remaining = s.sendAt - Date.now();
+    const h = Math.floor(remaining/3600000);
+    const m = Math.floor((remaining%3600000)/60000);
+    const timeLeft = remaining>0 ? (h>0?h+'시간 ':'')+m+'분 후' : '곧 발송';
+    return `<div style="background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh)">
+      <div style="font-size:22px;flex-shrink:0">🕐</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">${s.recipients.map(r=>r.name).join(', ')} <span style="font-size:11px;color:var(--text3);font-weight:400">(${s.recipients.length}명)</span></div>
+        <div style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.msg.slice(0,40)}${s.msg.length>40?'…':''}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">📅 ${s.sendAtStr} · <span style="color:var(--blue);font-weight:600">${timeLeft}</span></div>
+      </div>
+      <button class="btn sm red" onclick="cancelScheduledSms('${s.id}')">취소</button>
+    </div>`;
+  }).join('');
+}
+
+// 예약 시간 체크 타이머 (1분마다)
+function startSchedWatcher(){
+  if(smsSchedTimer) return;
+  smsSchedTimer = setInterval(async ()=>{
+    const list = getScheduledSms();
+    const now = Date.now();
+    let changed = false;
+    for(const s of list){
+      if(s.status==='pending' && s.sendAt <= now){
+        s.status = 'sending';
+        changed = true;
+        // 실제 발송
+        const t = JSON.parse(localStorage.getItem('twilio')||'{}');
+        if(isDemo || !t.sid){
+          s.status = 'done';
+          s.recipients.forEach(r=>{
+            smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:s.msg.slice(0,30)+'…',status:'✅ 예약발송(완료)'});
+          });
+          toast(`✅ 예약 문자 발송 완료 — ${s.recipients.length}명`);
+        } else {
+          let ok=0;
+          for(const r of s.recipients){
+            try{
+              const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${t.sid}/Messages.json`,{
+                method:'POST',
+                headers:{'Authorization':'Basic '+btoa(t.sid+':'+t.token),'Content-Type':'application/x-www-form-urlencoded'},
+                body:new URLSearchParams({To:r.phone,From:t.from,Body:s.msg.replace(/\{이름\}/g,r.name)})
+              });
+              const d=await res.json();
+              smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:s.msg.slice(0,30)+'…',status:d.sid?'✅ 예약발송':'❌ 실패'});
+              if(d.sid) ok++;
+            }catch(e){}
+          }
+          s.status='done';
+          toast(`✅ 예약 문자 발송 완료 — ${ok}/${s.recipients.length}명`);
+        }
+        localStorage.setItem('sms_history', JSON.stringify(smsHistory.slice(0,100)));
+      }
+    }
+    if(changed){
+      saveScheduledSms(list);
+      renderSmsSchedList();
+      renderSmsHistory();
+    }
+  }, 60000); // 1분마다 체크
+}
+
 function initSmsTab() {
   document.getElementById('smsTemplates').innerHTML = SMS_TEMPLATES.map((t,i)=>`<div class="sms-template" onclick="selectTemplate(${i})">${t.label}</div>`).join('');
   renderSmsHistory();
+  renderSmsSchedList();
+  startSchedWatcher();
   const msgEl = document.getElementById('smsMsg');
   if(msgEl && !msgEl._listenerAdded){
     msgEl.addEventListener('input', ()=>{ set('smsCharCount', msgEl.value.length+'자'); });
@@ -3119,6 +3312,43 @@ function openSingleSms(name, phone, type='general'){
     renderSmsRecips();
     if(type==='birthday') selectTemplate(0);
   },100);
+}
+
+// ══════════════════════════════════════
+// 마지막 연락일 리셋 (전화/문자 후)
+// ══════════════════════════════════════
+async function updateLastContact(rowIdx, skipConfirm){
+  const c = clients.find(x=>x.rowIdx===rowIdx);
+  if(!c) return;
+  if(!skipConfirm){
+    if(!confirm(`"${c.name}" 고객의 마지막 연락일을 오늘(${new Date().toLocaleDateString('ko-KR')})로 업데이트할까요?`)) return;
+  }
+  const today = new Date().toISOString().slice(0,10);
+  c.next = today;
+  // 숨김 목록에서도 제거 (연락했으니 다시 관리 대상)
+  fuDismissed = fuDismissed.filter(id=>id!==rowIdx);
+  localStorage.setItem('fcrm_fu_dismissed', JSON.stringify(fuDismissed));
+  if(!isDemo){
+    try{
+      await sheetsReq('PUT',`${MAIN_ID}/values/K${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[today]]});
+    }catch(e){ toast('⚠️ 시트 저장 실패: '+e.message, 4000); }
+  }
+  renderAll();
+  if(document.getElementById('detailPg').style.display==='block') openDetail(rowIdx);
+  toast(`✅ ${c.name} 마지막 연락일 → 오늘로 업데이트`);
+}
+
+// 전화 클릭 시 연락일 리셋 확인
+function callAndReset(phone, rowIdx){
+  window.location.href = 'tel:'+phone;
+  // 전화 앱 열린 직후 연락일 업데이트 제안
+  setTimeout(()=> updateLastContact(rowIdx, false), 1000);
+}
+
+// 문자 탭 열고 수신자 세팅 + 연락일 리셋 확인
+function smsAndReset(name, phone, rowIdx, type){
+  openSingleSms(name, phone, type);
+  setTimeout(()=> updateLastContact(rowIdx, false), 500);
 }
 function openBulkSms(type){
   const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
