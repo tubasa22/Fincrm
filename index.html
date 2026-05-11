@@ -3581,41 +3581,89 @@ let addrTimer = null;
 async function addrInput(el){
   const q = el.value.trim();
   const box = document.getElementById('addrSuggest');
-  if(q.length < 3){ box.style.display='none'; return; }
+  if(q.length < 4){ box.style.display='none'; return; }
   clearTimeout(addrTimer);
   addrTimer = setTimeout(async()=>{
+
+    // ── 1순위: Photon (Komoot) — 키 없음, 빠름, 미국 필터 ──
     try{
-      // Google Places Autocomplete (무료 티어, 브라우저에서 직접 호출)
       const res = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(q)}&types=address&components=country:us&language=en&key=AIzaSyD-placeholder`,
-        {mode:'no-cors'}
+        `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=7&lang=en&bbox=-125,24,-66,50`,
+        { headers:{ 'Accept-Language':'en' } }
       );
-      // CORS 제한으로 직접 API 호출 불가 → nominatim (무료, CORS 허용) 사용
+      const data = await res.json();
+      const usOnly = (data.features||[]).filter(f=>
+        f.properties.country_code==='us' || f.properties.country==='United States'
+      );
+      if(usOnly.length){
+        addrSuggestList = usOnly.map(f=>{
+          const p = f.properties;
+          const num  = p.housenumber||'';
+          const road = p.street||p.name||'';
+          const city = p.city||p.county||'';
+          const state= p.state||'';
+          const zip  = p.postcode||'';
+          return {
+            label:   [num,road,city,state,zip].filter(Boolean).join(', '),
+            address: [num,road].filter(Boolean).join(' '),
+            city, state, zip
+          };
+        });
+        renderAddrSuggest();
+        return;
+      }
     } catch(e){}
-    // ── Nominatim (OpenStreetMap) 무료 주소 검색 ──
+
+    // ── 2순위: US Census Geocoder — 미국 정부 공식, 키 없음 ──
+    try{
+      const res = await fetch(
+        `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(q)}&benchmark=Public_AR_Current&format=json`
+      );
+      const data = await res.json();
+      const matches = data?.result?.addressMatches || [];
+      if(matches.length){
+        addrSuggestList = matches.map(m=>({
+          label:   m.matchedAddress,
+          address: m.addressComponents?.streetName
+                   ? (m.addressComponents.fromAddress||'')+' '+m.addressComponents.streetName
+                   : m.matchedAddress.split(',')[0],
+          city:    m.addressComponents?.city||'',
+          state:   m.addressComponents?.state||'',
+          zip:     m.addressComponents?.zip||'',
+        }));
+        renderAddrSuggest();
+        return;
+      }
+    } catch(e){}
+
+    // ── 3순위: Nominatim 폴백 ──
     try{
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=5&countrycodes=us`,
-        {headers:{'Accept-Language':'en','User-Agent':'FinCRM/1.0'}}
+        { headers:{ 'Accept-Language':'en','User-Agent':'FinCRM/1.0' } }
       );
       const data = await res.json();
       addrSuggestList = data.map(d=>({
-        label: d.display_name,
-        address: [d.address.house_number, d.address.road].filter(Boolean).join(' '),
-        city: d.address.city || d.address.town || d.address.village || d.address.county || '',
-        state: d.address.state_code || d.address.state || '',
-        zip: d.address.postcode || '',
+        label:   d.display_name,
+        address: [d.address.house_number,d.address.road].filter(Boolean).join(' '),
+        city:    d.address.city||d.address.town||d.address.village||d.address.county||'',
+        state:   d.address.state_code||d.address.state||'',
+        zip:     d.address.postcode||'',
       }));
       renderAddrSuggest();
-    } catch(e){ addrSuggestList=[]; document.getElementById('addrSuggest').style.display='none'; }
-  }, 350);
+    } catch(e){
+      addrSuggestList=[];
+      document.getElementById('addrSuggest').style.display='none';
+    }
+
+  }, 320);
 }
 
 function renderAddrSuggest(){
   const box = document.getElementById('addrSuggest');
   if(!addrSuggestList.length){ box.style.display='none'; return; }
   box.innerHTML = addrSuggestList.map((s,i)=>`
-    <div onclick="selectAddr(${i})" style="padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--g3);line-height:1.4;transition:.1s"
+    <div onclick="selectAddr(${i})" style="padding:9px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--g3);line-height:1.4;transition:.1s"
       onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background=''">
       📍 ${s.label}
     </div>`).join('');
