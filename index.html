@@ -507,15 +507,27 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <div class="sh"><div class="st">⚠️ 연락 필요 고객</div><span id="fuCnt" style="font-size:12px;color:var(--text3)"></span></div>
         <div id="fuList"></div>
       </div>
-      <div>
-        <div class="sh">
-          <div class="st">📊 플랜별 현황</div>
-          <div style="display:flex;gap:6px">
-            <button class="qf on" id="chartToggleBar" onclick="switchChart('bar',this)" style="padding:3px 10px;font-size:11px">막대</button>
-            <button class="qf" id="chartToggleDot" onclick="switchChart('donut',this)" style="padding:3px 10px;font-size:11px">도넛</button>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div class="sh">
+            <div class="st">📊 플랜별 현황</div>
+            <div style="display:flex;gap:6px">
+              <button class="qf on" id="chartToggleBar" onclick="switchChart('bar',this)" style="padding:3px 10px;font-size:11px">막대</button>
+              <button class="qf" id="chartToggleDot" onclick="switchChart('donut',this)" style="padding:3px 10px;font-size:11px">도넛</button>
+            </div>
           </div>
+          <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
         </div>
-        <div class="dc" id="planStats" style="box-shadow:var(--sh)"></div>
+        <!-- 이번 달 생일자 -->
+        <div>
+          <div class="sh"><div class="st">🎂 이번 달 생일자</div><span id="bdThisMonthCnt" style="font-size:12px;color:var(--text3)"></span></div>
+          <div id="bdThisMonthList"></div>
+        </div>
+        <!-- Medicare 리마인더 -->
+        <div>
+          <div class="sh"><div class="st">🏥 Medicare 리마인더</div><span id="medicareReminderCnt" style="font-size:12px;color:var(--text3)"></span></div>
+          <div id="medicareReminderList"></div>
+        </div>
       </div>
     </div>
     <div style="margin-top:20px">
@@ -556,8 +568,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       </div>
     </div>
     <div class="tw"><table>
-      <thead><tr><th>No</th><th>고객명</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
-      <tbody id="cBody"><tr class="spin-row"><td colspan="11"><div class="spin"></div></td></tr></tbody>
+      <thead><tr><th>No</th><th>고객명</th><th>나이</th><th>연락처</th><th>이메일</th><th>플랜</th><th>가입상품</th><th>마지막 연락일</th><th>D-Day</th><th>리퍼</th><th>메모</th><th>관리</th></tr></thead>
+      <tbody id="cBody"><tr class="spin-row"><td colspan="12"><div class="spin"></div></td></tr></tbody>
     </table></div>
   </div>
 
@@ -1416,6 +1428,8 @@ async function loadAll(){
 }
 function renderAll(){
   updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();
+  renderBdThisMonth();
+  renderMedicareReminder();
   // 수동 일정 대상 datalist 채우기
   const dl = document.getElementById('ms_target_list');
   if(dl) dl.innerHTML = clients.map(c=>`<option value="${c.name}">`).join('');
@@ -1441,17 +1455,33 @@ function renderClients(list){
   const data=list||clients;
   set('cntBadge','('+data.length+'명)');
   const tb=document.getElementById('cBody');
-  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="11">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
+  if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="12">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
+  const today=new Date(); today.setHours(0,0,0,0);
   tb.innerHTML=data.map(c=>{
     const el_d=elapsed(c.next);
     const dh=el_d===null?'—':`<span class="badge ${el_d>=30?'bre':el_d>=14?'bam':'bgr'}">D+${el_d}</span>`;
     const mc=allMemos.filter(m=>m.name===c.name).length;
     const memoEl=c.memo?(c.memo.length>20?`<span class="tip">${c.memo.slice(0,20)}…<span class="tipbox">${c.memo}</span></span>`:c.memo):'—';
+    // 나이 계산
+    let ageHtml = '—';
+    const parsed = parseDob(c.dob);
+    if(parsed){
+      const {m,d,y} = parsed;
+      let age = today.getFullYear()-y;
+      if(today.getMonth()+1 < m || (today.getMonth()+1===m && today.getDate()<d)) age--;
+      // 65세 3개월 전 리마인더 체크
+      const bday65 = new Date(y+65,m-1,d); bday65.setHours(0,0,0,0);
+      const daysTo65 = Math.ceil((bday65-today)/864e5);
+      const showMedicare = daysTo65>0 && daysTo65<=90;
+      ageHtml = `<span style="font-weight:600">${age}세</span>`
+        + (showMedicare ? `<div style="font-size:10px;background:#dbeafe;color:#1e40af;border-radius:3px;padding:1px 5px;margin-top:2px;white-space:nowrap">🏥 New Medicare D-${daysTo65}</div>` : '');
+    }
     return `<tr class="click" onclick="openDetail(${c.rowIdx})">
       <td style="font-size:11px;color:var(--text3)">${c.no}</td>
       <td><div class="nc"><div class="av" style="background:${ac(c.name)}">${c.name[0]}</div>
         <div><div style="font-weight:600">${c.name}</div></div>
       </div></td>
+      <td style="font-size:12px">${ageHtml}</td>
       <td>${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3)'>${c.phone2}</div>`:''}</td>
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
       <td>${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
@@ -1526,6 +1556,98 @@ function renderFollowup(){
       </div>
       <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">D+${c.d}</div>
     </div>`).join('');
+}
+
+// ══════════════════════════════════════
+// 이번 달 생일자 (대시보드)
+// ══════════════════════════════════════
+function renderBdThisMonth(){
+  const el = document.getElementById('bdThisMonthList');
+  if(!el) return;
+  const today = new Date();
+  const thisM = today.getMonth()+1;
+  const thisY = today.getFullYear();
+  const list = getBirthdays().filter(c=>{
+    // 이번 달 생일 (올해 기준)
+    return c.bdMonth === thisM;
+  }).sort((a,b)=>a.bdDay-b.bdDay);
+  set('bdThisMonthCnt', list.length+'명');
+  if(!list.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--text3);padding:10px 0">이번 달 생일자 없음</div>`;
+    return;
+  }
+  el.innerHTML = list.map(c=>{
+    const isToday = c.daysLeft===0;
+    const isPast  = new Date(thisY, c.bdMonth-1, c.bdDay) < today && !isToday;
+    return `<div class="fu" style="${isToday?'border-left:3px solid var(--red);background:#fff5f5':''}">
+      <div class="fu-bar" style="background:${isToday?'var(--red)':isPast?'var(--g3)':'var(--amber)'}"></div>
+      <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
+        <div class="fu-name">${c.name}
+          ${c.plan?`<span class="badge ${pb(c.plan)}" style="font-size:10px;margin-left:4px">${c.plan}</span>`:''}
+          ${c.age?`<span style="font-size:11px;color:var(--text3);margin-left:4px">만 ${c.age}세</span>`:''}
+        </div>
+        <div class="fu-sub">🎂 ${c.bdMonth}월 ${c.bdDay}일 ${isToday?'· 오늘!':isPast?'· 지남':'· D-'+c.daysLeft}</div>
+      </div>
+      <div class="fu-acts">
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation()">📞</a>`:''}
+        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="openSingleSms('${esc(c.name)}','${c.phone}','birthday');event.stopPropagation()">💬</button>`:''}
+      </div>
+      <div class="fu-dd" style="color:${isToday?'var(--red)':isPast?'var(--text3)':'var(--amber)'}">
+        ${isToday?'🎂 오늘':isPast?'지남':'D-'+c.daysLeft}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// Medicare 리마인더 (65세 3개월 전)
+// ══════════════════════════════════════
+function renderMedicareReminder(){
+  const el = document.getElementById('medicareReminderList');
+  if(!el) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const list = [];
+  clients.forEach(c=>{
+    const parsed = parseDob(c.dob);
+    if(!parsed) return;
+    const {m, d, y} = parsed;
+    // 65세 생일
+    const bday65 = new Date(y+65, m-1, d); bday65.setHours(0,0,0,0);
+    // 이미 65세 이상이면 스킵
+    if(bday65 <= today) return;
+    // 65세 생일 3개월(90일) 전
+    const reminderDate = new Date(bday65); reminderDate.setDate(reminderDate.getDate()-90);
+    // 리마인더 기간 안에 있는 경우: 오늘 기준 reminderDate 이후 ~ 65세 생일 전
+    if(today >= reminderDate){
+      const daysTo65 = Math.ceil((bday65-today)/864e5);
+      const age = 64; // 65세 직전
+      list.push({...c, bday65, daysTo65, reminderDate});
+    }
+  });
+  list.sort((a,b)=>a.daysTo65-b.daysTo65);
+  set('medicareReminderCnt', list.length+'명');
+  if(!list.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--text3);padding:10px 0">해당 고객 없음</div>`;
+    return;
+  }
+  el.innerHTML = list.map(c=>{
+    const urgent = c.daysTo65 <= 30;
+    return `<div class="fu" style="border-left:3px solid ${urgent?'var(--red)':'var(--blue)'}">
+      <div class="fu-bar" style="background:${urgent?'var(--red)':'var(--blue)'}"></div>
+      <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
+        <div class="fu-name" style="display:flex;align-items:center;gap:6px">
+          ${c.name}
+          <span style="background:#dbeafe;color:#1e40af;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px">🏥 New Medicare</span>
+        </div>
+        <div class="fu-sub">65세 생일: ${c.bday65.getFullYear()}년 ${c.bday65.getMonth()+1}월 ${c.bday65.getDate()}일 · ${c.phone||'—'}</div>
+      </div>
+      <div class="fu-acts">
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" onclick="event.stopPropagation()">📞</a>`:''}
+        <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()">📝</button>
+      </div>
+      <div class="fu-dd" style="color:${urgent?'var(--red)':'var(--blue)'}">D-${c.daysTo65}</div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════
