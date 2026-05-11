@@ -769,11 +769,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
           <option>Alignment</option>
           <option>Anthem</option>
           <option>Blue Shield</option>
+          <option>CIGNA</option>
           <option>CleverCare</option>
           <option>Humana</option>
           <option>SCAN</option>
           <option>UCLA Health</option>
           <option>UnitedHealth</option>
+          <option>WellCare</option>
           <option value="__other__">기타 (직접 입력)</option>
         </select>
         <input id="f_prod" placeholder="상품명 직접 입력..."
@@ -1493,6 +1495,8 @@ function renderClients(list){
       <td onclick="event.stopPropagation()"><div class="ra">
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
         <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
+        ${c.phone?`<a href="tel:${c.phone}" class="ib" title="전화" style="text-decoration:none">📞</a>`:''}
+        ${c.phone?`<button class="ib" onclick="openSingleSms('${esc(c.name)}','${c.phone}');event.stopPropagation()" title="문자">💬</button>`:''}
         <button class="ib" onclick="openFileUpload('${esc(c.name)}')" title="파일 업로드">📎</button>
         <button class="ib del" onclick="delClient(${c.rowIdx},'${esc(c.name)}')" title="삭제">🗑</button>
       </div></td>
@@ -1535,13 +1539,33 @@ function renderSchedule(){
 // ══════════════════════════════════════
 // FOLLOWUP
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+// FOLLOWUP
+// ══════════════════════════════════════
+let fuDismissed = JSON.parse(localStorage.getItem('fcrm_fu_dismissed')||'[]');
+
+function dismissFu(rowIdx){
+  if(!fuDismissed.includes(rowIdx)) fuDismissed.push(rowIdx);
+  localStorage.setItem('fcrm_fu_dismissed', JSON.stringify(fuDismissed));
+  renderFollowup();
+}
+
 function renderFollowup(){
-  const items=clients.filter(c=>c.next).map(c=>({...c,d:elapsed(c.next)})).filter(c=>c.d!==null&&c.d>=7).sort((a,b)=>b.d-a.d).slice(0,8);
-  set('fuCnt',items.length+'명');
-  const el=document.getElementById('fuList');
-  if(!items.length){el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 7일 이상 미연락 없음</div>`;return;}
+  const items = clients
+    .filter(c=>c.next && !fuDismissed.includes(c.rowIdx))
+    .map(c=>({...c, d:elapsed(c.next)}))
+    .filter(c=>c.d!==null && c.d>=7)
+    .sort((a,b)=>b.d-a.d)
+    .slice(0,8);
+  const dismissedCount = clients.filter(c=>c.next && fuDismissed.includes(c.rowIdx) && (elapsed(c.next)||0)>=7).length;
+  set('fuCnt', items.length+'명'+(dismissedCount?` <span style="font-size:11px;color:var(--text3);cursor:pointer" onclick="fuDismissed=[];localStorage.removeItem('fcrm_fu_dismissed');renderFollowup()" title="숨김 해제">(+${dismissedCount}명 숨김 · 초기화)</span>`:''));
+  const el = document.getElementById('fuList');
+  if(!items.length){
+    el.innerHTML=`<div class="dc" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;box-shadow:var(--sh)">✅ 7일 이상 미연락 없음${dismissedCount?`<br><span style="font-size:11px;cursor:pointer;color:var(--blue)" onclick="fuDismissed=[];localStorage.removeItem('fcrm_fu_dismissed');renderFollowup()">${dismissedCount}명 숨김 해제</span>`:''}</div>`;
+    return;
+  }
   el.innerHTML=items.map(c=>`
-    <div class="fu">
+    <div class="fu" id="fu-${c.rowIdx}">
       <div class="fu-bar ${c.d>=30?'urgent':c.d>=14?'soon':'fine'}"></div>
       <div class="fu-meta" onclick="openDetail(${c.rowIdx})">
         <div class="fu-name">${c.name}
@@ -1551,10 +1575,15 @@ function renderFollowup(){
         <div class="fu-sub">${c.prod||'—'}${c.memo?' · '+c.memo.slice(0,22)+'…':''}</div>
       </div>
       <div class="fu-acts">
-        <a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>
+        ${c.phone?`<a href="tel:${c.phone}" class="btn sm" style="padding:4px 8px" title="전화" onclick="event.stopPropagation()">📞</a>`:''}
+        ${c.phone?`<button class="btn sm" style="padding:4px 8px" onclick="openSingleSms('${esc(c.name)}','${c.phone}');event.stopPropagation()" title="문자">💬</button>`:''}
         <button class="btn sm" style="padding:4px 8px" onclick="openAddMemoFor('${esc(c.name)}');event.stopPropagation()" title="메모">📝</button>
       </div>
       <div class="fu-dd" style="color:${c.d>=30?'var(--red)':c.d>=14?'var(--amber)':'var(--green)'}">D+${c.d}</div>
+      <button onclick="dismissFu(${c.rowIdx});event.stopPropagation()" title="숨기기"
+        style="margin-left:6px;width:20px;height:20px;border-radius:50%;border:1px solid var(--g3);background:var(--g2);cursor:pointer;font-size:11px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;transition:.15s"
+        onmouseover="this.style.background='var(--red2)';this.style.color='var(--red)';this.style.borderColor='var(--red)'"
+        onmouseout="this.style.background='var(--g2)';this.style.color='var(--text3)';this.style.borderColor='var(--g3)'">✕</button>
     </div>`).join('');
 }
 
@@ -2536,11 +2565,26 @@ async function uploadFiles(){
 // ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
 function togglePlanFields(){
-  const plan=document.getElementById('f_plan').value;
-  document.getElementById('planExtraFields').style.display=['MAPD','PDP'].includes(plan)?'block':'none';
-  // 플랜에 따라 프로덕 셀렉트 힌트 업데이트
+  const plan = document.getElementById('f_plan').value;
+  document.getElementById('planExtraFields').style.display = ['MAPD','PDP'].includes(plan) ? 'block' : 'none';
+
+  // 플랜별 프로덕트 옵션 동적 변경
   const sel = document.getElementById('f_prod_sel');
-  if(sel && !sel.value) sel.value = '';
+  const prev = getProdValue();
+  const OPTS = {
+    'PDP':    ['Aetna','CIGNA','Humana','WellCare'],
+    'MAPD':   ['Aetna','Alignment','Anthem','Blue Shield','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth'],
+    'Medigap':['Aetna','Anthem','Blue Shield','Humana','UnitedHealth'],
+    '':       ['Aetna','Alignment','Anthem','Blue Shield','CIGNA','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth','WellCare'],
+  };
+  const opts = OPTS[plan] || OPTS[''];
+  sel.innerHTML = '<option value="">선택...</option>'
+    + opts.map(o=>`<option${prev===o?' selected':''}>${o}</option>`).join('')
+    + '<option value="__other__"'+((!opts.includes(prev)&&prev)?' selected':'')+'>기타 (직접 입력)</option>';
+  // 이전 값 복원
+  if(prev && opts.includes(prev)) sel.value = prev;
+  else if(prev && !opts.includes(prev)) sel.value = '__other__';
+  prodSelChange();
 }
 function clearPlanFields(){
   ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
@@ -3664,14 +3708,17 @@ function setProdValue(val){
     document.getElementById('f_prod').style.display='none';
     return;
   }
-  const opts = ['Aetna','Alignment','Anthem','Blue Shield','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth'];
-  const match = opts.find(o => o.toLowerCase() === val.toLowerCase());
-  if(match){
-    document.getElementById('f_prod_sel').value = match;
+  const allOpts = ['Aetna','Alignment','Anthem','Blue Shield','CIGNA','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth','WellCare'];
+  const match = allOpts.find(o => o.toLowerCase() === val.toLowerCase());
+  const sel = document.getElementById('f_prod_sel');
+  // 현재 셀렉트에 옵션이 있으면 그걸로, 없으면 기타
+  const hasOpt = Array.from(sel.options).some(o=>o.value===match);
+  if(match && hasOpt){
+    sel.value = match;
     document.getElementById('f_prod').value = match;
     document.getElementById('f_prod').style.display = 'none';
   } else {
-    document.getElementById('f_prod_sel').value = '__other__';
+    sel.value = '__other__';
     document.getElementById('f_prod').value = val;
     document.getElementById('f_prod').style.display = 'block';
   }
