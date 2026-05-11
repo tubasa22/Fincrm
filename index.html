@@ -776,22 +776,22 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <h3 id="mTitle">👤 신규 고객 등록</h3>
     <input type="hidden" id="eRow"><input type="hidden" id="eNo">
     <div class="fgr" style="grid-template-columns:1fr 0.8fr 1fr">
-      <div class="fg"><label>First Name *</label><input id="f_fname" placeholder="John"></div>
-      <div class="fg"><label>Middle Name</label><input id="f_mname" placeholder="M."></div>
-      <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith"></div>
+      <div class="fg"><label>First Name *</label><input id="f_fname" placeholder="John" oninput="toTitleCase(this)"></div>
+      <div class="fg"><label>Middle Name</label><input id="f_mname" placeholder="M." oninput="toUpper(this)"></div>
+      <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith" oninput="toTitleCase(this)"></div>
     </div>
     <div class="fg"><label>주소 (Street Address)</label>
       <div style="position:relative">
         <input id="f_address1" placeholder="123 Main Street" autocomplete="off"
-          oninput="addrInput(this)" onkeydown="addrKeydown(event)"
+          oninput="addrInput(this);toUpper(this)" onkeydown="addrKeydown(event)"
           style="width:100%">
         <div id="addrSuggest" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--sur);border:1px solid var(--blue);border-radius:0 0 var(--rs) var(--rs);z-index:300;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:200px;overflow-y:auto"></div>
       </div>
     </div>
     <div class="fgr" style="grid-template-columns:1fr 0.6fr 0.7fr">
-      <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles"></div>
-      <div class="fg"><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase"></div>
-      <div class="fg"><label>ZIP Code</label><input id="f_zip" placeholder="90001"></div>
+      <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles" oninput="toTitleCase(this)"></div>
+      <div class="fg"><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase" oninput="toUpper(this)"></div>
+      <div class="fg"><label>ZIP Code</label><input id="f_zip" placeholder="90001" oninput="numOnly(this,5)"></div>
     </div>
     <div class="fgr">
       <div class="fg"><label>생년월일 (DOB)</label><input type="date" id="f_dob"></div>
@@ -801,7 +801,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="fg"><label>연락처 1 * (Primary)</label><input id="f_phone" placeholder="949-000-0000" oninput="fmtPhone(this)"></div>
       <div class="fg"><label>연락처 2 (Secondary)</label><input id="f_phone2" placeholder="213-000-0000" oninput="fmtPhone(this)"></div>
     </div>
-    <div class="fg"><label>이메일</label><input id="f_email"></div>
+    <div class="fg"><label>이메일</label><input id="f_email" oninput="toLower(this)"></div>
     <div class="fgr">
       <div class="fg"><label>플랜 구분</label>
         <select id="f_plan" onchange="togglePlanFields()">
@@ -837,16 +837,16 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <div id="planExtraFields" style="display:none;background:var(--blue2);border:1px solid #bfdbfe;border-radius:var(--rs);padding:14px;margin-bottom:12px">
       <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">🏥 MAPD / PDP 추가 정보</div>
       <div class="fgr">
-        <div class="fg"><label>MBI (Medicare ID)</label><input id="f_mbi" placeholder="1EG4-TE5-MK72"></div>
-        <div class="fg"><label>Medical # (Medi-Cal)</label><input id="f_medical_no" placeholder="Medi-Cal #"></div>
+        <div class="fg"><label>MBI (Medicare ID)</label><input id="f_mbi" placeholder="1EG4-TE5-MK72" oninput="fmtMbi(this)" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace"></div>
+        <div class="fg"><label>Medical # (Medi-Cal)</label><input id="f_medical_no" placeholder="Medi-Cal #" oninput="toUpper(this)"></div>
       </div>
       <div class="fgr">
-        <div class="fg"><label>PCP 이름</label><input id="f_pcp" placeholder="Dr. Kim..."></div>
-        <div class="fg"><label>PCP 연락처</label><input id="f_pcp_phone" placeholder="949-000-0000"></div>
+        <div class="fg"><label>PCP 이름</label><input id="f_pcp" placeholder="Dr. Kim..." oninput="toUpper(this)"></div>
+        <div class="fg"><label>PCP 연락처</label><input id="f_pcp_phone" placeholder="949-000-0000" oninput="fmtPhone(this)"></div>
       </div>
       <div class="fgr">
-        <div class="fg"><label>메디컬 네트워크 / IPA</label><input id="f_network" placeholder="HMO, PPO, 센타메디칼..."></div>
-        <div class="fg"><label>그룹 번호</label><input id="f_group_no" placeholder="Group #"></div>
+        <div class="fg"><label>메디컬 네트워크 / IPA</label><input id="f_network" placeholder="HMO, PPO, 센타메디칼..." oninput="toUpper(this)"></div>
+        <div class="fg"><label>그룹 번호</label><input id="f_group_no" placeholder="Group #" oninput="toUpper(this)"></div>
       </div>
       <div class="fg">
         <label style="display:flex;align-items:center;justify-content:space-between">
@@ -2715,20 +2715,81 @@ function togglePlanFields(){
   const plan = document.getElementById('f_plan').value;
   document.getElementById('planExtraFields').style.display = ['MAPD','PDP'].includes(plan) ? 'block' : 'none';
 
-  // 플랜별 프로덕트 옵션 동적 변경
   const sel = document.getElementById('f_prod_sel');
   const prev = getProdValue();
+
+  // ── 캘리포니아 LA·OC·SB·Riverside 서비스 보험사 (2025 CMS 기준) ──
   const OPTS = {
-    'PDP':    ['Aetna','CIGNA','Humana','WellCare'],
-    'MAPD':   ['Aetna','Alignment','Anthem','Blue Shield','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth'],
-    'Medigap':['Aetna','Anthem','Blue Shield','Humana','UnitedHealth'],
-    '':       ['Aetna','Alignment','Anthem','Blue Shield','CIGNA','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth','WellCare'],
+    'MAPD': [
+      // 대형 전국 보험사
+      'Aetna Medicare',
+      'Anthem Blue Cross',
+      'Anthem Blue Cross MedBlue',
+      // 캘리포니아 특화
+      'Alignment Health Plan',
+      'Blue Shield 65 Plus',
+      'Brand New Day',
+      'CIGNA HealthSpring',
+      'CleverCare Health Plan',
+      'Devoted Health',
+      'Health Net',
+      'Humana Gold Plus HMO',
+      'Humana Choice PPO',
+      'Kaiser Permanente',
+      'LA Care Health Plan',
+      'Molina Medicare',
+      'SCAN Health Plan',
+      'UCLA Health Medicare',
+      'UnitedHealthcare AARP',
+      'WellCare Medicare',
+    ],
+    'PDP': [
+      // 2025 현재 California 서비스 PDP
+      'Aetna SilverScript Choice',
+      'Cigna Assurance Rx',
+      'Cigna Extra Rx',
+      'Humana Basic Rx',
+      'Humana Premier Rx',
+      'Humana Value Rx',
+      'AARP Medicare Rx Preferred (UHC)',
+      'AARP Medicare Rx Saver (UHC)',
+      'WellCare Classic',
+      'WellCare Value Script',
+    ],
+    'Medigap': [
+      'Aetna Medicare Supplement',
+      'Anthem Blue Cross Medigap',
+      'Blue Shield Medigap',
+      'CIGNA Medigap',
+      'Humana Medicare Supplement',
+      'Mutual of Omaha Medigap',
+      'UnitedHealthcare AARP Medigap',
+    ],
+    'SNP': [
+      'Anthem Full Dual Advantage (D-SNP)',
+      'Health Net Salud y Más (D-SNP)',
+      'Humana Gold Plus SNP',
+      'Kaiser D-SNP',
+      'LA Care Medicare Plus (D-SNP)',
+      'Molina Medicare Dual Care (D-SNP)',
+      'SCAN Balance (D-SNP)',
+      'WellCare Dual Access (D-SNP)',
+    ],
+    '': [
+      'Aetna Medicare', 'Alignment Health Plan', 'Anthem Blue Cross',
+      'Blue Shield 65 Plus', 'Brand New Day', 'CIGNA HealthSpring',
+      'CleverCare Health Plan', 'Devoted Health', 'Health Net',
+      'Humana', 'Kaiser Permanente', 'LA Care Health Plan',
+      'Molina Medicare', 'SCAN Health Plan', 'UCLA Health Medicare',
+      'UnitedHealthcare AARP', 'WellCare Medicare',
+    ],
   };
+
   const opts = OPTS[plan] || OPTS[''];
   sel.innerHTML = '<option value="">선택...</option>'
     + opts.map(o=>`<option${prev===o?' selected':''}>${o}</option>`).join('')
     + '<option value="__other__"'+((!opts.includes(prev)&&prev)?' selected':'')+'>기타 (직접 입력)</option>';
-  // 이전 값 복원
+
   if(prev && opts.includes(prev)) sel.value = prev;
   else if(prev && !opts.includes(prev)) sel.value = '__other__';
   prodSelChange();
@@ -3667,6 +3728,44 @@ function fmtPhone(el){
   else el.value=v;
 }
 
+// MBI: 1XX9-XX9-XX99 형식 (영숫자 11자, 하이픈 자동)
+function fmtMbi(el){
+  const pos = el.selectionStart;
+  let v = el.value.replace(/[^A-Z0-9]/gi,'').toUpperCase().slice(0,11);
+  let out = '';
+  for(let i=0;i<v.length;i++){
+    if(i===4||i===7) out+='-';
+    out+=v[i];
+  }
+  el.value = out;
+}
+
+// 대문자 변환
+function toUpper(el){
+  const pos = el.selectionStart;
+  el.value = el.value.toUpperCase();
+  try{ el.setSelectionRange(pos,pos); }catch(e){}
+}
+
+// 소문자 변환 (이메일)
+function toLower(el){
+  const pos = el.selectionStart;
+  el.value = el.value.toLowerCase();
+  try{ el.setSelectionRange(pos,pos); }catch(e){}
+}
+
+// 단어 첫글자 대문자 (이름, 도시)
+function toTitleCase(el){
+  const pos = el.selectionStart;
+  el.value = el.value.replace(/\b\w/g, c=>c.toUpperCase());
+  try{ el.setSelectionRange(pos,pos); }catch(e){}
+}
+
+// 숫자만 (ZIP)
+function numOnly(el, maxLen){
+  el.value = el.value.replace(/\D/g,'').slice(0, maxLen||99);
+}
+
 // ══════════════════════════════════════
 // 주소 자동완성 (Google Places Autocomplete API)
 // ══════════════════════════════════════
@@ -4076,20 +4175,17 @@ function getProdValue(){
 }
 
 function setProdValue(val){
-  if(!val){ 
+  if(!val){
     document.getElementById('f_prod_sel').value='';
     document.getElementById('f_prod').value='';
     document.getElementById('f_prod').style.display='none';
     return;
   }
-  const allOpts = ['Aetna','Alignment','Anthem','Blue Shield','CIGNA','CleverCare','Humana','SCAN','UCLA Health','UnitedHealth','WellCare'];
-  const match = allOpts.find(o => o.toLowerCase() === val.toLowerCase());
   const sel = document.getElementById('f_prod_sel');
-  // 현재 셀렉트에 옵션이 있으면 그걸로, 없으면 기타
-  const hasOpt = Array.from(sel.options).some(o=>o.value===match);
-  if(match && hasOpt){
-    sel.value = match;
-    document.getElementById('f_prod').value = match;
+  const hasOpt = Array.from(sel.options).some(o=>o.value===val||o.text===val);
+  if(hasOpt){
+    sel.value = val;
+    document.getElementById('f_prod').value = val;
     document.getElementById('f_prod').style.display = 'none';
   } else {
     sel.value = '__other__';
