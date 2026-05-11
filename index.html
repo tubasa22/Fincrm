@@ -51,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .btn.sm{padding:5px 10px;font-size:12px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
 .btn.red{background:var(--red2);color:var(--red);border-color:var(--red)}
 
-.pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%}.pg.on{display:block}
+.pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%;flex:1;overflow-y:auto}.pg.on{display:block}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .kpi{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh)}
 .kpi-l{font-size:12px;color:var(--text2);margin-bottom:5px}.kpi-v{font-size:26px;font-weight:700}
@@ -93,7 +93,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--g3)}
 
 /* DETAIL */
-#detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto}
+#detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto;width:100%;flex:1;overflow-y:auto}
 #detailPg.on{display:block}
 .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:18px;padding:6px 13px;border:1px solid var(--g3);border-radius:var(--rs);background:var(--sur);font-family:inherit}
 .back:hover{background:var(--g2)}
@@ -1625,7 +1625,10 @@ function openDetail(rowIdx){
   // URL hash에 현재 위치 저장 → 새로고침 시 복원
   history.replaceState(null,'','#detail-'+rowIdx);
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById('detailPg').classList.add('on');
+  const dp=document.getElementById('detailPg');
+  dp.classList.add('on');
+  dp.style.display='block';
+  window.scrollTo(0,0);
   const d=elapsed(c.next);
   const db=d!==null?`<span class="badge ${d>=30?'bre':d>=14?'bam':'bgr'}">D+${d}</span>`:'';
   const memos=allMemos.filter(m=>m.name===c.name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
@@ -2127,7 +2130,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function closeDetail(){
   history.replaceState(null,'','#clients');
-  document.getElementById('detailPg').classList.remove('on');
+  const dp=document.getElementById('detailPg');
+  dp.classList.remove('on');
+  dp.style.display='none';
   const at=document.querySelector('.tab.on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const id=at?at.getAttribute('onclick').match(/'([^']+)'/)?.[1]:'dashboard';
