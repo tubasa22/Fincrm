@@ -2678,6 +2678,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_dob').value=c.dob||'';
   document.getElementById('f_next').value=c.next||'';
   document.getElementById('f_plan').value=c.plan;
+  togglePlanFields();
   setProdValue(c.prod||'');
   document.getElementById('f_prod').value=c.prod;
   document.getElementById('f_memo').value=c.memo;
@@ -2687,7 +2688,6 @@ function openEditClient(rowIdx){
   document.getElementById('f_agent_wrap').style.display=isRef?'block':'none';
   document.getElementById('f_ref_badge').style.display=isRef?'inline-flex':'none';
   const agEl=document.getElementById('f_agent'); if(agEl) agEl.value=c.agent||'';
-  clearPlanFields();
   if(['MAPD','PDP'].includes(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
     const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
