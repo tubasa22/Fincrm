@@ -93,8 +93,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--g3)}
 
 /* DETAIL */
-#detailPg{display:none;padding:22px 24px;max-width:1100px;margin:0 auto;width:100%;flex:1;overflow-y:auto}
-#detailPg.on{display:block}
+#detailPg{max-width:1100px}
 .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:18px;padding:6px 13px;border:1px solid var(--g3);border-radius:var(--rs);background:var(--sur);font-family:inherit}
 .back:hover{background:var(--g2)}
 .dh{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:22px 26px;margin-bottom:14px;display:flex;align-items:center;gap:18px;box-shadow:var(--sh);flex-wrap:wrap}
@@ -688,7 +687,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   </div>
 
   <!-- DETAIL -->
-  <div id="detailPg">
+  <div class="pg" id="detailPg">
     <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
     <div class="dh" id="dHead"></div>
     <div class="dgrid" id="dGrid"></div>
@@ -1622,12 +1621,9 @@ function renderPlanStats(){
 // ══════════════════════════════════════
 function openDetail(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
-  // URL hash에 현재 위치 저장 → 새로고침 시 복원
   history.replaceState(null,'','#detail-'+rowIdx);
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  const dp=document.getElementById('detailPg');
-  dp.classList.add('on');
-  dp.style.display='block';
+  document.getElementById('detailPg').classList.add('on');
   window.scrollTo(0,0);
   const d=elapsed(c.next);
   const db=d!==null?`<span class="badge ${d>=30?'bre':d>=14?'bam':'bgr'}">D+${d}</span>`:'';
@@ -2130,9 +2126,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function closeDetail(){
   history.replaceState(null,'','#clients');
-  const dp=document.getElementById('detailPg');
-  dp.classList.remove('on');
-  dp.style.display='none';
   const at=document.querySelector('.tab.on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   const id=at?at.getAttribute('onclick').match(/'([^']+)'/)?.[1]:'dashboard';
@@ -2800,7 +2793,6 @@ function copyWh(id){
 // ══════════════════════════════════════
 function showTab(id,el){
   history.replaceState(null,'','#'+id);
-  document.getElementById('detailPg').classList.remove('on');
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
