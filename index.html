@@ -93,7 +93,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--g3)}
 
 /* DETAIL */
-#detailPg{max-width:1100px}
 .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:18px;padding:6px 13px;border:1px solid var(--g3);border-radius:var(--rs);background:var(--sur);font-family:inherit}
 .back:hover{background:var(--g2)}
 .dh{background:var(--sur);border:1px solid var(--g3);border-radius:var(--r);padding:22px 26px;margin-bottom:14px;display:flex;align-items:center;gap:18px;box-shadow:var(--sh);flex-wrap:wrap}
@@ -686,11 +685,13 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     </div>
   </div>
 
-  <!-- DETAIL -->
-  <div class="pg" id="detailPg">
-    <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
-    <div class="dh" id="dHead"></div>
-    <div class="dgrid" id="dGrid"></div>
+  <!-- DETAIL (완전 독립 오버레이) -->
+  <div id="detailPg" style="display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:100;padding:22px 24px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <button class="back" onclick="closeDetail()">← 목록으로 돌아가기</button>
+      <div id="dHead"></div>
+      <div id="dGrid"></div>
+    </div>
   </div>
 </div>
 
@@ -1620,88 +1621,85 @@ function renderPlanStats(){
 // DETAIL PAGE
 // ══════════════════════════════════════
 function openDetail(rowIdx){
-  const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
-  history.replaceState(null,'','#detail-'+rowIdx);
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById('detailPg').classList.add('on');
-  window.scrollTo(0,0);
-  const d=elapsed(c.next);
-  const db=d!==null?`<span class="badge ${d>=30?'bre':d>=14?'bam':'bgr'}">D+${d}</span>`:'';
-  const memos=allMemos.filter(m=>m.name===c.name).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  document.getElementById('dHead').innerHTML=`
-    <div class="dh-av" style="background:${ac(c.name)}">${c.name[0]}</div>
-    <div class="dh-info">
-      <h2>${c.name}
-        ${c.ref==='TRUE'?`<span class="badge bpu" style="margin-left:8px;font-size:12px">리퍼</span>${c.agent?' <span style="font-size:12px;color:var(--text2)">'+c.agent+'</span>':''}`:''}
-        ${c.plan?`<span class="badge ${pb(c.plan)}" style="margin-left:6px;font-size:12px">${c.plan}</span>`:''}
-      </h2>
-      <p>📞 ${c.phone||'—'}${c.phone2?' / '+c.phone2:''} &nbsp;|&nbsp; ✉️ ${c.email||'—'} &nbsp;|&nbsp; 📅 마지막 연락: ${c.next||'없음'} ${db}</p>
-    </div>
-    <div class="dh-right">
-      ${c.phone?`<a href="tel:${c.phone}" class="btn sm grn">📞 전화</a>`:''}
-      <button class="btn sm" onclick="openAddMemoFor('${esc(c.name)}')">📝 메모</button>
-      <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">📎 서류 업로드</button>
-      <button class="btn sm" onclick="openEditClient(${c.rowIdx})">✏️ 수정</button>
-      <button class="btn sm pri" onclick="openSheetView('${esc(c.name)}','${c.durl||''}')">📋 상세 페이지</button>
-    </div>`;
+  const c=clients.find(x=>x.rowIdx===rowIdx);
+  if(!c){ alert('고객 정보를 찾을 수 없습니다.'); return; }
 
-  const docsHtml = isDemo
-    ? `<div class="doc-item"><span style="font-size:18px">📄</span><div><div class="doc-name">[보험카드] anthem_card.jpg</div><div class="doc-date">2025-03-18</div></div><a href="#" class="btn sm">열기</a></div>`
-    : `<div style="color:var(--text3);font-size:13px;text-align:center;padding:12px" id="docsList_${rowIdx}">서류 불러오는 중...</div>`;
+  // 상세페이지 오버레이 띄우기 (가장 원시적인 방법)
+  var dp = document.getElementById('detailPg');
+  dp.style.display = 'block';
+  dp.scrollTop = 0;
 
-  document.getElementById('dGrid').innerHTML=`
-    <div class="dc">
-      <h4>기본 정보</h4>
-      ${dr('연락처 1',c.phone)}${c.phone2?dr('연락처 2',c.phone2):''}${dr('이메일',c.email)}
-      ${c.address1?dr('주소',`${c.address1}${c.city?', '+c.city:''}${c.zip?' '+c.zip:''}`):''}
-      ${c.state?dr('State',c.state):''}
-      ${c.dob?dr('생년월일 (DOB)',c.dob):''}
-      ${dr('플랜',c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—')}
-      ${dr('가입상품',c.prod)}${dr('에이전트 리퍼', c.ref==='TRUE' ? `<span class="badge bpu">리퍼 ✓</span>${c.agent?' &nbsp;<strong>'+c.agent+'</strong>':''}` : '없음')}
-    </div>
-    <div class="dc">
-      <h4>메모 &amp; 일정
-        <button class="btn sm" onclick="toggleMemoEdit(${c.rowIdx},'${esc(c.memo||'')}')">✏️ 수정</button>
-      </h4>
-      ${dr('마지막 연락일',(c.next||'없음')+' '+db)}
-      <div id="memoView_${c.rowIdx}" style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">${c.memo||'(메모 없음)'}</div>
-      <div id="memoEdit_${c.rowIdx}" style="display:none;margin-top:10px">
-        <textarea id="memoTa_${c.rowIdx}" style="width:100%;border:1px solid var(--blue);border-radius:var(--rs);padding:10px;font-size:13px;min-height:80px;resize:vertical;font-family:inherit;outline:none;line-height:1.7">${c.memo||''}</textarea>
-        <div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end">
-          <button class="btn sm" onclick="cancelMemoEdit(${c.rowIdx},'${esc(c.memo||'')}')">취소</button>
-          <button class="btn sm pri" onclick="saveMemoEdit(${c.rowIdx})">💾 저장</button>
-        </div>
-      </div>
-    </div>
-    ${['MAPD','PDP'].includes(c.plan)?`
-    <div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">
-      <h4 style="color:var(--blue)">🏥 ${c.plan} 플랜 상세 정보
-        <button class="btn sm" onclick="openEditClient(${c.rowIdx})" style="font-size:11px">✏️ 수정</button>
-      </h4>
-      ${renderPlanInfo(c.name)}
-    </div>`:''
-    }
-    <div class="dc">
-      <h4>📎 고객 서류
-        <button class="btn sm" onclick="openFileUpload('${esc(c.name)}')">+ 업로드</button>
-      </h4>
-      <div id="docsList_${rowIdx}">${docsHtml}</div>
-    </div>
-    <div class="dc full">
-      <h4>📋 상담 이력 · 변경 로그 (${memos.length}건)
-        <button class="btn sm pri" onclick="openAddMemoFor('${esc(c.name)}')">+ 메모 추가</button>
-      </h4>
-      ${memos.length ? memos.map(m=>`
-        <div class="mi" style="border-left:3px solid var(--blue);padding-left:12px;margin-bottom:10px;background:var(--sur);border-radius:0 var(--rs) var(--rs) 0">
-          <div class="mi-d" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span class="badge bbl" style="font-size:10px">${m.type||'기타'}</span>
-            <span style="font-weight:600;color:var(--text)">${m.date||''}</span>
-            ${m.ts?`<span style="font-size:11px;color:var(--text3)">작성: ${m.ts}</span>`:''}
-          </div>
-          <div class="mi-t" style="margin-top:6px;white-space:pre-wrap">${m.text||''}</div>
-        </div>`).join('')
-      : '<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음 — 위 버튼으로 첫 메모를 추가하세요</p>'}
-    </div>`;
+  var d = elapsed(c.next);
+  var db = d!==null ? '<span class="badge '+(d>=30?'bre':d>=14?'bam':'bgr')+'">D+'+d+'</span>' : '';
+  var memos = allMemos.filter(function(m){ return m.name===c.name; }).sort(function(a,b){ return new Date(b.date||0)-new Date(a.date||0); });
+
+  // 헤더
+  document.getElementById('dHead').innerHTML =
+    '<div class="dh">' +
+      '<div class="dh-av" style="background:'+ac(c.name)+'">'+c.name[0]+'</div>' +
+      '<div class="dh-info">' +
+        '<h2>'+c.name+
+          (c.ref==='TRUE' ? ' <span class="badge bpu">리퍼</span>'+(c.agent?' <span style="font-size:12px;color:var(--text2)">'+c.agent+'</span>':'') : '') +
+          (c.plan ? ' <span class="badge '+pb(c.plan)+'">'+c.plan+'</span>' : '') +
+        '</h2>' +
+        '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next||'없음')+' '+db+'</p>' +
+      '</div>' +
+      '<div class="dh-right">' +
+        (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn">📞 전화</a>' : '') +
+        '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
+        '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
+        '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +
+        '<button class="btn sm pri" onclick="openSheetView(\''+esc(c.name)+'\',\''+( c.durl||'')+'\')">📋 상세 페이지</button>' +
+      '</div>' +
+    '</div>';
+
+  // 본문 그리드
+  var memoListHtml = memos.length ? memos.map(function(m){
+    return '<div class="mi" style="border-left:3px solid var(--blue);padding-left:12px;margin-bottom:10px;background:var(--sur);border-radius:0 var(--rs) var(--rs) 0">' +
+      '<div class="mi-d" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+        '<span class="badge bbl" style="font-size:10px">'+(m.type||'기타')+'</span>' +
+        '<span style="font-weight:600;color:var(--text)">'+(m.date||'')+'</span>' +
+        (m.ts ? '<span style="font-size:11px;color:var(--text3)">작성: '+m.ts+'</span>' : '') +
+      '</div>' +
+      '<div class="mi-t" style="margin-top:6px;white-space:pre-wrap">'+(m.text||'')+'</div>' +
+    '</div>';
+  }).join('') : '<p style="color:var(--text3);font-size:13px;padding:10px 0">상담 이력 없음</p>';
+
+  document.getElementById('dGrid').innerHTML =
+    '<div class="dgrid">' +
+      '<div class="dc">' +
+        '<h4>기본 정보</h4>' +
+        dr('연락처 1', c.phone) +
+        (c.phone2 ? dr('연락처 2', c.phone2) : '') +
+        dr('이메일', c.email) +
+        (c.address1 ? dr('주소', c.address1+(c.city?', '+c.city:'')+(c.zip?' '+c.zip:'')) : '') +
+        (c.state ? dr('State', c.state) : '') +
+        (c.dob ? dr('생년월일', c.dob) : '') +
+        dr('플랜', c.plan ? '<span class="badge '+pb(c.plan)+'">'+c.plan+'</span>' : '—') +
+        dr('가입상품', c.prod||'—') +
+        dr('리퍼', c.ref==='TRUE' ? '<span class="badge bpu">리퍼 ✓</span>'+(c.agent?' <strong>'+c.agent+'</strong>':'') : '없음') +
+      '</div>' +
+      '<div class="dc">' +
+        '<h4>메모 &amp; 일정 <button class="btn sm" onclick="toggleMemoEdit('+c.rowIdx+',\''+esc(c.memo||'')+'\')">✏️ 수정</button></h4>' +
+        dr('마지막 연락일', (c.next||'없음')+' '+db) +
+        '<div id="memoView_'+c.rowIdx+'" style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">'+(c.memo||'(메모 없음)')+'</div>' +
+        '<div id="memoEdit_'+c.rowIdx+'" style="display:none;margin-top:10px">' +
+          '<textarea id="memoTa_'+c.rowIdx+'" style="width:100%;border:1px solid var(--blue);border-radius:var(--rs);padding:10px;font-size:13px;min-height:80px;resize:vertical;font-family:inherit;outline:none;line-height:1.7">'+(c.memo||'')+'</textarea>' +
+          '<div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end">' +
+            '<button class="btn sm" onclick="cancelMemoEdit('+c.rowIdx+',\''+esc(c.memo||'')+'\')">취소</button>' +
+            '<button class="btn sm pri" onclick="saveMemoEdit('+c.rowIdx+')">💾 저장</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dc">' +
+        '<h4>📎 고객 서류 <button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">+ 업로드</button></h4>' +
+        '<div id="docsList_'+rowIdx+'"><div style="color:var(--text3);font-size:13px;padding:12px">불러오는 중...</div></div>' +
+      '</div>' +
+      '<div class="dc full">' +
+        '<h4>📋 상담 이력 ('+memos.length+'건) <button class="btn sm pri" onclick="openAddMemoFor(\''+esc(c.name)+'\')">+ 메모 추가</button></h4>' +
+        memoListHtml +
+      '</div>' +
+    '</div>';
 
   loadClientDocs(c.name, rowIdx);
 }
@@ -2125,11 +2123,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 function closeDetail(){
-  history.replaceState(null,'','#clients');
-  const at=document.querySelector('.tab.on');
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  const id=at?at.getAttribute('onclick').match(/'([^']+)'/)?.[1]:'dashboard';
-  document.getElementById('pg-'+(id||'dashboard'))?.classList.add('on');
+  document.getElementById('detailPg').style.display = 'none';
 }
 
 // ══════════════════════════════════════
@@ -2493,7 +2487,7 @@ async function saveMemo(){
     }
     closeOv('memoModal');
     renderAll();
-    if(document.getElementById('detailPg').classList.contains('on')){
+    if(document.getElementById('detailPg').style.display === 'block'){
       const c=clients.find(x=>x.name===name);
       if(c) openDetail(c.rowIdx);
     }
