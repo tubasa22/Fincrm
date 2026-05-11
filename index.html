@@ -2044,6 +2044,15 @@ function openDetail(rowIdx){
           '</div>' +
         '</div>' +
       '</div>' +
+      // MAPD/PDP 플랜 추가 정보 패널
+      (['MAPD','PDP'].includes(c.plan) ?
+        '<div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">' +
+          '<h4 style="color:var(--blue)">🏥 '+c.plan+' 플랜 상세 정보' +
+            ' <button class="btn sm" onclick="openEditClient('+c.rowIdx+')" style="font-size:11px">✏️ 수정</button>' +
+          '</h4>' +
+          renderPlanInfo(c.name) +
+        '</div>'
+      : '') +
       '<div class="dc">' +
         '<h4>📎 고객 서류 <button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">+ 업로드</button></h4>' +
         '<div id="docsList_'+rowIdx+'"><div style="color:var(--text3);font-size:13px;padding:12px">불러오는 중...</div></div>' +
