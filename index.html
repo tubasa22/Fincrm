@@ -463,10 +463,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
             <div style="font-size:11px;color:var(--text3);margin-top:4px" id="udLoginTime"></div>
           </div>
           <div class="ud-body">
-            <div class="ud-item" onclick="loadAll();toggleUserMenu()">
-              <span class="ud-icon">🔄</span> 데이터 새로고침
-            </div>
-            <div class="ud-divider"></div>
             <div class="ud-item" onclick="showLoginLog()">
               <span class="ud-icon">📋</span> 로그인 이력
             </div>
@@ -796,7 +792,9 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div class="fg"><label>ZIP Code</label><input id="f_zip" placeholder="90001" oninput="numOnly(this,5)"></div>
     </div>
     <div class="fgr">
-      <div class="fg"><label>생년월일 (DOB)</label><input type="date" id="f_dob"></div>
+      <div class="fg"><label>생년월일 (DOB) — DD/MM/YYYY</label>
+        <input id="f_dob" placeholder="DD/MM/YYYY" maxlength="10" oninput="fmtDob(this)" style="font-family:monospace;letter-spacing:1px">
+      </div>
       <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next"></div>
     </div>
     <div class="fgr">
@@ -2863,7 +2861,11 @@ function openEditClient(rowIdx){
   document.getElementById('f_phone2').value=c.phone2||'';
   document.getElementById('f_email').value=c.email;
   document.getElementById('f_state').value=c.state||'';
-  document.getElementById('f_dob').value=c.dob||'';
+  // dob → DD/MM/YYYY 변환해서 표시
+  const parsedDob = parseDob(c.dob);
+  document.getElementById('f_dob').value = parsedDob
+    ? String(parsedDob.d).padStart(2,'0')+'/'+String(parsedDob.m).padStart(2,'0')+'/'+parsedDob.y
+    : (c.dob||'');
   document.getElementById('f_next').value=c.next||'';
   document.getElementById('f_plan').value=c.plan;
   togglePlanFields();
@@ -3123,20 +3125,32 @@ function parseDob(raw) {
   if (!raw) return null;
   const s = String(raw).trim();
   if (!s) return null;
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
-    const [mm, dd, yyyy] = s.split('/').map(Number);
+  // DD/MM/YYYY (새 입력 형식 — 최우선)
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [dd, mm, yyyy] = s.split('/').map(Number);
     if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
   }
+  // MM/DD/YYYY (구 형식 호환)
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+    const parts = s.split('/').map(Number);
+    // DD/MM/YYYY vs MM/DD/YYYY 구분: 첫 번째 값이 12 초과면 DD
+    const [a, b, yyyy] = parts;
+    if (a > 12) return {m:b, d:a, y:yyyy}; // DD/MM
+    return {m:a, d:b, y:yyyy}; // MM/DD (구형)
+  }
+  // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const [yyyy, mm, dd] = s.split('-').map(Number);
     if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
   }
-  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
-    const parts = s.split('/').map(Number);
-    const [mm, dd, yyyy] = parts;
-    const fullY = yyyy < 100 ? (yyyy > 30 ? 1900+yyyy : 2000+yyyy) : yyyy;
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:fullY};
+  // 2자리 연도 처리
+  if (/^\d{1,2}\/\d{1,2}\/\d{2}$/.test(s)) {
+    const [a, b, yy] = s.split('/').map(Number);
+    const yyyy = yy > 30 ? 1900+yy : 2000+yy;
+    if (a > 12) return {m:b, d:a, y:yyyy};
+    return {m:a, d:b, y:yyyy};
   }
+  // 엑셀 시리얼
   if (/^\d+$/.test(s)) {
     const serial = parseInt(s);
     if (serial > 1000 && serial < 80000) {
@@ -3792,7 +3806,16 @@ function toTitleCase(el){
   try{ el.setSelectionRange(pos,pos); }catch(e){}
 }
 
-// 숫자만 (ZIP)
+// DOB: DD/MM/YYYY 자동 슬래시
+function fmtDob(el){
+  let v = el.value.replace(/\D/g,'').slice(0,8);
+  let out = '';
+  if(v.length>4) out = v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+  else if(v.length>2) out = v.slice(0,2)+'/'+v.slice(2);
+  else out = v;
+  el.value = out;
+}
+
 function numOnly(el, maxLen){
   el.value = el.value.replace(/\D/g,'').slice(0, maxLen||99);
 }
@@ -4093,32 +4116,34 @@ function updateUserUI(u){
   const name = u.name || u.email || '사용자';
   const email = u.email || '';
   const picture = u.picture || '';
-  const initials = name.charAt(0).toUpperCase();
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const loginTime = new Date().toLocaleString('ko-KR');
+  const firstName = name.split(' ')[0];
 
-  // 상단바 버튼
   document.getElementById('userWrap').style.display = 'block';
-  document.getElementById('userBtnName').textContent = name.split(' ')[0];
+  document.getElementById('userBtnName').textContent = firstName;
 
-  // 아바타
   if(picture){
+    // 구글 프로필 사진 있으면 표시
     const av = document.getElementById('userAvatar');
-    av.src = picture; av.style.display='block';
-    document.getElementById('userAvatarPlaceholder').style.display='none';
+    av.src = picture; av.style.display = 'block';
+    document.getElementById('userAvatarPlaceholder').style.display = 'none';
     document.getElementById('udAvatar').src = picture;
-    document.getElementById('udAvatar').style.display='block';
-    document.getElementById('udAvatarPlaceholder').style.display='none';
+    document.getElementById('udAvatar').style.display = 'block';
+    document.getElementById('udAvatarPlaceholder').style.display = 'none';
   } else {
+    // 사진 없으면 이니셜
+    document.getElementById('userAvatar').style.display = 'none';
+    document.getElementById('userAvatarPlaceholder').style.display = 'flex';
     document.getElementById('userAvatarPlaceholder').textContent = initials;
+    document.getElementById('udAvatar').style.display = 'none';
+    document.getElementById('udAvatarPlaceholder').style.display = 'flex';
     document.getElementById('udAvatarPlaceholder').textContent = initials;
   }
 
-  // 드롭다운 정보
   document.getElementById('udName').textContent = name;
   document.getElementById('udEmail').textContent = email;
   document.getElementById('udLoginTime').textContent = '🕐 로그인: ' + loginTime;
-
-  // 로그 렌더
   renderUdLog();
 }
 
