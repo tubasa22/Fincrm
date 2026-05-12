@@ -1548,13 +1548,35 @@ function verifyCode(){
     errEl.style.display = 'block';
     return;
   }
-  // 코드를 localStorage에 저장 (앱 진입 후 온보딩에서 사용)
+  // 코드를 localStorage에 저장
   localStorage.setItem('fcrm_access_code', raw);
   errEl.style.display = 'none';
-  // 구글 로그인 버튼 표시
-  document.getElementById('lp_google_wrap').style.display = 'block';
+
+  // 구글 로그인 wrap 표시
+  const wrap = document.getElementById('lp_google_wrap');
+  wrap.style.display = 'block';
   document.getElementById('lp_code_input').style.borderColor = 'var(--green)';
   document.getElementById('lp_code_input').disabled = true;
+
+  // 버튼 강제 활성화 — SDK 이미 로드됐을 수 있으므로 즉시 활성화
+  const btn = document.getElementById('signInBtn');
+  if(btn){
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    const txt = btn.querySelector('#signInBtnTxt, .signInBtnTxt, span');
+    if(txt) txt.textContent = 'Google 계정으로 로그인';
+  }
+  // tokenClient 아직 없으면 SDK 로드 대기 후 활성화
+  if(!tokenClient){
+    const chk = setInterval(()=>{
+      if(window.google?.accounts?.oauth2){
+        clearInterval(chk);
+        const b = document.getElementById('signInBtn');
+        if(b){ b.disabled=false; b.style.opacity='1'; b.style.cursor='pointer'; }
+      }
+    }, 200);
+  }
 }
 
 function signInClick(){
