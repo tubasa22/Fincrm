@@ -1580,11 +1580,12 @@ function verifyCode(){
 }
 
 function signInClick(){
+  const btn = document.getElementById('signInBtn');
   const spinner = document.getElementById('loginSpinner');
-  btn.disabled = true;
-  btn.style.opacity = '0.7';
-  document.getElementById('signInBtnTxt').textContent = '로그인 중...';
-  spinner.style.display = 'block';
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
+  const txtEl = document.getElementById('signInBtnTxt') || btn?.querySelector('span');
+  if(txtEl) txtEl.textContent = '로그인 중...';
+  if(spinner) spinner.style.display = 'block';
   if(tokenClient) tokenClient.requestAccessToken({prompt:''});
 }
 function signIn(){ signInClick(); }
