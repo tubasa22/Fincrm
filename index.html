@@ -862,18 +862,49 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <div style="display:flex;flex-direction:column;gap:10px">
           <label style="font-size:12px;font-weight:600;color:var(--text2)">주요 서비스 카운티 (복수 선택)</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            ${['Los Angeles','Orange County','San Bernardino','Riverside','San Diego','Ventura','기타 CA'].map(c=>`
-              <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
-                <input type="checkbox" name="ob_county" value="${c}" style="accent-color:var(--blue)"> ${c}
-              </label>`).join('')}
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="Los Angeles" style="accent-color:var(--blue)"> Los Angeles
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="Orange County" style="accent-color:var(--blue)"> Orange County
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="San Bernardino" style="accent-color:var(--blue)"> San Bernardino
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="Riverside" style="accent-color:var(--blue)"> Riverside
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="San Diego" style="accent-color:var(--blue)"> San Diego
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="Ventura" style="accent-color:var(--blue)"> Ventura
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--g3);border-radius:8px;cursor:pointer;font-size:13px">
+              <input type="checkbox" name="ob_county" value="기타 CA" style="accent-color:var(--blue)"> 기타 CA
+            </label>
           </div>
           <div style="margin-top:4px">
-            <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">주로 취급하는 플랜</label>
+            <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:8px">주로 취급하는 플랜</label>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
-              ${['MAPD','PDP','Medigap','C-SNP','D-SNP','Life'].map(p=>`
-                <label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
-                  <input type="checkbox" name="ob_plan" value="${p}" style="accent-color:var(--blue)"> ${p}
-                </label>`).join('')}
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="MAPD" style="accent-color:var(--blue)"> MAPD
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="PDP" style="accent-color:var(--blue)"> PDP
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="Medigap" style="accent-color:var(--blue)"> Medigap
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="C-SNP" style="accent-color:var(--blue)"> C-SNP
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="D-SNP" style="accent-color:var(--blue)"> D-SNP
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
+                <input type="checkbox" name="ob_plan" value="Life" style="accent-color:var(--blue)"> Life
+              </label>
             </div>
           </div>
         </div>
