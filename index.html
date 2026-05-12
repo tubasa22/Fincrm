@@ -404,16 +404,105 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <div id="loginScreen">
   <div class="lbox">
     <div class="llogo">🏦 FinCRM</div>
-    <p class="lsub">보험 에이전트 고객관리 시스템<br>Google 계정으로 로그인해주세요</p>
-    <button class="google-btn" id="signInBtn" onclick="signInClick()" disabled style="opacity:0.5;cursor:not-allowed">
-      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      <span id="signInBtnTxt">Google 계정 로드 중...</span>
-    </button>
-    <div class="login-spinner" id="loginSpinner"></div>
-    <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기</button>
-    <p class="login-note">Sheets 읽기/쓰기 + Drive 파일 업로드 권한이 요청됩니다</p>
-    <div class="lbox-footer">
+    <p class="lsub">한인 보험 에이전트 전용 고객관리 시스템</p>
+
+    <!-- 패널 A: 초기 선택 -->
+    <div id="lp_main">
+      <!-- 정식 사용 신청 -->
+      <button class="google-btn" style="background:linear-gradient(135deg,#1a56db,#7c3aed);color:#fff;border:none;margin-bottom:10px" onclick="showPanel('lp_apply')">
+        📝 정식 사용 신청하기
+      </button>
+      <!-- 이미 코드 있음 -->
+      <button class="google-btn" style="margin-bottom:10px" onclick="showPanel('lp_code')">
+        🔑 액세스 코드 있음 → 로그인
+      </button>
+      <!-- 데모 -->
+      <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기 (코드 불필요)</button>
+      <p class="login-note" style="margin-top:14px">베타 기간 중 무료 · LA·OC·SB·Riverside 지역 에이전트 대상</p>
       <div class="last-login" id="lastLoginInfo"></div>
+    </div>
+
+    <!-- 패널 B: 사용 신청 (정보 입력) -->
+    <div id="lp_apply" style="display:none">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <button onclick="showPanel('lp_main')" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text3)">←</button>
+        <span style="font-size:15px;font-weight:700">📝 사용 신청</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">이름 *</label>
+          <input id="ap_name" placeholder="홍길동" style="width:100%;border:1px solid var(--g3);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">에이전시명</label>
+          <input id="ap_agency" placeholder="ABC Insurance" style="width:100%;border:1px solid var(--g3);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">연락처 * (코드 수신용)</label>
+          <input id="ap_phone" placeholder="213-000-0000" oninput="fmtPhone(this)" style="width:100%;border:1px solid var(--g3);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">이메일</label>
+          <input id="ap_email" type="email" placeholder="agent@example.com" style="width:100%;border:1px solid var(--g3);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px">주요 서비스 지역</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="Los Angeles" style="accent-color:var(--blue)"> LA</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="Orange County" style="accent-color:var(--blue)"> OC</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="San Bernardino" style="accent-color:var(--blue)"> SB</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="Riverside" style="accent-color:var(--blue)"> Riverside</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="San Diego" style="accent-color:var(--blue)"> San Diego</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--g3);border-radius:7px;cursor:pointer;font-size:12px"><input type="checkbox" name="ap_county" value="기타 CA" style="accent-color:var(--blue)"> 기타 CA</label>
+          </div>
+        </div>
+      </div>
+      <button onclick="submitApply()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#7c3aed);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">신청하기 →</button>
+      <p class="login-note" style="margin-top:10px">신청 후 담당자가 액세스 코드를 연락처로 보내드립니다</p>
+    </div>
+
+    <!-- 패널 C: 신청 완료 대기 -->
+    <div id="lp_applied" style="display:none;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">✅</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:8px">신청 완료!</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px">
+        <strong id="ap_name_confirm"></strong>님의 신청이 접수되었습니다.<br>
+        담당자가 확인 후 액세스 코드를 보내드립니다.<br>
+        (보통 1 영업일 이내)
+      </div>
+      <div style="background:var(--blue2);border-radius:10px;padding:12px;font-size:12px;color:var(--blue);margin-bottom:16px">
+        코드를 받으시면 → <strong>액세스 코드 있음</strong> 버튼으로 로그인하세요
+      </div>
+      <button onclick="showPanel('lp_main')" style="width:100%;padding:11px;background:none;border:1px solid var(--g3);border-radius:10px;font-size:14px;cursor:pointer">← 처음으로</button>
+    </div>
+
+    <!-- 패널 D: 코드 입력 → 구글 로그인 -->
+    <div id="lp_code" style="display:none">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <button onclick="showPanel('lp_main')" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text3)">←</button>
+        <span style="font-size:15px;font-weight:700">🔑 액세스 코드 입력</span>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px">발급받은 코드를 입력하세요</label>
+        <input id="lp_code_input" placeholder="FC-XX-0000" maxlength="10"
+          style="width:100%;border:2px solid var(--g3);border-radius:10px;padding:14px;font-size:20px;font-weight:700;letter-spacing:3px;font-family:monospace;text-align:center;outline:none;text-transform:uppercase"
+          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'"
+          oninput="fmtAccessCode(this)" onkeydown="if(event.key==='Enter')verifyCode()">
+        <div id="lp_code_err" style="font-size:12px;color:var(--red);margin-top:6px;display:none"></div>
+      </div>
+      <button onclick="verifyCode()" style="width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px">
+        코드 확인 →
+      </button>
+      <!-- 코드 확인 후 구글 로그인 버튼 (숨겨져 있다가 표시) -->
+      <div id="lp_google_wrap" style="display:none">
+        <div style="text-align:center;margin-bottom:10px;font-size:13px;color:var(--green);font-weight:600">✅ 코드 확인됨! Google 계정으로 로그인하세요</div>
+        <button class="google-btn" id="signInBtn" onclick="signInClick()" disabled style="opacity:0.5;cursor:not-allowed;margin-bottom:0">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <span id="signInBtnTxt">Google 계정 로드 중...</span>
+        </button>
+        <div class="login-spinner" id="loginSpinner"></div>
+      </div>
+      <p class="login-note" style="margin-top:10px">코드가 없으시면 먼저 사용 신청을 해주세요</p>
     </div>
   </div>
 </div>
@@ -1377,7 +1466,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = false;
         btn.style.opacity = '1';
         btn.style.cursor = 'pointer';
-        btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg><span id="signInBtnTxt">Google 계정으로 로그인</span>`;
+        btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg><span class="signInBtnTxt">Google 계정으로 로그인</span>`;
         renderLastLoginInfo();
       }
     }
@@ -1394,8 +1483,81 @@ function addLoginLog(type, userName){
   localStorage.setItem('fcrm_login_log', JSON.stringify(log.slice(0,20)));
 }
 
+// ══════════════════════════════════════
+// 로그인 화면 패널 전환
+// ══════════════════════════════════════
+function showPanel(id){
+  ['lp_main','lp_apply','lp_applied','lp_code'].forEach(p=>{
+    const el = document.getElementById(p);
+    if(el) el.style.display = p===id ? 'block' : 'none';
+  });
+}
+
+// 액세스 코드 포맷 (FC-XX-0000)
+function fmtAccessCode(el){
+  let v = el.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+  let out = '';
+  if(v.length > 2) out = v.slice(0,2)+'-'+v.slice(2);
+  else out = v;
+  if(out.length > 5) out = out.slice(0,5)+'-'+out.replace('-','').slice(4);
+  el.value = out.slice(0,10);
+}
+
+// 사용 신청 제출
+async function submitApply(){
+  const name   = document.getElementById('ap_name').value.trim();
+  const phone  = document.getElementById('ap_phone').value.trim();
+  if(!name){ alert('이름을 입력해주세요'); return; }
+  if(!phone){ alert('연락처를 입력해주세요'); return; }
+  const counties = [...document.querySelectorAll('input[name="ap_county"]:checked')].map(e=>e.value);
+  const payload = {
+    type:    'apply',
+    name,
+    agency:  document.getElementById('ap_agency').value.trim(),
+    phone,
+    email:   document.getElementById('ap_email').value.trim(),
+    counties,
+    ts:      new Date().toLocaleString('ko-KR'),
+    source:  'FinCRM Login'
+  };
+  // Webhook 전송 (운영팀 알림)
+  const webhook = localStorage.getItem('fcrm_feedback_webhook')||'';
+  if(webhook){
+    try{
+      await fetch(webhook, { method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload) });
+    }catch(e){}
+  }
+  // 로컬 백업
+  const pending = JSON.parse(localStorage.getItem('fcrm_pending_reports')||'[]');
+  pending.push(payload);
+  localStorage.setItem('fcrm_pending_reports', JSON.stringify(pending));
+
+  document.getElementById('ap_name_confirm').textContent = name;
+  showPanel('lp_applied');
+}
+
+// 코드 검증
+function verifyCode(){
+  const raw   = document.getElementById('lp_code_input').value.trim().toUpperCase();
+  const errEl = document.getElementById('lp_code_err');
+  // 형식 체크: FC-XX-NNNN (10자)
+  if(!/^FC-[A-Z]{2}-\d{4}$/.test(raw)){
+    errEl.textContent = '❌ 코드 형식이 올바르지 않습니다 (예: FC-HG-3821)';
+    errEl.style.display = 'block';
+    return;
+  }
+  // 코드를 localStorage에 저장 (앱 진입 후 온보딩에서 사용)
+  localStorage.setItem('fcrm_access_code', raw);
+  errEl.style.display = 'none';
+  // 구글 로그인 버튼 표시
+  document.getElementById('lp_google_wrap').style.display = 'block';
+  document.getElementById('lp_code_input').style.borderColor = 'var(--green)';
+  document.getElementById('lp_code_input').disabled = true;
+}
+
 function signInClick(){
-  const btn = document.getElementById('signInBtn');
   const spinner = document.getElementById('loginSpinner');
   btn.disabled = true;
   btn.style.opacity = '0.7';
@@ -4713,10 +4875,10 @@ function obNext(step){
     document.getElementById('ob_step2').style.display='block';
     document.getElementById('ob_step_bar').style.width='66%';
   } else if(step===2){
-    // 사용자 코드 생성
+    // 로그인 시 입력한 액세스 코드 사용 (없으면 자동 생성)
     const name  = document.getElementById('ob_name').value.trim();
     const email = document.getElementById('ob_email').value.trim();
-    const code  = generateUserCode(name, email);
+    const code  = localStorage.getItem('fcrm_access_code') || generateUserCode(name, email);
     document.getElementById('ob_code_display').textContent = code;
     // 요약
     const counties = [...document.querySelectorAll('input[name="ob_county"]:checked')].map(e=>e.value);
@@ -4757,13 +4919,14 @@ function completeOnboarding(){
   const phone    = document.getElementById('ob_phone').value.trim();
   const counties = [...document.querySelectorAll('input[name="ob_county"]:checked')].map(e=>e.value);
   const plans    = [...document.querySelectorAll('input[name="ob_plan"]:checked')].map(e=>e.value);
-  const code     = document.getElementById('ob_code_display').textContent;
-  const profile  = { name, agency, email, phone, counties, plans, code,
-                     joinedAt: new Date().toLocaleString('ko-KR'), version:'1.0' };
+  // 로그인 시 입력한 액세스 코드 사용 (없으면 자동 생성)
+  const code = localStorage.getItem('fcrm_access_code') || generateUserCode(name, email);
+  const profile = { name, agency, email, phone, counties, plans, code,
+                    joinedAt: new Date().toLocaleString('ko-KR'), version:'1.0' };
   localStorage.setItem('fcrm_user_profile', JSON.stringify(profile));
   document.getElementById('onboardingModal').style.display = 'none';
   applyUserCode();
-  // 웰컴 피드백 자동 전송 (운영팀에 신규 사용자 알림)
+  // 운영팀에 신규 사용자 알림
   const webhook = localStorage.getItem('fcrm_feedback_webhook')||'';
   if(webhook){
     fetch(webhook, { method:'POST', headers:{'Content-Type':'application/json'},
