@@ -815,6 +815,32 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 
   <!-- AUTOMATION -->
   <div class="pg" id="pg-automation">
+
+    <!-- 피드백 & n8n Webhook 설정 — 최상단 -->
+    <div class="sh">
+      <div class="st">🔗 n8n / Zapier Webhook 연동</div>
+    </div>
+    <div style="background:var(--blue2);border:1.5px solid var(--blue);border-radius:var(--rs);padding:14px;font-size:13px;color:var(--blue);margin-bottom:16px;line-height:1.8">
+      💡 n8n Webhook URL을 등록하면 <strong>피드백·버그·신청·온보딩</strong> 데이터가 자동으로 Jarvice로 전달됩니다.
+    </div>
+    <div class="dc" style="box-shadow:var(--sh);margin-bottom:20px">
+      <h4>🏓 Webhook URL 등록</h4>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <input id="feedbackWebhookUrl" placeholder="https://your-n8n.app/webhook/fincrm-feedback" style="flex:1;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        <button class="btn pri" onclick="saveFeedbackWebhook()">💾 저장</button>
+        <button class="btn" onclick="testFeedbackWebhook()">🏓 Ping</button>
+      </div>
+      <div style="font-size:11px;margin-top:6px" id="feedbackWebhookStatus"></div>
+      <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--g3)">
+        <span style="font-size:12px;color:var(--text2)">미전송 임시 저장</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="pendingReportCount" style="font-size:12px;font-weight:600;color:var(--blue)"></span>
+          <button class="btn sm" onclick="sendPendingReports()">📤 재전송</button>
+          <button class="btn sm" onclick="clearPendingReports()">🗑 삭제</button>
+        </div>
+      </div>
+    </div>
+
     <div class="sh"><div class="st">⚡ Zapier 자동화 연동</div><a href="https://zapier.com" target="_blank" class="btn">Zapier 열기 →</a></div>
     <div style="background:var(--amber2);border:1px solid #fcd34d;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--amber);margin-bottom:18px;line-height:1.7">
       💡 <strong>연동 방법:</strong> Zapier → Trigger: Webhooks (Catch Hook) → URL 복사 → 아래 등록<br>
@@ -858,50 +884,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <button class="btn sm" onclick="triggerZap('new','👤 신규 고객 테스트')">👤 신규 테스트</button>
       </div>
       <div id="zapTestResult" style="font-size:12px;color:var(--text2);margin-top:8px"></div>
-    </div>
-
-    <!-- 피드백 Webhook 설정 -->
-    <div class="sh" style="margin-top:24px">
-      <div class="st">💬 피드백 & 버그 리포트 수신 설정</div>
-    </div>
-    <div style="background:var(--blue2);border:1px solid var(--blue);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--blue);margin-bottom:16px;line-height:1.7">
-      💡 n8n 또는 Zapier Webhook URL을 등록하면 사용자 피드백과 버그 리포트가 자동으로 전달됩니다.<br>
-      <strong>n8n:</strong> Webhook 트리거 노드 URL 복사 &nbsp;|&nbsp; <strong>Zapier:</strong> Webhooks by Zapier → Catch Hook → URL 복사
-    </div>
-    <div class="dc" style="box-shadow:var(--sh)">
-      <div class="fg">
-        <label>Webhook URL (n8n / Zapier)</label>
-        <div style="display:flex;gap:8px">
-          <input id="feedbackWebhookUrl" placeholder="https://your-n8n.com/webhook/crm-feedback" style="flex:1"
-            value="">
-          <button class="btn sm pri" onclick="saveFeedbackWebhook()">저장</button>
-          <button class="btn sm" onclick="testFeedbackWebhook()">테스트</button>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px" id="feedbackWebhookStatus"></div>
-      </div>
-      <div style="margin-top:12px">
-        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">전송되는 데이터 구조</div>
-        <pre style="background:var(--g2);padding:10px;border-radius:var(--rs);font-size:11px;color:var(--text2);overflow-x:auto;line-height:1.6">{
-  "type": "feedback" | "bug",
-  "subtype": "개선 아이디어" | "칭찬" | ...,
-  "severity": "심각" | "보통" | "낮음",   // 버그만
-  "page": "현재 화면",
-  "text": "내용",
-  "stars": 1~5,                           // 피드백만
-  "user": "사용자명",
-  "ts": "2026-05-11 14:30",
-  "mode": "demo" | "live",
-  "version": "1.0"
-}</pre>
-      </div>
-      <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:12px;color:var(--text2)">로컬 임시 저장된 미전송 리포트</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span id="pendingReportCount" style="font-size:12px;font-weight:600;color:var(--blue)"></span>
-          <button class="btn sm" onclick="sendPendingReports()">📤 재전송</button>
-          <button class="btn sm" onclick="clearPendingReports()">🗑 삭제</button>
-        </div>
-      </div>
     </div>
   </div>
 
