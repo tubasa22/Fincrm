@@ -1590,6 +1590,19 @@ function verifyCode(){
 
 // 개발자 코드 검증
 
+
+// 개발자 모드에서 Google 로그인 초기화
+function initGoogleSignIn(){
+  const btn = document.getElementById('signInBtn');
+  if(btn && btn.disabled){
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    const txtEl = document.getElementById('signInBtnTxt');
+    if(txtEl) txtEl.textContent = 'Google 계정으로 로그인';
+  }
+}
+
 function signInClick(){
   const btn = document.getElementById('signInBtn');
   const spinner = document.getElementById('loginSpinner');
@@ -5033,38 +5046,24 @@ function devAuthVerify(){
     return;
   }
   
-  // 개발자 인증 성공 - 모든 제한 풀기
+  // 개발자 인증 성공
   sessionStorage.setItem('dev_auth', '1');
   localStorage.setItem('dev_auth', '1');
   
-  // 개발자 사용자로 인증된 상태로 설정
-  isDemo = false;
-  localStorage.setItem('fcrm_user', JSON.stringify({
-    name: '개발자', 
-    email: 'dev@fincrm.local', 
-    picture: ''
-  }));
-  
-  // 액세스 코드 설정 (모든 기능 활성화)
-  localStorage.setItem('fcrm_access_code', 'DEV-00-0000');
-  
-  // 더미 프로필 설정 (온보딩 스킵)
-  localStorage.setItem('fcrm_user_profile', JSON.stringify({
-    name: '개발자',
-    agency: 'Development',
-    email: 'dev@fincrm.local',
-    phone: '',
-    counties: [],
-    plans: []
-  }));
-  
   closeDevAuthModal();
-  toast('✅ 개발자 모드 활성화됨');
   
-  // 앱 부팅 (로그인 화면에 있다면)
+  // 개발자 모드에서는 Google 로그인 진행
+  // loginScreen이 보이고 있으면 Google 버튼으로 이동
   const loginScreen = document.getElementById('loginScreen');
   if(loginScreen && loginScreen.style.display !== 'none'){
-    bootApp();
+    // Google 로그인 활성화 후 Google 버튼 클릭
+    initGoogleSignIn();
+    setTimeout(() => {
+      const signInBtn = document.getElementById('signInBtn');
+      if(signInBtn && !signInBtn.disabled){
+        signInBtn.click();
+      }
+    }, 500);
   } else if(document.getElementById('app').classList.contains('on')){
     // 이미 앱이 실행 중이면 개발자 패널 열기
     openDevPanel();
@@ -5468,6 +5467,8 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
     </div>
   </div>
 </div>
+<!-- 개발자 패널 (Ctrl+Shift+D로만 표시) -->
+<div id="devPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;width:90%;max-width:860px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
     <!-- 헤더 -->
     <div style="background:#26215C;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
