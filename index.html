@@ -1457,10 +1457,15 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fcrm_exp', tokenExpiry);
           fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
             .then(r=>r.json()).then(u=>{
-              const name = u.name||u.email||'사용자';
+              // Google에서 반환한 정보 사용
+              let name = u.name || u.given_name || u.family_name || u.email || '사용자';
+              // 이메일에서 이름 추출 (예: john.doe@example.com → john doe)
+              if(!u.name && u.email && u.email.includes('@')){
+                name = u.email.split('@')[0].replace(/[._-]/g, ' ');
+              }
               localStorage.setItem('fcrm_user', JSON.stringify({name, email:u.email||'', picture:u.picture||''}));
               addLoginLog('login', name);
-              updateUserUI(u);
+              updateUserUI({name: name, email: u.email||'', picture: u.picture||''});
             });
           bootApp();
         }
@@ -4765,7 +4770,13 @@ function renderPlanInfo(clientName){
 // USER UI 함수들
 // ══════════════════════════════════════
 function updateUserUI(u){
-  const name = u.name || u.email || '사용자';
+  let name = u.name || u.given_name || u.family_name || u.email || '사용자';
+  
+  // 이메일만 있는 경우 이메일에서 이름 추출
+  if(!u.name && !u.given_name && !u.family_name && u.email && u.email.includes('@')){
+    name = u.email.split('@')[0].replace(/[._-]/g, ' ');
+  }
+  
   const email = u.email || '';
   const picture = u.picture || '';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
