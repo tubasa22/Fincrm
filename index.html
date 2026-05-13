@@ -5005,10 +5005,16 @@ document.addEventListener('keydown', function(e){
 
 function openDevPanel(){
   if(!devUnlocked){
-    const pw = prompt('🔐 개발자 패널 접근 코드:');
-    if(pw !== DEV_KEY){ if(pw !== null) toast('❌ 접근 코드가 올바르지 않습니다'); return; }
-    devUnlocked = true;
-    sessionStorage.setItem('dev_unlocked', '1');
+    // 세션 중에 이미 인증된 경우 바로 진입
+    if(sessionStorage.getItem('dev_unlocked')==='1'){
+      devUnlocked = true;
+    } else {
+      // 처음 진입: 코드 입력 요청
+      const pw = prompt('🔐 개발자 패널 접근 코드:');
+      if(pw !== DEV_KEY){ if(pw !== null) toast('❌ 접근 코드가 올바르지 않습니다'); return; }
+      devUnlocked = true;
+      sessionStorage.setItem('dev_unlocked', '1');
+    }
   }
   document.getElementById('devPanel').style.display = 'flex';
   renderDevTab(devTab);
