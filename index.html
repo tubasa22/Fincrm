@@ -4073,12 +4073,35 @@ function removeSmsRecip(i){
   renderSmsRecips();
 }
 function openSingleSms(name, phone, type='general'){
-  showTab('sms', document.querySelectorAll('.tab')[4]);
+  // SMS 탭 요소 찾기
+  const smsTabEl = Array.from(document.querySelectorAll('.tab')).find(t => {
+    return t.getAttribute('onclick') && t.getAttribute('onclick').includes("'sms'");
+  });
+  
+  // 탭 활성화
+  if(smsTabEl) {
+    showTab('sms', smsTabEl);
+  } else {
+    // 탭 요소가 없으면 ID로 직접 활성화
+    document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+    document.getElementById('pg-sms').classList.add('on');
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    const tab = Array.from(document.querySelectorAll('.tab')).find(t=>t.textContent.includes('문자'));
+    if(tab) tab.classList.add('on');
+  }
+  
+  // 수신자 설정
   setTimeout(()=>{
-    smsRecipients=[{name,phone}];
+    smsRecipients = [{name, phone}];
     renderSmsRecips();
     if(type==='birthday') selectTemplate(0);
-  },100);
+    // Twilio 설정도 복원
+    const t = JSON.parse(localStorage.getItem('twilio')||'{}');
+    if(t.sid) document.getElementById('twilioSid').value = t.sid;
+    if(t.token) document.getElementById('twilioToken').value = t.token;
+    if(t.from) document.getElementById('twilioFrom').value = t.from;
+    updateTwilioStatus();
+  }, 150);
 }
 
 // ══════════════════════════════════════
@@ -4168,10 +4191,14 @@ async function sendSms(){
     smsRecipients.forEach(r=>{
       smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,
         msg:(isMMS?'[MMS] ':'')+msg.slice(0,30)+'…',status:'✅ 발송됨(데모)'});
+      // 데모 모드: 마지막 연락일 업데이트
+      const c = clients.find(x=>x.name===r.name);
+      if(c) c.next = new Date().toISOString().slice(0,10);
     });
     localStorage.setItem('sms_history',JSON.stringify(smsHistory.slice(0,100)));
     renderSmsHistory(); smsRecipients=[]; renderSmsRecips();
     smsMediaFiles=[]; renderSmsMediaPreview();
+    if(document.getElementById('detailPg').style.display==='block') openDetail(clients.find(x=>x.name===smsRecipients[0]?.name)?.rowIdx);
     toast('✅ 데모: '+(isMMS?'MMS':'SMS')+' 발송 시뮬레이션 완료');
     return;
   }
@@ -4180,20 +4207,18 @@ async function sendSms(){
   let mediaUrls = [];
   if(isMMS){
     showLoad('이미지 준비 중...');
-    // Twilio MMS는 공개 URL이 필요 — base64 data URL을 MediaUrl로 직접 전달 (Twilio 지원)
-    // 실제로는 파일을 서버/Drive에 업로드 후 URL 사용이 권장되나
-    // 여기선 파일명만 기록하고 안내 메시지 표시
     mediaUrls = smsMediaFiles.map(f=>f.name);
   }
 
   showLoad('문자 발송 중...');
   let ok=0,fail=0;
+  const todayStr = new Date().toISOString().slice(0,10);
+  const recipientNames = smsRecipients.map(r=>r.name);
+  
   for(const r of smsRecipients){
     const text=msg.replace(/\{이름\}/g,r.name);
     try{
       const params = {To:r.phone, From:t.from, Body:text};
-      // MMS: MediaUrl 추가 (Google Drive 공개 링크가 있는 경우)
-      // smsMediaFiles는 로컬 파일이라 직접 전송 불가 → 안내
       const res=await fetch(`https://api.twilio.com/2010-04-01/Accounts/${t.sid}/Messages.json`,{
         method:'POST',
         headers:{'Authorization':'Basic '+btoa(t.sid+':'+t.token),'Content-Type':'application/x-www-form-urlencoded'},
@@ -4204,7 +4229,14 @@ async function sendSms(){
       smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,
         msg:text.slice(0,30)+'…'+mediaNote,
         status:d.sid?'✅ 발송됨':'❌ 실패: '+(d.message||'오류')});
-      if(d.sid) ok++; else fail++;
+      if(d.sid) {
+        ok++;
+        // 발송 성공: 해당 고객의 마지막 연락일 업데이트
+        const c = clients.find(x=>x.name===r.name);
+        if(c) c.next = todayStr;
+      } else {
+        fail++;
+      }
     }catch(e){
       smsHistory.unshift({time:new Date().toLocaleString('ko'),name:r.name,phone:r.phone,msg:'…',status:'❌ '+e.message});
       fail++;
@@ -4213,6 +4245,13 @@ async function sendSms(){
   localStorage.setItem('sms_history',JSON.stringify(smsHistory.slice(0,100)));
   hideLoad(); renderSmsHistory(); smsRecipients=[]; renderSmsRecips();
   smsMediaFiles=[]; renderSmsMediaPreview();
+  
+  // 고객 상세 페이지가 열려있으면 즉시 업데이트
+  if(document.getElementById('detailPg').style.display==='block'){
+    const detailClient = clients.find(x=>recipientNames.includes(x.name));
+    if(detailClient) openDetail(detailClient.rowIdx);
+  }
+  
   if(isMMS) toast(`✅ ${ok}건 발송${fail?` / ❌ ${fail}건 실패`:''}\n⚠️ MMS 이미지는 공개 URL 방식으로 별도 업로드 필요`);
   else toast(`✅ ${ok}건 발송${fail?` / ❌ ${fail}건 실패`:''}`);
 }
@@ -5004,7 +5043,7 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
 };
 const DEV_KEY = 'fincrm_dev_2026';
 let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
-let devTab = 'feedback';
+let devTab = 'agents';
 
 // 단축키 등록
 document.addEventListener('keydown', function(e){
@@ -5418,10 +5457,6 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
     </div>
     <!-- 탭 -->
     <div style="display:flex;border-bottom:1px solid #e5e3db;background:#f8f7f3;flex-shrink:0">
-      <button class="dev-tab" data-tab="feedback" onclick="switchDevTab('feedback')"
-        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
-        💬 피드백·버그
-      </button>
       <button class="dev-tab" data-tab="agents" onclick="switchDevTab('agents')"
         style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
         🤖 에이전트 로그
