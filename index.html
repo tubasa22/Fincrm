@@ -1546,16 +1546,27 @@ function fmtAccessCode(el){
 
 // 사용 신청 제출
 async function submitApply(){
-  const name  = document.getElementById('ap_name').value.trim();
-  const email = document.getElementById('ap_email').value.trim();
+  // ★ null 체크 추가
+  const nameEl = document.getElementById('ap_name');
+  const emailEl = document.getElementById('ap_email');
+  
+  if(!nameEl) {
+    alert('❌ 이름 입력 필드를 찾을 수 없습니다');
+    console.error('ap_name 요소 없음');
+    return;
+  }
+  if(!emailEl) {
+    alert('❌ 이메일 입력 필드를 찾을 수 없습니다');
+    console.error('ap_email 요소 없음');
+    return;
+  }
+  
+  const name  = nameEl.value.trim();
+  const email = emailEl.value.trim();
   if(!name){ alert('이름을 입력해주세요'); return; }
-  if(!email){ alert('이메일을 입력해주세요 (코드 수신용)'); return; }
+  if(!email){ alert('이메일을 입력해주세요'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('올바른 이메일 형식을 입력해주세요'); return; }
 
-  const counties = [...document.querySelectorAll('input[name="ap_county"]:checked')].map(e=>e.value);
-  const phone = document.getElementById('ap_phone').value.trim();
-  const agency = document.getElementById('ap_agency').value.trim();
-  const region = counties.length > 0 ? counties.join(', ') : '';
   const now = new Date().toLocaleString('ko-KR');
 
   try {
@@ -1564,19 +1575,20 @@ async function submitApply(){
     // Google Apps Script를 통해 Sheet에 데이터 추가
     const gasUrl = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
     
-    // FormData 올바르게 생성
-    const formData = new FormData();
-    formData.append('action', 'addApplication');
-    formData.append('신청일시', now);
-    formData.append('이름', name);
-    formData.append('이메일', email);
-    formData.append('에이전시명', agency);
-    formData.append('연락처', phone);
-    formData.append('지역', region);
+    // JSON으로 전송
+    const payload = {
+      action: 'addApplication',
+      '신청일시': now,
+      '이름': name,
+      '이메일': email
+    };
 
     const response = await fetch(gasUrl, {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
 
     const result = await response.text();
