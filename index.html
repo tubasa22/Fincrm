@@ -1646,16 +1646,14 @@ function verifyCode(){
     errEl.style.display = 'block';
   });
 }
-  // tokenClient 아직 없으면 SDK 로드 대기 후 활성화
-  if(!tokenClient){
-    const chk = setInterval(()=>{
-      if(window.google?.accounts?.oauth2){
-        clearInterval(chk);
-        const b = document.getElementById('signInBtn');
-        if(b){ b.disabled=false; b.style.opacity='1'; b.style.cursor='pointer'; }
-      }
-    }, 200);
-  }
+
+// fmtAccessCode 함수 (코드 자동 포맷)
+function fmtAccessCode(el){
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  // FC-X-NNNN 또는 FC-XX-NNNN 형식으로 자동 포맷
+  if(v.length > 2 && !v.includes('-')) v = 'FC-' + v;
+  if(v.length > 5 && v.charAt(3) !== '-') v = v.substring(0,3) + '-' + v.substring(3);
+  el.value = v;
 }
 
 function signInClick(){
