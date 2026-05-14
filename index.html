@@ -1413,8 +1413,6 @@ const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleuserc
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
 const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
-// Google Apps Script 배포 URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
 
 let accessToken = '';
 let tokenExpiry  = 0;
@@ -1430,15 +1428,6 @@ let currentUploadClient = '';
 // OAUTH
 // ══════════════════════════════════════
 window.addEventListener('load', () => {
-  // 개발자 인증 확인
-  if(sessionStorage.getItem('dev_auth')==='1' || localStorage.getItem('dev_auth')==='1'){
-    isDemo = false;
-    sessionStorage.setItem('dev_auth', '1');
-    localStorage.setItem('dev_auth', '1');
-    bootApp();
-    return;
-  }
-  
   const t = localStorage.getItem('fcrm_token');
   const e = localStorage.getItem('fcrm_exp');
   if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
@@ -1459,15 +1448,10 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fcrm_exp', tokenExpiry);
           fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
             .then(r=>r.json()).then(u=>{
-              // 온보딩에서 입력한 사용자 프로필에서 이름 가져오기
-              const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
-              const name = profile?.name || u.name || u.email || '사용자';
-              const email = u.email || profile?.email || '';
-              const picture = u.picture || '';
-              
-              localStorage.setItem('fcrm_user', JSON.stringify({name, email, picture}));
+              const name = u.name||u.email||'사용자';
+              localStorage.setItem('fcrm_user', JSON.stringify({name, email:u.email||'', picture:u.picture||''}));
               addLoginLog('login', name);
-              updateUserUI({name: name, email: email, picture: picture});
+              updateUserUI(u);
             });
           bootApp();
         }
@@ -1592,21 +1576,6 @@ function verifyCode(){
         if(b){ b.disabled=false; b.style.opacity='1'; b.style.cursor='pointer'; }
       }
     }, 200);
-  }
-}
-
-// 개발자 코드 검증
-
-
-// 개발자 모드에서 Google 로그인 초기화
-function initGoogleSignIn(){
-  const btn = document.getElementById('signInBtn');
-  if(btn && btn.disabled){
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
-    const txtEl = document.getElementById('signInBtnTxt');
-    if(txtEl) txtEl.textContent = 'Google 계정으로 로그인';
   }
 }
 
@@ -1906,18 +1875,13 @@ function bootApp(){
   const saved = localStorage.getItem('fcrm_user');
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
   document.getElementById('userWrap').style.display = 'block';
-  
-  // ── 온보딩 체크 ── 개발자는 스킵, 일반 사용자만 프로필 입력
-  const isDev = sessionStorage.getItem('dev_auth')==='1' || localStorage.getItem('dev_auth')==='1';
+  // ── 온보딩 체크 ── 최초 실행 시 프로필 입력
   const profile = localStorage.getItem('fcrm_user_profile');
-  if(!isDev && !profile){
-    // 일반 사용자: 온보딩 실행
+  if(!profile){
     setTimeout(()=>openOnboarding(), 600);
   } else {
-    // 개발자 또는 이미 프로필이 있는 사용자: 스킵
     applyUserCode();
   }
-  
   if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
 }
 
@@ -2002,54 +1966,48 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    // Google Apps Script를 통해 고객 데이터 조회
-    const result = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'getClients' })
-    }).then(r => r.json());
-    
-    if(result.error) throw new Error(result.error);
-    
-    clients = (result.clients || []).map((c, i) => ({
-      rowIdx: i + 2,
-      no: String(c.no || ''),
-      fname: String(c.fname || ''),
-      mname: String(c.mname || ''),
-      lname: String(c.lname || ''),
-      name: String(c.name || ''),
-      email: String(c.email || ''),
-      address1: String(c.address1 || ''),
-      city: String(c.city || ''),
-      zip: String(c.zip || ''),
-      state: String(c.state || ''),
-      dob: String(c.dob || ''),
-      next: String(c.next || ''),
-      phone: String(c.phone || ''),
-      phone2: String(c.phone2 || ''),
-      plan: String(c.plan || ''),
-      prod: String(c.prod || ''),
-      memo: String(c.memo || ''),
-      ref: String(c.ref || 'FALSE'),
-      agent: String(c.agent || ''),
-      durl: String(c.durl || ''),
-      biz: ''
-    }));
-    
-    allMemos = [];
-    allPlanInfo = [];
-    
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:S`);
+    // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
+    // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
+    // N=Plan  O=Product  P=Memo  Q=Ref(TRUE/FALSE)  R=에이전트이름  S=상세URL
+    clients=(d.values||[]).slice(1).map((r,i)=>({
+      rowIdx:i+2, no:String(r[0]||''),
+      fname:String(r[1]||''), mname:String(r[2]||''), lname:String(r[3]||''),
+      name:String([r[3],r[1],r[2]].filter(Boolean).join(' ')||''),
+      email:String(r[4]||''),
+      address1:String(r[5]||''), city:String(r[6]||''), zip:String(r[7]||''),
+      state:String(r[8]||''),
+      dob:String(r[9]||''),
+      next:String(r[10]||''),
+      phone:String(r[11]||''),
+      phone2:String(r[12]||''),
+      plan:String(r[13]||''),
+      prod:String(r[14]||''),
+      memo:String(r[15]||''),
+      ref:String(r[16]||'FALSE'),
+      agent:String(r[17]||''),
+      durl:String(r[18]||''),
+      biz:'',
+    })).filter(c=>c.name.trim());
+    try{
+      const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
+      allMemos=(md.values||[]).slice(1).map(r=>({
+        name:String(r[1]||''),type:String(r[2]||''),text:String(r[3]||''),
+        date:String(r[4]||''),ts:String(r[5]||''),
+      })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    }catch(e){ allMemos=[]; }
+    try{
+      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`); // gid=588166202 탭
+      allPlanInfo=(pi.values||[]).slice(1).map(r=>({
+        name:String(r[0]||''),mbi:String(r[1]||''),medical_no:String(r[2]||''),
+        pcp:String(r[3]||''),pcp_phone:String(r[4]||''),
+        network:String(r[5]||''),group_no:String(r[6]||''),
+        meds:String(r[7]||''),conditions:String(r[8]||''),
+      })).filter(p=>p.name.trim());
+    }catch(e){ allPlanInfo=[]; }
     setSyncStatus('연결됨',true);
     renderAll();
-  }catch(e){
-    console.error('데이터 동기화 오류:', e.message);
-    clients = [];
-    allMemos = [];
-    allPlanInfo = [];
-    setSyncStatus('연결 오류',false);
-    toast('❌ 동기화 실패: '+e.message,4000);
-    renderAll();
-  }
+  }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
 }
 function renderAll(){
   updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();
@@ -2690,7 +2648,7 @@ async function loadClientDocs(clientName, rowIdx){
 }
 
 async function deleteDoc(fileId, fileName, rowIdx, clientName){
-  if(isDemoUser()){ toast('🚫 데모 모드에서는 삭제가 비활성화됩니다'); return; }
+  if(isDemo){ toast('🚫 데모 모드에서는 삭제가 비활성화됩니다'); return; }
   if(!confirm('"'+fileName+'" 파일을 삭제할까요?')) return;
   try{
     showLoad('삭제 중...');
@@ -3276,7 +3234,7 @@ function renderPendingFiles(){
 function removePending(i){ pendingFiles.splice(i,1); renderPendingFiles(); }
 async function uploadFiles(){
   if(!pendingFiles.length) return;
-  if(isDemoUser()){ toast('데모 모드에서는 실제 업로드가 안 됩니다'); return; }
+  if(isDemo){ toast('데모 모드에서는 실제 업로드가 안 됩니다'); return; }
   const fileType = document.getElementById('fileType').value;
   const progWrap = document.getElementById('uploadProg');
   const progFill = document.getElementById('uploadProgFill');
@@ -3573,56 +3531,76 @@ async function saveClient(){
         const idx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
         if(idx>=0) allPlanInfo[idx]=pi; else allPlanInfo.push(pi);
       }
-      // localStorage에도 저장
-      localStorage.setItem('fcrm_clients', JSON.stringify(clients));
     } else {
-      // Google Apps Script를 통해 저장
-      const clientData = {
-        no: autoNo,
-        fname, mname, lname, name,
-        email: vals[0][4],
-        address1: vals[0][5],
-        city: vals[0][6],
-        zip: vals[0][7],
-        state: vals[0][8],
-        dob: vals[0][9],
-        next: vals[0][10],
-        phone: vals[0][11],
-        phone2: vals[0][12],
-        plan: vals[0][13],
-        prod: vals[0][14],
-        memo: vals[0][15],
-        ref: vals[0][16],
-        agent: vals[0][17],
-        durl: ''
-      };
-      
-      try{
-        if(rowIdx){
-          // 수정
-          clientData.rowIdx = rowIdx;
-          const result = await fetch(GAS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'updateClient', data: clientData })
-          }).then(r => r.json());
-          if(result.error) throw new Error(result.error);
-        } else {
-          // 신규
-          const result = await fetch(GAS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'addClient', data: clientData })
-          }).then(r => r.json());
-          if(result.error) throw new Error(result.error);
-        }
-        
-        await loadAll();
-      } catch(e){
-        toast('❌ 저장 실패: '+e.message, 5000);
-        console.error('saveClient GAS error:', e);
-        throw e;
+      // ── 1. 메인 시트 저장 ──
+      if(rowIdx){
+        // 수정: 해당 행 덮어쓰기
+        await sheetsReq('PUT',
+          `${MAIN_ID}/values/A${rowIdx}:S${rowIdx}?valueInputOption=USER_ENTERED`,
+          {values:vals});
+      } else {
+        // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
+        await sheetsReq('POST',
+          `${MAIN_ID}/values/A%3AS:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+          {values:vals});
       }
+
+      // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
+      if(piVals){
+        try{
+          // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
+          let planInfoExists = true;
+          try{
+            await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A1`);
+          }catch(e){
+            planInfoExists = false;
+          }
+          if(!planInfoExists){
+            // 탭 생성
+            await sheetsReq('POST',`${DETAIL_ID}:batchUpdate`,{
+              requests:[{addSheet:{properties:{title:'PlanInfo'}}}]
+            });
+            // 헤더 입력
+            await sheetsReq('PUT',
+              `${DETAIL_ID}/values/PlanInfo!A1:I1?valueInputOption=USER_ENTERED`,
+              {values:[['name','mbi','medical_no','pcp','pcp_phone','network','group_no','meds','conditions']]});
+          }
+
+          // 기존 행 검색 — A열 전체 읽기
+          const existingRows=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
+          const rows=(existingRows.values||[]);
+          // 헤더(0번) 제외, 이름 일치 행 찾기
+          const matchIdx=rows.findIndex((r,i)=>i>0 && String(r[0]||'').trim()===name.trim());
+
+          if(matchIdx>0){
+            // 기존 행 업데이트
+            const sheetRow=matchIdx+1;
+            await sheetsReq('PUT',
+              `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
+              {values:piVals});
+          } else {
+            // 신규 행 추가
+            await sheetsReq('POST',
+              `${DETAIL_ID}/values/PlanInfo!A%3AI:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+              {values:piVals});
+          }
+
+          // 로컬 allPlanInfo 즉시 반영
+          const localIdx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
+          const piObj={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],
+            pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
+            meds:piVals[0][7],conditions:piVals[0][8]};
+          if(localIdx>=0) allPlanInfo[localIdx]=piObj; else allPlanInfo.push(piObj);
+          toast('✅ PlanInfo 저장 완료!');
+
+        } catch(piErr){
+          console.warn('PlanInfo 저장 오류:', piErr.message);
+          toast('⚠️ 기본정보는 저장됨. PlanInfo 오류: '+piErr.message, 5000);
+        }
+      }
+
+      // ── 3. 전체 리로드 ──
+      await loadAll();
     }
 
     closeOv('clientModal');
@@ -3645,29 +3623,12 @@ async function saveClient(){
 
 async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
-  if(isDemoUser()){
-    clients=clients.filter(c=>c.rowIdx!==rowIdx);
-    renderAll();
-    toast('삭제됨');
-    return;
-  }
+  if(isDemo){clients=clients.filter(c=>c.rowIdx!==rowIdx);renderAll();toast('삭제됨');return;}
   showLoad('삭제 중...');
   try{
-    // Google Apps Script를 통해 삭제
-    const result = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteClient', data: { rowIdx } })
-    }).then(r => r.json());
-    
-    if(result.error) throw new Error(result.error);
-    
-    await loadAll();
-    toast('🗑 삭제되었습니다');
-  }catch(e){
-    toast('❌ '+e.message,4000);
-    console.error('delClient error:', e);
-  }
+    await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{requests:[{deleteDimension:{range:{sheetId:0,dimension:'ROWS',startIndex:rowIdx-1,endIndex:rowIdx}}}]});
+    await loadAll();toast('🗑 삭제되었습니다');
+  }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
 
@@ -4359,7 +4320,7 @@ function clearPendingReports(){
   toast('🗑 삭제 완료');
 }
 function saveZapUrl(){
-  if(isDemoUser()){ toast('🚫 데모 모드에서는 저장되지 않습니다'); return; }
+  if(isDemo){ toast('🚫 데모 모드에서는 저장되지 않습니다'); return; }
   zapBaseUrl=document.getElementById('zapUrl').value.trim();
   localStorage.setItem('zap_url',zapBaseUrl);
   updateZapUrls(zapBaseUrl);
@@ -4775,8 +4736,10 @@ function renderPlanInfo(clientName){
 // USER UI 함수들
 // ══════════════════════════════════════
 function updateUserUI(u){
-  const name = u.name || '사용자';
-  const email = u.email || '';
+  // 온보딩에서 입력한 이름을 우선 사용
+  const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
+  const name = profile?.name || u.name || u.email || '사용자';
+  const email = u.email || profile?.email || '';
   const picture = u.picture || '';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const loginTime = new Date().toLocaleString('ko-KR');
@@ -5030,78 +4993,38 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
     closeOv(modalId); toast(successMsg);
   }
 };
-// 개발자 인증 모달 표시
-function showDevAuthModal(){
-  document.getElementById('devAuthModal').style.display = 'flex';
-  document.getElementById('devAuthInput').focus();
-  document.getElementById('devAuthErr').style.display = 'none';
-}
+const DEV_KEY = 'fincrm_dev_2026';
+let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
+let devTab = 'feedback';
 
-// 개발자 인증 모달 닫기
-function closeDevAuthModal(){
-  document.getElementById('devAuthModal').style.display = 'none';
-  document.getElementById('devAuthInput').value = '';
-  document.getElementById('devAuthErr').style.display = 'none';
-}
-
-// 개발자 코드 검증
-function devAuthVerify(){
-  const code = document.getElementById('devAuthInput').value.trim();
-  const errEl = document.getElementById('devAuthErr');
-  const DEV_CODE = 'fincrm_dev_2026';
-  
-  if(code !== DEV_CODE){
-    errEl.textContent = '❌ 코드가 올바르지 않습니다';
-    errEl.style.display = 'block';
-    return;
-  }
-  
-  // 개발자 인증 성공
-  sessionStorage.setItem('dev_auth', '1');
-  localStorage.setItem('dev_auth', '1');
-  
-  closeDevAuthModal();
-  
-  // 개발자 모드에서는 Google 로그인 진행
-  // loginScreen이 보이고 있으면 Google 버튼으로 이동
-  const loginScreen = document.getElementById('loginScreen');
-  if(loginScreen && loginScreen.style.display !== 'none'){
-    // Google 로그인 활성화 후 Google 버튼 클릭
-    initGoogleSignIn();
-    setTimeout(() => {
-      const signInBtn = document.getElementById('signInBtn');
-      if(signInBtn && !signInBtn.disabled){
-        signInBtn.click();
-      }
-    }, 500);
-  } else if(document.getElementById('app').classList.contains('on')){
-    // 이미 앱이 실행 중이면 개발자 패널 열기
-    openDevPanel();
-  }
-}
-
-// 제한 체크: 개발자는 제외, 데모 사용자만 제한
-function isDemoUser(){
-  const isDev = sessionStorage.getItem('dev_auth')==='1' || localStorage.getItem('dev_auth')==='1';
-  return isDemo && !isDev;
-}
-
-// 개발자 인증 단축키 (Ctrl+Shift+D)
+// 단축키 등록
 document.addEventListener('keydown', function(e){
   if(e.ctrlKey && e.shiftKey && e.key === 'D'){
     e.preventDefault();
-    showDevAuthModal();
+    openDevPanel();
   }
 });
 
 function openDevPanel(){
   if(!devUnlocked){
-    // 개발자 인증 체크
-    if(sessionStorage.getItem('dev_auth') !== '1'){
-      showDevAuthModal();
+    const pw = prompt('🔐 개발자 패널 접근 코드:');
+    if(pw !== DEV_KEY){ if(pw !== null) toast('❌ 접근 코드가 올바르지 않습니다'); return; }
+    devUnlocked = true;
+    sessionStorage.setItem('dev_unlocked', '1');
+    
+    // Google 로그인 활성화 및 자동 로그인
+    const loginScreen = document.getElementById('loginScreen');
+    if(loginScreen && loginScreen.style.display !== 'none'){
+      // Google 로그인 활성화 후 자동 클릭
+      initGoogleSignIn();
+      setTimeout(() => {
+        const signInBtn = document.getElementById('signInBtn');
+        if(signInBtn && !signInBtn.disabled){
+          signInBtn.click();
+        }
+      }, 500);
       return;
     }
-    devUnlocked = true;
   }
   document.getElementById('devPanel').style.display = 'flex';
   renderDevTab(devTab);
@@ -5109,6 +5032,18 @@ function openDevPanel(){
   setTimeout(()=>{
     document.querySelectorAll('.dev-tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===devTab));
   }, 0);
+}
+
+// Google 로그인 초기화
+function initGoogleSignIn(){
+  const btn = document.getElementById('signInBtn');
+  if(btn && btn.disabled){
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    const txtEl = document.getElementById('signInBtnTxt');
+    if(txtEl) txtEl.textContent = 'Google 계정으로 로그인';
+  }
 }
 
 function closeDevPanel(){
@@ -5460,25 +5395,8 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
 };
 </script>
 
-<!-- 개발자 모달 (단축키로만 표시) -->
-<div id="devAuthModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:14px;padding:28px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.2)">
-    <div style="font-size:24px;margin-bottom:12px;text-align:center">🔑</div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:6px;text-align:center">개발자 인증</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:20px;text-align:center">개발자 코드를 입력하세요</div>
-    <input id="devAuthInput" type="password" placeholder="코드 입력" 
-      style="width:100%;border:2px solid var(--g3);border-radius:10px;padding:12px;font-size:14px;font-family:inherit;margin-bottom:6px;outline:none"
-      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'"
-      onkeydown="if(event.key==='Enter')devAuthVerify()">
-    <div id="devAuthErr" style="font-size:12px;color:var(--red);margin-bottom:12px;display:none"></div>
-    <div style="display:flex;gap:8px">
-      <button onclick="closeDevAuthModal()" style="flex:1;padding:10px;background:var(--g2);border:none;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit">취소</button>
-      <button onclick="devAuthVerify()" style="flex:1;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit">확인</button>
-    </div>
-  </div>
-</div>
-<!-- 개발자 패널 (Ctrl+Shift+D로만 표시) -->
-<div id="devPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center">
+<!-- 개발자 패널 UI -->
+<div id="devPanel" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;width:90%;max-width:860px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
     <!-- 헤더 -->
     <div style="background:#26215C;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
