@@ -1431,9 +1431,16 @@ let currentUploadClient = '';
 // OAUTH
 // ══════════════════════════════════════
 window.addEventListener('load', () => {
+  // ★ 이미 로그인된 사용자 확인 (토큰 존재 && 유효)
   const t = localStorage.getItem('fcrm_token');
   const e = localStorage.getItem('fcrm_exp');
-  if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
+  
+  if (t && e && Date.now() < +e) {
+    console.log('✅ 유효한 토큰 발견 - 자동 로그인');
+    accessToken = t;
+    tokenExpiry = +e;
+    bootApp();  // 바로 앱 부팅
+  }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
