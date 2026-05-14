@@ -2635,8 +2635,8 @@ function openDetail(rowIdx){
         '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next||'없음')+' '+db+'</p>' +
       '</div>' +
       '<div class="dh-right">' +
-        (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',false),1000)">📞 전화</a>' : '') +
-        (c.phone ? '<button class="btn sm" onclick="openSingleSms(\''+esc(c.name)+'\',\''+c.phone+'\');setTimeout(()=>updateLastContact('+c.rowIdx+',false),1000)" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9">💬 메시지</button>' : '') +
+        (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)">📞 전화</a>' : '') +
+        (c.phone ? '<button class="btn sm" onclick="openSingleSms(\''+esc(c.name)+'\',\''+c.phone+'\');setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9">💬 메시지</button>' : '') +
         '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
         '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
         '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +
