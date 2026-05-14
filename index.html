@@ -412,12 +412,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <button class="google-btn" style="background:linear-gradient(135deg,#1a56db,#7c3aed);color:#fff;border:none;margin-bottom:10px" onclick="showPanel('lp_apply')">
         📝 정식 사용 신청하기
       </button>
-      <!-- 이미 코드 있음 -->
-      <button class="google-btn" style="margin-bottom:10px" onclick="showPanel('lp_code')">
-        🔑 액세스 코드 있음 → 로그인
-      </button>
       <!-- 데모 -->
-      <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기 (코드 불필요)</button>
+      <button class="demo-btn" onclick="demoMode()">📋 데모 모드로 체험하기 (신청 불필요)</button>
       <p class="login-note" style="margin-top:14px">베타 기간 중 무료 · LA·OC·SB·Riverside 지역 에이전트 대상</p>
       <div class="last-login" id="lastLoginInfo"></div>
     </div>
@@ -476,17 +472,16 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         <div style="font-size:12px;color:#166534;line-height:1.8">
           1. 입력하신 이메일로 액세스 코드를 보내드립니다<br>
           2. 이메일에서 코드 확인 (보통 1 영업일 이내)<br>
-          3. 아래 버튼 → <strong>액세스 코드 있음</strong> 선택<br>
-          4. 코드 입력 후 Google 로그인
+          3. 코드를 입력하여 Google 로그인<br>
+          4. FinCRM 사용 시작!
         </div>
       </div>
       <div style="background:var(--g2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:16px">
         📬 이메일: <strong id="ap_email_confirm" style="color:var(--blue)"></strong>
       </div>
-      <button onclick="showPanel('lp_code')" style="width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">
-        🔑 코드 받으셨나요? → 입력하러 가기
+      <button onclick="showPanel('lp_main')" style="width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">
+        ← 메인으로 돌아가기
       </button>
-      <button onclick="showPanel('lp_main')" style="width:100%;padding:11px;background:none;border:1px solid var(--g3);border-radius:10px;font-size:13px;cursor:pointer;color:var(--text3)">← 처음으로</button>
     </div>
 
     <!-- 패널 D: 코드 입력 → 구글 로그인 -->
@@ -1507,35 +1502,49 @@ async function submitApply(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('올바른 이메일 형식을 입력해주세요'); return; }
 
   const counties = [...document.querySelectorAll('input[name="ap_county"]:checked')].map(e=>e.value);
-  const payload = {
-    type:    'apply',
-    name,
-    email,
-    agency:  document.getElementById('ap_agency').value.trim(),
-    phone:   document.getElementById('ap_phone').value.trim(),
-    counties,
-    ts:      new Date().toLocaleString('ko-KR'),
-    source:  'FinCRM Login'
-  };
+  const phone = document.getElementById('ap_phone').value.trim();
+  const agency = document.getElementById('ap_agency').value.trim();
+  const region = counties.length > 0 ? counties.join(', ') : '';
+  const now = new Date().toLocaleString('ko-KR');
 
-  // Webhook 전송 (Jarvice → 코드 생성 → 이메일 발송)
-  const webhook = localStorage.getItem('fcrm_feedback_webhook')||'';
-  if(webhook){
-    try{
-      await fetch(webhook, { method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload) });
-    }catch(e){}
+  try {
+    showLoad('신청 접수 중...');
+
+    // Google Apps Script를 통해 Sheet에 데이터 추가
+    const gasUrl = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
+    
+    const payload = {
+      action: 'addApplication',
+      신청일시: now,
+      이름: name,
+      이메일: email,
+      에이전시명: agency,
+      연락처: phone,
+      지역: region
+    };
+
+    const response = await fetch(gasUrl, {
+      method: 'POST',
+      body: new FormData(Object.entries(payload).reduce((fd, [k, v]) => (fd.append(k, v), fd), new FormData()))
+    });
+
+    const result = await response.text();
+    console.log('Sheet 추가 응답:', result);
+
+    hideLoad();
+    
+    // 정보 표시
+    document.getElementById('ap_name_confirm').textContent = name;
+    document.getElementById('ap_email_confirm').textContent = email;
+    showPanel('lp_applied');
+    
+    toast('✅ 신청이 접수되었습니다!');
+
+  } catch(e) {
+    hideLoad();
+    console.error('신청 처리 오류:', e);
+    alert('❌ 신청 처리 중 오류가 발생했습니다.\n\n오류: ' + e.message + '\n\n다시 시도해주세요.');
   }
-  // 로컬 백업
-  const pending = JSON.parse(localStorage.getItem('fcrm_pending_reports')||'[]');
-  pending.push(payload);
-  localStorage.setItem('fcrm_pending_reports', JSON.stringify(pending));
-
-  // 완료 화면에 이름·이메일 표시
-  document.getElementById('ap_name_confirm').textContent = name;
-  document.getElementById('ap_email_confirm').textContent = email;
-  showPanel('lp_applied');
 }
 
 // 코드 검증
@@ -5045,42 +5054,14 @@ const DEV_KEY = 'fincrm_dev_2026';
 let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
 let devTab = 'agents';
 
-// 단축키 등록
-document.addEventListener('keydown', function(e){
-  if(e.ctrlKey && e.shiftKey && e.key === 'D'){
-    e.preventDefault();
-    openDevPanel();
-  }
-});
+// ★ 개발자 모드는 비활성화됨 (고객용 버전)
 
-function openDevPanel(){
-  if(!devUnlocked){
-    const pw = prompt('🔐 개발자 패널 접근 코드:');
-    if(pw !== DEV_KEY){ if(pw !== null) toast('❌ 접근 코드가 올바르지 않습니다'); return; }
-    devUnlocked = true;
-    sessionStorage.setItem('dev_unlocked', '1');
-    
-    // Google 로그인 활성화 및 자동 로그인
-    const loginScreen = document.getElementById('loginScreen');
-    if(loginScreen && loginScreen.style.display !== 'none'){
-      // Google 로그인 활성화 후 자동 클릭
-      initGoogleSignIn();
-      setTimeout(() => {
-        const signInBtn = document.getElementById('signInBtn');
-        if(signInBtn && !signInBtn.disabled){
-          signInBtn.click();
-        }
-      }, 500);
-      return;
-    }
-  }
-  document.getElementById('devPanel').style.display = 'flex';
-  renderDevTab(devTab);
-  // 첫 탭 활성화
-  setTimeout(()=>{
-    document.querySelectorAll('.dev-tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===devTab));
-  }, 0);
-}
+// ★ 개발자 모드는 비활성화됨 (고객용 버전)
+
+function openDevPanel(){} // 비활성화됨
+function closeDevPanel(){} // 비활성화됨
+function switchDevTab(t){} // 비활성화됨
+function renderDevTab(t){} // 비활성화됨
 
 // Google 로그인 초기화
 function initGoogleSignIn(){
@@ -5092,24 +5073,6 @@ function initGoogleSignIn(){
     const txtEl = document.getElementById('signInBtnTxt');
     if(txtEl) txtEl.textContent = 'Google 계정으로 로그인';
   }
-}
-
-function closeDevPanel(){
-  document.getElementById('devPanel').style.display = 'none';
-}
-
-function switchDevTab(t){
-  devTab = t;
-  document.querySelectorAll('.dev-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-  renderDevTab(t);
-}
-
-function renderDevTab(t){
-  const body = document.getElementById('devBody');
-  if(t === 'feedback')  body.innerHTML = renderFeedbackDash();
-  if(t === 'agents')    body.innerHTML = renderAgentsDash();
-  if(t === 'system')    body.innerHTML = renderSystemDash();
-  if(t === 'tools')     body.innerHTML = renderToolsDash();
 }
 
 // ── 피드백·버그 대시보드 ──
@@ -5443,41 +5406,12 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
 };
 </script>
 
-<!-- 개발자 패널 UI -->
-<div id="devPanel" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;width:90%;max-width:860px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-    <!-- 헤더 -->
-    <div style="background:#26215C;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:18px">🛠</span>
-        <span style="color:#fff;font-size:15px;font-weight:600">FinCRM 개발자 패널</span>
-        <span style="background:#CECBF6;color:#26215C;font-size:10px;padding:2px 8px;border-radius:20px">Ctrl+Shift+D</span>
-      </div>
-      <button onclick="closeDevPanel()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:0.7;line-height:1">✕</button>
-    </div>
-    <!-- 탭 -->
-    <div style="display:flex;border-bottom:1px solid #e5e3db;background:#f8f7f3;flex-shrink:0">
-      <button class="dev-tab" data-tab="agents" onclick="switchDevTab('agents')"
-        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
-        🤖 에이전트 로그
-      </button>
-      <button class="dev-tab" data-tab="system" onclick="switchDevTab('system')"
-        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
-        📊 시스템 상태
-      </button>
-      <button class="dev-tab" data-tab="tools" onclick="switchDevTab('tools')"
-        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
-        🔧 개발 도구
-      </button>
-    </div>
-    <!-- 본문 -->
-    <div id="devBody" style="flex:1;overflow-y:auto;padding:16px"></div>
-  </div>
-</div>
-
-<style>
-.dev-tab.on { border-bottom-color:#534AB7 !important; color:#534AB7 !important; background:#fff !important; }
-</style>
+<!-- 
+  ⚠️ 개발자 패널 제거됨 (고객용 버전)
+  
+  이 섹션은 내부용 개발 도구입니다.
+  고객에게는 보이지 않으며, 필요한 경우 별도의 관리자 버전 파일을 사용하세요.
+-->
 
 </body>
 </html>
