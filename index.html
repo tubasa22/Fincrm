@@ -1457,15 +1457,15 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fcrm_exp', tokenExpiry);
           fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
             .then(r=>r.json()).then(u=>{
-              // Google에서 반환한 정보 사용
-              let name = u.name || u.given_name || u.family_name || u.email || '사용자';
-              // 이메일에서 이름 추출 (예: john.doe@example.com → john doe)
-              if(!u.name && u.email && u.email.includes('@')){
-                name = u.email.split('@')[0].replace(/[._-]/g, ' ');
-              }
-              localStorage.setItem('fcrm_user', JSON.stringify({name, email:u.email||'', picture:u.picture||''}));
+              // 온보딩에서 입력한 사용자 프로필에서 이름 가져오기
+              const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
+              const name = profile?.name || u.name || u.email || '사용자';
+              const email = u.email || profile?.email || '';
+              const picture = u.picture || '';
+              
+              localStorage.setItem('fcrm_user', JSON.stringify({name, email, picture}));
               addLoginLog('login', name);
-              updateUserUI({name: name, email: u.email||'', picture: u.picture||''});
+              updateUserUI({name: name, email: email, picture: picture});
             });
           bootApp();
         }
@@ -1998,64 +1998,26 @@ async function findOrCreateFolder(name, parentId=null) {
 // LOAD
 // ══════════════════════════════════════
 async function loadAll(){
-  setSyncStatus('동기화 중...',false);
+  setSyncStatus('로컬 모드',true);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:S`);
-    // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
-    // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
-    // N=Plan  O=Product  P=Memo  Q=Ref(TRUE/FALSE)  R=에이전트이름  S=상세URL
-    clients=(d.values||[]).slice(1).map((r,i)=>({
-      rowIdx:i+2, no:String(r[0]||''),
-      fname:String(r[1]||''), mname:String(r[2]||''), lname:String(r[3]||''),
-      name:String([r[3],r[1],r[2]].filter(Boolean).join(' ')||''),
-      email:String(r[4]||''),
-      address1:String(r[5]||''), city:String(r[6]||''), zip:String(r[7]||''),
-      state:String(r[8]||''),
-      dob:String(r[9]||''),
-      next:String(r[10]||''),
-      phone:String(r[11]||''),
-      phone2:String(r[12]||''),
-      plan:String(r[13]||''),
-      prod:String(r[14]||''),
-      memo:String(r[15]||''),
-      ref:String(r[16]||'FALSE'),
-      agent:String(r[17]||''),
-      durl:String(r[18]||''),
-      biz:'',
-    })).filter(c=>c.name.trim());
-    try{
-      const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
-      allMemos=(md.values||[]).slice(1).map(r=>({
-        name:String(r[1]||''),type:String(r[2]||''),text:String(r[3]||''),
-        date:String(r[4]||''),ts:String(r[5]||''),
-      })).filter(m=>m.name.trim()).sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-    }catch(e){ allMemos=[]; }
-    try{
-      const pi=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:I`); // gid=588166202 탭
-      allPlanInfo=(pi.values||[]).slice(1).map(r=>({
-        name:String(r[0]||''),mbi:String(r[1]||''),medical_no:String(r[2]||''),
-        pcp:String(r[3]||''),pcp_phone:String(r[4]||''),
-        network:String(r[5]||''),group_no:String(r[6]||''),
-        meds:String(r[7]||''),conditions:String(r[8]||''),
-      })).filter(p=>p.name.trim());
-    }catch(e){ allPlanInfo=[]; }
-    setSyncStatus('연결됨',true);
-    renderAll();
-  }catch(e){
-    // API 권한 오류 발생 시 데모 데이터로 진행 또는 빈 데이터로 표시
-    console.error('데이터 동기화 오류:', e.message);
-    
-    if(isDemo){
-      // 데모 모드면 기존 데모 데이터 유지
-      setSyncStatus('데모 모드',true);
+    // Google Sheets API 호출 대신 localStorage에서 로드
+    const saved = localStorage.getItem('fcrm_clients');
+    if(saved){
+      clients = JSON.parse(saved);
     } else {
-      // 빈 데이터로 진행
       clients = [];
-      allMemos = [];
-      allPlanInfo = [];
-      setSyncStatus('오류: '+e.message.slice(0,20),false);
     }
     
+    allMemos = [];
+    allPlanInfo = [];
+    
+    renderAll();
+  }catch(e){
+    console.error('데이터 로드 오류:', e.message);
+    clients = [];
+    allMemos = [];
+    allPlanInfo = [];
+    setSyncStatus('로컬 모드',true);
     renderAll();
   }
 }
@@ -3581,6 +3543,8 @@ async function saveClient(){
         const idx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
         if(idx>=0) allPlanInfo[idx]=pi; else allPlanInfo.push(pi);
       }
+      // localStorage에도 저장
+      localStorage.setItem('fcrm_clients', JSON.stringify(clients));
     } else {
       // ── 1. 메인 시트 저장 ──
       if(rowIdx){
@@ -3673,11 +3637,19 @@ async function saveClient(){
 
 async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
-  if(isDemoUser()){clients=clients.filter(c=>c.rowIdx!==rowIdx);renderAll();toast('삭제됨');return;}
+  if(isDemoUser()){
+    clients=clients.filter(c=>c.rowIdx!==rowIdx);
+    localStorage.setItem('fcrm_clients', JSON.stringify(clients));
+    renderAll();
+    toast('삭제됨');
+    return;
+  }
   showLoad('삭제 중...');
   try{
-    await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{requests:[{deleteDimension:{range:{sheetId:0,dimension:'ROWS',startIndex:rowIdx-1,endIndex:rowIdx}}}]});
-    await loadAll();toast('🗑 삭제되었습니다');
+    clients=clients.filter(c=>c.rowIdx!==rowIdx);
+    localStorage.setItem('fcrm_clients', JSON.stringify(clients));
+    await loadAll();
+    toast('🗑 삭제되었습니다');
   }catch(e){toast('❌ '+e.message,4000);}
   finally{hideLoad();}
 }
@@ -4786,13 +4758,7 @@ function renderPlanInfo(clientName){
 // USER UI 함수들
 // ══════════════════════════════════════
 function updateUserUI(u){
-  let name = u.name || u.given_name || u.family_name || u.email || '사용자';
-  
-  // 이메일만 있는 경우 이메일에서 이름 추출
-  if(!u.name && !u.given_name && !u.family_name && u.email && u.email.includes('@')){
-    name = u.email.split('@')[0].replace(/[._-]/g, ' ');
-  }
-  
+  const name = u.name || '사용자';
   const email = u.email || '';
   const picture = u.picture || '';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
