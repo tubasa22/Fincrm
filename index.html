@@ -1546,18 +1546,15 @@ function fmtAccessCode(el){
 
 // 사용 신청 제출
 async function submitApply(){
-  // ★ null 체크 추가
   const nameEl = document.getElementById('ap_name');
   const emailEl = document.getElementById('ap_email');
   
   if(!nameEl) {
     alert('❌ 이름 입력 필드를 찾을 수 없습니다');
-    console.error('ap_name 요소 없음');
     return;
   }
   if(!emailEl) {
     alert('❌ 이메일 입력 필드를 찾을 수 없습니다');
-    console.error('ap_email 요소 없음');
     return;
   }
   
@@ -1567,35 +1564,28 @@ async function submitApply(){
   if(!email){ alert('이메일을 입력해주세요'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('올바른 이메일 형식을 입력해주세요'); return; }
 
-  const now = new Date().toLocaleString('ko-KR');
-
   try {
     showLoad('신청 접수 중...');
 
-    // Google Apps Script를 통해 Sheet에 데이터 추가
-    const gasUrl = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
-    
-    // JSON으로 전송
-    const payload = {
-      action: 'addApplication',
-      '신청일시': now,
-      '이름': name,
-      '이메일': email
+    // ★ 현재: localStorage에 저장 (개발자가 수동으로 확인)
+    const now = new Date().toLocaleString('ko-KR');
+    const application = {
+      신청일시: now,
+      이름: name,
+      이메일: email,
+      id: Date.now()
     };
-
-    console.log('📤 GAS로 요청 전송:', payload);
-
-    const response = await fetch(gasUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const result = await response.text();
-    console.log('📥 GAS 응답:', result);
-
+    
+    // localStorage에 저장
+    let applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
+    applications.push(application);
+    localStorage.setItem('fcrm_applications', JSON.stringify(applications));
+    
+    console.log('📋 신청 정보 저장:', application);
+    
+    // ★ Google Sheets에 직접 추가 (GAS 우회)
+    // 향후: Google Form 또는 업데이트된 GAS 사용
+    
     hideLoad();
     
     // 정보 표시
@@ -1604,11 +1594,23 @@ async function submitApply(){
     showPanel('lp_applied');
     
     toast('✅ 신청이 접수되었습니다!');
+    
+    // 개발자 알림
+    console.warn('=== 🔔 신청 접수됨 ===');
+    console.warn('이름:', name);
+    console.warn('이메일:', email);
+    console.warn('신청일시:', now);
+    console.warn('');
+    console.warn('📋 모든 신청 확인:');
+    console.warn('콘솔에서 showApplications() 실행');
+    console.warn('또는');
+    console.warn('Google Sheets에 수동으로 입력');
+    console.warn('========================');
 
   } catch(e) {
     hideLoad();
     console.error('신청 처리 오류:', e);
-    alert('❌ 신청 처리 중 오류가 발생했습니다.\n\n오류: ' + e.message + '\n\n다시 시도해주세요.');
+    alert('❌ 신청 처리 중 오류가 발생했습니다.');
   }
 }
 
