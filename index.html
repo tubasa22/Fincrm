@@ -1413,6 +1413,8 @@ const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleuserc
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
 const DETAIL_ID = '1ld2vqccy4e7o9QKsOxCDMa5cIR0uxzutQ1R52Sdk0yM';
 const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive';
+// Google Apps Script 배포 URL
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
 
 let accessToken = '';
 let tokenExpiry  = 0;
@@ -1998,26 +2000,54 @@ async function findOrCreateFolder(name, parentId=null) {
 // LOAD
 // ══════════════════════════════════════
 async function loadAll(){
-  setSyncStatus('로컬 모드',true);
+  setSyncStatus('동기화 중...',false);
   try{
-    // Google Sheets API 호출 대신 localStorage에서 로드
-    const saved = localStorage.getItem('fcrm_clients');
-    if(saved){
-      clients = JSON.parse(saved);
-    } else {
-      clients = [];
-    }
+    // Google Apps Script를 통해 고객 데이터 조회
+    const result = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'getClients' })
+    }).then(r => r.json());
+    
+    if(result.error) throw new Error(result.error);
+    
+    clients = (result.clients || []).map((c, i) => ({
+      rowIdx: i + 2,
+      no: String(c.no || ''),
+      fname: String(c.fname || ''),
+      mname: String(c.mname || ''),
+      lname: String(c.lname || ''),
+      name: String(c.name || ''),
+      email: String(c.email || ''),
+      address1: String(c.address1 || ''),
+      city: String(c.city || ''),
+      zip: String(c.zip || ''),
+      state: String(c.state || ''),
+      dob: String(c.dob || ''),
+      next: String(c.next || ''),
+      phone: String(c.phone || ''),
+      phone2: String(c.phone2 || ''),
+      plan: String(c.plan || ''),
+      prod: String(c.prod || ''),
+      memo: String(c.memo || ''),
+      ref: String(c.ref || 'FALSE'),
+      agent: String(c.agent || ''),
+      durl: String(c.durl || ''),
+      biz: ''
+    }));
     
     allMemos = [];
     allPlanInfo = [];
     
+    setSyncStatus('연결됨',true);
     renderAll();
   }catch(e){
-    console.error('데이터 로드 오류:', e.message);
+    console.error('데이터 동기화 오류:', e.message);
     clients = [];
     allMemos = [];
     allPlanInfo = [];
-    setSyncStatus('로컬 모드',true);
+    setSyncStatus('연결 오류',false);
+    toast('❌ 동기화 실패: '+e.message,4000);
     renderAll();
   }
 }
@@ -3546,75 +3576,53 @@ async function saveClient(){
       // localStorage에도 저장
       localStorage.setItem('fcrm_clients', JSON.stringify(clients));
     } else {
-      // ── 1. 메인 시트 저장 ──
-      if(rowIdx){
-        // 수정: 해당 행 덮어쓰기
-        await sheetsReq('PUT',
-          `${MAIN_ID}/values/A${rowIdx}:S${rowIdx}?valueInputOption=USER_ENTERED`,
-          {values:vals});
-      } else {
-        // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
-        await sheetsReq('POST',
-          `${MAIN_ID}/values/A%3AS:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
-          {values:vals});
-      }
-
-      // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
-      if(piVals){
-        try{
-          // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
-          let planInfoExists = true;
-          try{
-            await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A1`);
-          }catch(e){
-            planInfoExists = false;
-          }
-          if(!planInfoExists){
-            // 탭 생성
-            await sheetsReq('POST',`${DETAIL_ID}:batchUpdate`,{
-              requests:[{addSheet:{properties:{title:'PlanInfo'}}}]
-            });
-            // 헤더 입력
-            await sheetsReq('PUT',
-              `${DETAIL_ID}/values/PlanInfo!A1:I1?valueInputOption=USER_ENTERED`,
-              {values:[['name','mbi','medical_no','pcp','pcp_phone','network','group_no','meds','conditions']]});
-          }
-
-          // 기존 행 검색 — A열 전체 읽기
-          const existingRows=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
-          const rows=(existingRows.values||[]);
-          // 헤더(0번) 제외, 이름 일치 행 찾기
-          const matchIdx=rows.findIndex((r,i)=>i>0 && String(r[0]||'').trim()===name.trim());
-
-          if(matchIdx>0){
-            // 기존 행 업데이트
-            const sheetRow=matchIdx+1;
-            await sheetsReq('PUT',
-              `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
-              {values:piVals});
-          } else {
-            // 신규 행 추가
-            await sheetsReq('POST',
-              `${DETAIL_ID}/values/PlanInfo!A%3AI:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
-              {values:piVals});
-          }
-
-          // 로컬 allPlanInfo 즉시 반영
-          const localIdx=allPlanInfo.findIndex(p=>p.name.trim()===name.trim());
-          const piObj={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],
-            pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
-            meds:piVals[0][7],conditions:piVals[0][8]};
-          if(localIdx>=0) allPlanInfo[localIdx]=piObj; else allPlanInfo.push(piObj);
-          toast('✅ PlanInfo 저장 완료!');
-
-        } catch(piErr){
-          console.warn('PlanInfo 저장 오류:', piErr.message);
-          toast('⚠️ 기본정보는 저장됨. PlanInfo 오류: '+piErr.message, 5000);
+      // Google Apps Script를 통해 저장
+      const clientData = {
+        no: autoNo,
+        fname, mname, lname, name,
+        email: vals[0][4],
+        address1: vals[0][5],
+        city: vals[0][6],
+        zip: vals[0][7],
+        state: vals[0][8],
+        dob: vals[0][9],
+        next: vals[0][10],
+        phone: vals[0][11],
+        phone2: vals[0][12],
+        plan: vals[0][13],
+        prod: vals[0][14],
+        memo: vals[0][15],
+        ref: vals[0][16],
+        agent: vals[0][17],
+        durl: ''
+      };
+      
+      try{
+        if(rowIdx){
+          // 수정
+          clientData.rowIdx = rowIdx;
+          const result = await fetch(GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'updateClient', data: clientData })
+          }).then(r => r.json());
+          if(result.error) throw new Error(result.error);
+        } else {
+          // 신규
+          const result = await fetch(GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'addClient', data: clientData })
+          }).then(r => r.json());
+          if(result.error) throw new Error(result.error);
         }
+        
+        await loadAll();
+      } catch(e){
+        toast('❌ 저장 실패: '+e.message, 5000);
+        console.error('saveClient GAS error:', e);
+        throw e;
       }
-
-      // ── 3. 전체 리로드 ──
-      await loadAll();
     }
 
     closeOv('clientModal');
@@ -3639,18 +3647,27 @@ async function delClient(rowIdx,name){
   if(!confirm(`"${name}" 고객을 삭제할까요?`))return;
   if(isDemoUser()){
     clients=clients.filter(c=>c.rowIdx!==rowIdx);
-    localStorage.setItem('fcrm_clients', JSON.stringify(clients));
     renderAll();
     toast('삭제됨');
     return;
   }
   showLoad('삭제 중...');
   try{
-    clients=clients.filter(c=>c.rowIdx!==rowIdx);
-    localStorage.setItem('fcrm_clients', JSON.stringify(clients));
+    // Google Apps Script를 통해 삭제
+    const result = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'deleteClient', data: { rowIdx } })
+    }).then(r => r.json());
+    
+    if(result.error) throw new Error(result.error);
+    
     await loadAll();
     toast('🗑 삭제되었습니다');
-  }catch(e){toast('❌ '+e.message,4000);}
+  }catch(e){
+    toast('❌ '+e.message,4000);
+    console.error('delClient error:', e);
+  }
   finally{hideLoad();}
 }
 
