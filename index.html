@@ -1437,6 +1437,9 @@ window.addEventListener('load', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ★ 저장된 액세스 코드가 있으면 자동으로 처리
+  checkSavedAccessCode();
+  
   const chk = setInterval(() => {
     if (window.google?.accounts?.oauth2) {
       clearInterval(chk);
@@ -5198,6 +5201,40 @@ function renderDevTab(t){
   if(t === 'agents')    body.innerHTML = renderAgentsDash();
   if(t === 'system')    body.innerHTML = renderSystemDash();
   if(t === 'tools')     body.innerHTML = renderToolsDash();
+}
+
+// localStorage에 저장된 코드가 있는지 확인하고 자동 처리
+function checkSavedAccessCode(){
+  const savedCode = localStorage.getItem('fcrm_access_code');
+  
+  // 저장된 코드가 없으면 메인 화면 표시
+  if(!savedCode){
+    document.getElementById('loginScreen').style.display = 'block';
+    showPanel('lp_main');
+    return;
+  }
+  
+  // 저장된 코드가 있으면 백그라운드에서 검증
+  console.log('📝 저장된 코드 발견:', savedCode);
+  console.log('🔍 검증 중...');
+  
+  verifyAccessCodeInBackground(savedCode).then(()=>{
+    // 검증 성공 → Google 로그인 화면 바로 표시
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('lp_main').style.display = 'none';
+    document.getElementById('lp_code').style.display = 'block';
+    document.getElementById('lp_code_input').style.display = 'none';
+    document.getElementById('lp_code_input').parentElement.style.display = 'none';
+    document.querySelector('[onclick="verifyCode()"]').style.display = 'none';
+    document.getElementById('lp_google_wrap').style.display = 'block';
+    console.log('✅ 검증 성공 - Google 로그인 버튼 표시');
+  }).catch(e=>{
+    // 검증 실패 → 코드 재입력 요청
+    console.warn('❌ 저장된 코드가 유효하지 않음:', e);
+    localStorage.removeItem('fcrm_access_code');
+    document.getElementById('loginScreen').style.display = 'block';
+    showPanel('lp_main');
+  });
 }
 
 // Google 로그인 초기화
