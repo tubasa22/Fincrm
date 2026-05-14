@@ -1649,11 +1649,40 @@ function verifyCode(){
 
 // fmtAccessCode 함수 (코드 자동 포맷)
 function fmtAccessCode(el){
-  let v = el.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-  // FC-X-NNNN 또는 FC-XX-NNNN 형식으로 자동 포맷
-  if(v.length > 2 && !v.includes('-')) v = 'FC-' + v;
-  if(v.length > 5 && v.charAt(3) !== '-') v = v.substring(0,3) + '-' + v.substring(3);
-  el.value = v;
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  
+  // FC-X-NNNN 또는 FC-XX-NNNN 형식
+  if(v.startsWith('FC')){
+    v = v.substring(2); // FC 제거
+  }
+  
+  // 정확한 포맷팅
+  if(v.length >= 1){
+    // 영문자 부분 (1-2글자) 추출
+    let alpha = '';
+    let i = 0;
+    for(i = 0; i < v.length && i < 2; i++){
+      if(/[A-Z]/.test(v[i])){
+        alpha += v[i];
+      } else {
+        break;
+      }
+    }
+    
+    // 숫자 부분 (최대 4자리)
+    let nums = v.substring(i).replace(/[^0-9]/g, '').substring(0, 4);
+    
+    // 최종 형식: FC-{alpha}-{nums}
+    if(alpha && nums.length === 4){
+      el.value = 'FC-' + alpha + '-' + nums;
+    } else if(alpha){
+      el.value = 'FC-' + alpha + (nums ? '-' + nums : '');
+    } else {
+      el.value = 'FC-';
+    }
+  } else {
+    el.value = 'FC-';
+  }
 }
 
 function signInClick(){
