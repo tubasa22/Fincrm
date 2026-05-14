@@ -1583,6 +1583,8 @@ async function submitApply(){
       '이메일': email
     };
 
+    console.log('📤 GAS로 요청 전송:', payload);
+
     const response = await fetch(gasUrl, {
       method: 'POST',
       headers: {
@@ -1592,7 +1594,7 @@ async function submitApply(){
     });
 
     const result = await response.text();
-    console.log('Sheet 추가 응답:', result);
+    console.log('📥 GAS 응답:', result);
 
     hideLoad();
     
@@ -1699,6 +1701,19 @@ function signInClick(){
   if(tokenClient) tokenClient.requestAccessToken({prompt:''});
 }
 function signIn(){ signInClick(); }
+
+// ★ 개발자용: 신청 목록 확인 (콘솔에서 showApplications() 실행)
+function showApplications(){
+  const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
+  console.clear();
+  console.log('=== 신청 목록 (총 ' + applications.length + '건) ===\n');
+  applications.forEach((app, idx) => {
+    console.log(`${idx+1}. ${app.이름} (${app.이메일})`);
+    console.log(`   신청일시: ${app.신청일시}`);
+    console.log('');
+  });
+  console.log('💾 이 정보를 Google Sheets의 신청자목록 탭에 입력해주세요');
+}
 
 function signOut(){
   const userName = document.getElementById('udName')?.textContent || '';
