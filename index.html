@@ -1513,19 +1513,19 @@ async function submitApply(){
     // Google Apps Script를 통해 Sheet에 데이터 추가
     const gasUrl = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
     
-    const payload = {
-      action: 'addApplication',
-      신청일시: now,
-      이름: name,
-      이메일: email,
-      에이전시명: agency,
-      연락처: phone,
-      지역: region
-    };
+    // FormData 올바르게 생성
+    const formData = new FormData();
+    formData.append('action', 'addApplication');
+    formData.append('신청일시', now);
+    formData.append('이름', name);
+    formData.append('이메일', email);
+    formData.append('에이전시명', agency);
+    formData.append('연락처', phone);
+    formData.append('지역', region);
 
     const response = await fetch(gasUrl, {
       method: 'POST',
-      body: new FormData(Object.entries(payload).reduce((fd, [k, v]) => (fd.append(k, v), fd), new FormData()))
+      body: formData
     });
 
     const result = await response.text();
@@ -5054,14 +5054,44 @@ const DEV_KEY = 'fincrm_dev_2026';
 let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
 let devTab = 'agents';
 
-// ★ 개발자 모드는 비활성화됨 (고객용 버전)
+// 단축키 등록 (개발자 전용)
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.shiftKey && e.key === 'D'){
+    e.preventDefault();
+    openDevPanel();
+  }
+});
 
-// ★ 개발자 모드는 비활성화됨 (고객용 버전)
+function openDevPanel(){
+  if(!devUnlocked){
+    const pw = prompt('🔐 개발자 패널 접근 코드:');
+    if(pw !== DEV_KEY){ if(pw !== null) toast('❌ 접근 코드가 올바르지 않습니다'); return; }
+    devUnlocked = true;
+    sessionStorage.setItem('dev_unlocked', '1');
+  }
+  document.getElementById('devPanel').style.display = 'flex';
+  renderDevTab(devTab);
+  setTimeout(()=>{
+    document.querySelectorAll('.dev-tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===devTab));
+  }, 0);
+}
 
-function openDevPanel(){} // 비활성화됨
-function closeDevPanel(){} // 비활성화됨
-function switchDevTab(t){} // 비활성화됨
-function renderDevTab(t){} // 비활성화됨
+function closeDevPanel(){
+  document.getElementById('devPanel').style.display = 'none';
+}
+
+function switchDevTab(t){
+  devTab = t;
+  document.querySelectorAll('.dev-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  renderDevTab(t);
+}
+
+function renderDevTab(t){
+  const body = document.getElementById('devBody');
+  if(t === 'agents')    body.innerHTML = renderAgentsDash();
+  if(t === 'system')    body.innerHTML = renderSystemDash();
+  if(t === 'tools')     body.innerHTML = renderToolsDash();
+}
 
 // Google 로그인 초기화
 function initGoogleSignIn(){
@@ -5406,12 +5436,41 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
 };
 </script>
 
-<!-- 
-  ⚠️ 개발자 패널 제거됨 (고객용 버전)
-  
-  이 섹션은 내부용 개발 도구입니다.
-  고객에게는 보이지 않으며, 필요한 경우 별도의 관리자 버전 파일을 사용하세요.
--->
+<!-- 개발자 패널 UI (단축키: Ctrl+Shift+D) -->
+<div id="devPanel" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;width:90%;max-width:860px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+    <!-- 헤더 -->
+    <div style="background:#26215C;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">🛠</span>
+        <span style="color:#fff;font-size:15px;font-weight:600">FinCRM 개발자 패널</span>
+        <span style="background:#CECBF6;color:#26215C;font-size:10px;padding:2px 8px;border-radius:20px">Ctrl+Shift+D</span>
+      </div>
+      <button onclick="closeDevPanel()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:0.7;line-height:1">✕</button>
+    </div>
+    <!-- 탭 -->
+    <div style="display:flex;border-bottom:1px solid #e5e3db;background:#f8f7f3;flex-shrink:0">
+      <button class="dev-tab" data-tab="agents" onclick="switchDevTab('agents')"
+        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
+        🤖 에이전트 로그
+      </button>
+      <button class="dev-tab" data-tab="system" onclick="switchDevTab('system')"
+        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
+        📊 시스템 상태
+      </button>
+      <button class="dev-tab" data-tab="tools" onclick="switchDevTab('tools')"
+        style="padding:10px 16px;border:none;background:none;font-size:12px;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;color:#888">
+        🔧 개발 도구
+      </button>
+    </div>
+    <!-- 본문 -->
+    <div id="devBody" style="flex:1;overflow-y:auto;padding:16px"></div>
+  </div>
+</div>
+
+<style>
+.dev-tab.on { border-bottom-color:#534AB7 !important; color:#534AB7 !important; background:#fff !important; }
+</style>
 
 </body>
 </html>
