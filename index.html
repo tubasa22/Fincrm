@@ -1092,6 +1092,10 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">🏥 MAPD / PDP 추가 정보</div>
       <div class="fgr">
         <div class="fg"><label>MBI (Medicare ID)</label><input id="f_mbi" placeholder="1EG4-TE5-MK72" oninput="fmtMbi(this)" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace"></div>
+        <div class="fg"><label>Part A Effective Date</label><input id="f_part_a_date" type="date" placeholder="YYYY-MM-DD"></div>
+        <div class="fg"><label>Part B Effective Date</label><input id="f_part_b_date" type="date" placeholder="YYYY-MM-DD"></div>
+      </div>
+      <div class="fgr">
         <div class="fg"><label>Medical # (Medi-Cal)</label><input id="f_medical_no" placeholder="Medi-Cal #" oninput="toUpper(this)"></div>
       </div>
       <div class="fgr">
@@ -1509,7 +1513,16 @@ async function submitApply(){
   const phone = document.getElementById('ap_phone').value.trim();
   const agency = document.getElementById('ap_agency').value.trim();
   const region = counties.length > 0 ? counties.join(', ') : '';
-  const now = new Date().toLocaleString('ko-KR');
+  
+  // 날짜 포멧: YYYY-MM-DD HH:MM:SS (Zapier가 인식 가능한 형식)
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const nowFormatted = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
   try {
     showLoad('신청 접수 중...');
@@ -1520,7 +1533,7 @@ async function submitApply(){
     // FormData 올바르게 생성
     const formData = new FormData();
     formData.append('action', 'addApplication');
-    formData.append('신청일시', now);
+    formData.append('신청일시', nowFormatted);
     formData.append('이름', name);
     formData.append('이메일', email);
     formData.append('에이전시명', agency);
@@ -1551,35 +1564,88 @@ async function submitApply(){
   }
 }
 
+// 액세스 코드 백그라운드 검증 (Sheet의 코드와 비교)
+async function verifyAccessCodeInBackground(userCode){
+  try {
+    // 신청자목록 Sheet에서 발급된 코드 조회
+    const sheetId = '16j-DWyzI7GgsbIfKeulYwUluhk1d5-6xguyJbnNvJAs';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycby_Ho65Es2yeoxkMf_RmbOMb4ORrDbM4t8mPFlyEgcGJ_IkgymsL7E1QK0sy8ZuNc0s/exec';
+    
+    const formData = new FormData();
+    formData.append('action', 'verifyCode');
+    formData.append('code', userCode);
+
+    const response = await fetch(gasUrl, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.text();
+    console.log('코드 검증 결과:', result);
+
+    // 결과 파싱
+    if(result.includes('✅')){
+      // 코드 유효함 - localStorage에 유효 시간 저장
+      localStorage.setItem('fcrm_code_verified', JSON.stringify({
+        code: userCode,
+        verified_at: new Date().getTime(),
+        valid: true
+      }));
+      console.log('✅ 액세스 코드 유효함');
+    } else if(result.includes('❌')){
+      // 코드 무효함 - 로그아웃 처리
+      console.warn('❌ 액세스 코드 무효');
+      localStorage.removeItem('fcrm_access_code');
+      localStorage.removeItem('fcrm_code_verified');
+      // 30초 후 자동 로그아웃
+      setTimeout(()=>{
+        alert('❌ 액세스 코드가 유효하지 않습니다.\n\n다시 로그인해주세요.');
+        location.reload();
+      }, 30000);
+    }
+  } catch(e) {
+    console.error('코드 검증 중 오류:', e);
+    // 오류 무시 (네트워크 문제 등)
+  }
+}
+
 // 코드 검증
 function verifyCode(){
   const raw   = document.getElementById('lp_code_input').value.trim().toUpperCase();
   const errEl = document.getElementById('lp_code_err');
-  // 형식 체크: FC-XX-NNNN (10자)
-  if(!/^FC-[A-Z]{2}-\d{4}$/.test(raw)){
-    errEl.textContent = '❌ 코드 형식이 올바르지 않습니다 (예: FC-HG-3821)';
+  // 형식 체크: FC-X-NNNN 또는 FC-XX-NNNN (영문 1-2글자, 숫자 4자리)
+  if(!/^FC-[A-Z]{1,2}-\d{4}$/.test(raw)){
+    errEl.textContent = '❌ 코드 형식이 올바르지 않습니다 (예: FC-H-3821 또는 FC-HG-3821)';
     errEl.style.display = 'block';
     return;
   }
-  // 코드를 localStorage에 저장
-  localStorage.setItem('fcrm_access_code', raw);
-  errEl.style.display = 'none';
+  
+  // 백그라운드에서 Sheet 검증
+  verifyAccessCodeInBackground(raw).then(()=>{
+    // 검증 성공하면 로그인 진행
+    localStorage.setItem('fcrm_access_code', raw);
+    errEl.style.display = 'none';
 
-  // 구글 로그인 wrap 표시
-  const wrap = document.getElementById('lp_google_wrap');
-  wrap.style.display = 'block';
-  document.getElementById('lp_code_input').style.borderColor = 'var(--green)';
-  document.getElementById('lp_code_input').disabled = true;
+    // 구글 로그인 wrap 표시
+    const wrap = document.getElementById('lp_google_wrap');
+    wrap.style.display = 'block';
+    document.getElementById('lp_code_input').style.borderColor = 'var(--green)';
+    document.getElementById('lp_code_input').disabled = true;
 
-  // 버튼 강제 활성화 — SDK 이미 로드됐을 수 있으므로 즉시 활성화
-  const btn = document.getElementById('signInBtn');
-  if(btn){
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
-    const txt = btn.querySelector('#signInBtnTxt, .signInBtnTxt, span');
-    if(txt) txt.textContent = 'Google 계정으로 로그인';
-  }
+    // 버튼 강제 활성화 — SDK 이미 로드됐을 수 있으므로 즉시 활성화
+    const btn = document.getElementById('signInBtn');
+    if(btn){
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      const txt = btn.querySelector('#signInBtnTxt, .signInBtnTxt, span');
+      if(txt) txt.textContent = 'Google 계정으로 로그인';
+    }
+  }).catch(e=>{
+    errEl.textContent = '❌ 코드 검증 중 오류가 발생했습니다. 다시 시도해주세요.';
+    errEl.style.display = 'block';
+  });
+}
   // tokenClient 아직 없으면 SDK 로드 대기 후 활성화
   if(!tokenClient){
     const chk = setInterval(()=>{
@@ -1888,6 +1954,12 @@ function bootApp(){
   const saved = localStorage.getItem('fcrm_user');
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
   document.getElementById('userWrap').style.display = 'block';
+  
+  // ── 액세스 코드 검증 (백그라운드) ──
+  const savedCode = localStorage.getItem('fcrm_access_code');
+  if(savedCode && !isDemo){
+    verifyAccessCodeInBackground(savedCode);
+  }
   
   // ── Twilio 설정 복원 ──
   const t = JSON.parse(localStorage.getItem('twilio')||'{}');
@@ -3460,6 +3532,8 @@ function openEditClient(rowIdx){
     document.getElementById('planExtraFields').style.display='block';
     const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
     document.getElementById('f_mbi').value=pi.mbi||'';
+    document.getElementById('f_part_a_date').value=pi.part_a_date||'';
+    document.getElementById('f_part_b_date').value=pi.part_b_date||'';
     document.getElementById('f_medical_no').value=pi.medical_no||'';
     document.getElementById('f_pcp').value=pi.pcp||'';
     document.getElementById('f_pcp_phone').value=pi.pcp_phone||'';
@@ -3519,6 +3593,8 @@ async function saveClient(){
     piVals=[[
       name,
       document.getElementById('f_mbi').value.trim(),
+      document.getElementById('f_part_a_date').value.trim(),
+      document.getElementById('f_part_b_date').value.trim(),
       document.getElementById('f_medical_no').value.trim(),
       document.getElementById('f_pcp').value.trim(),
       document.getElementById('f_pcp_phone').value.trim(),
