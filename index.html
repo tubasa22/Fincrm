@@ -1875,6 +1875,14 @@ function bootApp(){
   const saved = localStorage.getItem('fcrm_user');
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
   document.getElementById('userWrap').style.display = 'block';
+  
+  // ── Twilio 설정 복원 ──
+  const t = JSON.parse(localStorage.getItem('twilio')||'{}');
+  if(t.sid) document.getElementById('twilioSid').value = t.sid;
+  if(t.token) document.getElementById('twilioToken').value = t.token;
+  if(t.from) document.getElementById('twilioFrom').value = t.from;
+  updateTwilioStatus();
+  
   // ── 온보딩 체크 ── 최초 실행 시 프로필 입력
   const profile = localStorage.getItem('fcrm_user_profile');
   if(!profile){
@@ -2530,6 +2538,7 @@ function openDetail(rowIdx){
       '</div>' +
       '<div class="dh-right">' +
         (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',false),1000)">📞 전화</a>' : '') +
+        (c.phone ? '<button class="btn sm" onclick="openSingleSms(\''+esc(c.name)+'\',\''+c.phone+'\');setTimeout(()=>updateLastContact('+c.rowIdx+',false),1000)" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9">💬 메시지</button>' : '') +
         '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
         '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
         '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +
