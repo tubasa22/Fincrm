@@ -2041,7 +2041,23 @@ async function loadAll(){
     }catch(e){ allPlanInfo=[]; }
     setSyncStatus('연결됨',true);
     renderAll();
-  }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
+  }catch(e){
+    // API 권한 오류 발생 시 데모 데이터로 진행 또는 빈 데이터로 표시
+    console.error('데이터 동기화 오류:', e.message);
+    
+    if(isDemo){
+      // 데모 모드면 기존 데모 데이터 유지
+      setSyncStatus('데모 모드',true);
+    } else {
+      // 빈 데이터로 진행
+      clients = [];
+      allMemos = [];
+      allPlanInfo = [];
+      setSyncStatus('오류: '+e.message.slice(0,20),false);
+    }
+    
+    renderAll();
+  }
 }
 function renderAll(){
   updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();
