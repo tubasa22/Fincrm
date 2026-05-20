@@ -525,6 +525,11 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <div id="app">
   <div class="topbar">
     <div class="logo">🏦 FinCRM</div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:10px">
+      <button class="btn" id="btnHealth" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('health')">🏥 Medicare/Health</button>
+      <button class="btn" id="btnLife" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('life')">🛡️ Life/Annuity</button>
+    </div>
+    
     <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
     <button class="tab" onclick="showTab('clients',this)">👥 고객 목록</button>
     <button class="tab" onclick="showTab('schedule',this)">📅 연락일</button>
@@ -1741,7 +1746,41 @@ function signInClick(){
 }
 function signIn(){ signInClick(); }
 
-// ★ 개발자용: 신청 목록 확인 (콘솔에서 showApplications() 실행)
+// ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
+function switchProduct(product) {
+  if(product === 'life') {
+    // Life/Annuity로 이동 (localStorage에 선택 저장)
+    localStorage.setItem('fcrm_current_product', 'life');
+    window.location.href = 'life-annuity.html';
+  } else {
+    // Medicare/Health로 이동
+    localStorage.setItem('fcrm_current_product', 'health');
+    localStorage.removeItem('fcrm_current_product_temp');
+  }
+}
+
+// ★ 페이지 로드 시 상품 확인
+window.addEventListener('load', () => {
+  const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
+  
+  if(currentProduct === 'life') {
+    // 이미 life-annuity.html에 있어야 함
+  } else {
+    // Medicare/Health 유지
+    const btnHealth = document.getElementById('btnHealth');
+    const btnLife = document.getElementById('btnLife');
+    
+    if(btnHealth) {
+      btnHealth.style.background = '#007bff';
+      btnHealth.style.color = '#fff';
+    }
+    
+    if(btnLife) {
+      btnLife.style.background = '#e8f5e9';
+      btnLife.style.color = '#2e7d32';
+    }
+  }
+});
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
   console.clear();
