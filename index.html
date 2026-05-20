@@ -1858,9 +1858,19 @@ function selectProduct(product) {
   localStorage.setItem('fcrm_product', product);
   
   if(product === 'health') {
-    window.location.href = 'health.html';
+    // URL 변경
+    window.history.pushState(null, '', 'health.html');
+    // 페이지 로드
+    setTimeout(() => {
+      window.location.href = 'health.html';
+    }, 100);
   } else if(product === 'life') {
-    window.location.href = 'life.html';
+    // URL 변경
+    window.history.pushState(null, '', 'life.html');
+    // 페이지 로드
+    setTimeout(() => {
+      window.location.href = 'life.html';
+    }, 100);
   }
 }
 
