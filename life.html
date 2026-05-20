@@ -210,6 +210,26 @@ let statements = [];
 let contacts = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 로그인 확인
+  const token = localStorage.getItem('fcrm_token');
+  const demoMode = localStorage.getItem('fcrm_demo');
+  
+  if(!token && !demoMode) {
+    // 로그인 안 됨 → index로 리다이렉트
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  // 토큰 설정
+  if(token) {
+    accessToken = token;
+  }
+  
+  // 데모 모드 설정
+  if(demoMode) {
+    isDemo = true;
+  }
+  
   // Google 스크립트 로드 대기
   const checkGoogle = setInterval(() => {
     if(window.google?.accounts?.id) {
@@ -246,21 +266,6 @@ function handleCredential(response) {
   localStorage.setItem('fcrm_token', accessToken);
   bootApp();
 }
-
-// ★ 페이지 로드 시 로그인 확인 (index에서만 로그인 가능)
-document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('fcrm_token');
-  const isDemo = localStorage.getItem('fcrm_demo');
-  
-  if(!token && !isDemo) {
-    // 로그인 안 됨 → index로 리다이렉트
-    window.location.href = 'index.html';
-    return;
-  }
-  
-  // 로그인됨 → 앱 시작
-  bootApp();
-});
 
 function bootApp() {
   if(!accessToken && !isDemo) {
@@ -409,6 +414,7 @@ function addContact() { alert('연락 기록 추가 (구현 필요)'); }
 // ★ Health로 전환
 function switchToHealth() {
   localStorage.setItem('fcrm_product', 'health');
+  // 페이지 로드
   window.location.href = 'health.html';
 }
 
