@@ -525,13 +525,26 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 
 <!-- APP -->
 <div id="app">
-  <div class="topbar">
-    <div class="logo">🏦 FinCRM</div>
-    <div style="display:flex;gap:10px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:10px">
-      <button class="btn" id="btnHealth" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default">🏥 Medicare/Health</button>
-      <button class="btn" id="btnLife" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="localStorage.setItem('fcrm_product','life');window.location.href='life.html'">💰 Life/Annuity</button>
+  <header style="background:#fff;border-bottom:1px solid #ccc;padding:15px 20px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:24px;font-weight:bold;color:#333">🏥 Medicare/Health CRM</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span id="udName" style="font-weight:600;color:#333">사용자</span>
+        <button class="btn btn-secondary btn-sm" onclick="showDevModeModal()" style="background:#b45309;color:#fff">🔐 개발자</button>
+        <button class="btn btn-secondary btn-sm" onclick="signOut()">🚪 로그아웃</button>
+      </div>
     </div>
-    
+  </header>
+
+  <!-- 제품 선택 -->
+  <div style="background:#fff;border-bottom:1px solid #ccc;padding:10px 20px">
+    <div style="display:flex;gap:8px">
+      <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default">🏥 Medicare/Health</button>
+      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="localStorage.setItem('fcrm_product','life');window.location.href='life.html'">💰 Life/Annuity</button>
+    </div>
+  </div>
+
+  <div class="topbar" style="margin-top:0;padding:0 20px">
     <button class="tab on" data-product="health" onclick="showTab('dashboard',this)">📊 대시보드</button>
     <button class="tab" data-product="health" onclick="showTab('clients',this)">👥 고객 목록</button>
     <button class="tab" data-product="health" onclick="showTab('schedule',this)">📅 연락일</button>
@@ -2138,8 +2151,16 @@ function bootApp(){
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
   const banner = document.getElementById('demoBanner');
   if(banner) banner.style.display = isDemo ? 'block' : 'none';
+  
+  // 사용자 정보 표시
   const saved = localStorage.getItem('fcrm_user');
-  if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
+  if(saved){ 
+    try{ 
+      const user = JSON.parse(saved);
+      document.getElementById('udName').textContent = user.name || '사용자';
+      updateUserUI(user);
+    }catch(e){} 
+  }
   document.getElementById('userWrap').style.display = 'block';
   
   // ── Twilio 설정 복원 ──
@@ -3267,14 +3288,6 @@ function svDoneLoading(){
   setTimeout(function(){ bar.style.width='0%'; bar.style.transition='none'; },400);
 }
 // iframe load 감지
-document.addEventListener('DOMContentLoaded', function(){
-  var frame = document.getElementById('sheetViewFrame');
-  if(frame){
-    frame.addEventListener('load', function(){
-      svDoneLoading();
-    });
-  }
-});
 
 // ══════════════════════════════════════
 // 피드백 & 버그 리포트
