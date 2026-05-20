@@ -530,12 +530,20 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <button class="btn" id="btnLife" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('life')">🛡️ Life/Annuity</button>
     </div>
     
-    <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
-    <button class="tab" onclick="showTab('clients',this)">👥 고객 목록</button>
-    <button class="tab" onclick="showTab('schedule',this)">📅 연락일</button>
-    <button class="tab" onclick="showTab('birthday',this)">🎂 생일</button>
-    <button class="tab" onclick="showTab('sms',this)">💬 문자 발송</button>
-    <button class="tab" onclick="showTab('automation',this)">⚡ 자동화</button>
+    <button class="tab on" data-product="health" onclick="showTab('dashboard',this)">📊 대시보드</button>
+    <button class="tab" data-product="health" onclick="showTab('clients',this)">👥 고객 목록</button>
+    <button class="tab" data-product="health" onclick="showTab('schedule',this)">📅 연락일</button>
+    <button class="tab" data-product="health" onclick="showTab('birthday',this)">🎂 생일</button>
+    <button class="tab" data-product="health" onclick="showTab('sms',this)">💬 문자 발송</button>
+    <button class="tab" data-product="health" onclick="showTab('automation',this)">⚡ 자동화</button>
+    
+    <!-- Annuity 탭 -->
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-dashboard',this)">📊 대시보드</button>
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-clients',this)">👥 고객 관리</button>
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-consultation',this)">📅 상담 이력</button>
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-annual',this)">🔄 Annual Review</button>
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-statement',this)">📋 Statement Review</button>
+    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-contact',this)">📞 연락 추적</button>
     <div class="tr">
       <div class="gsrch-wrap">
         <span class="gsrch-icon">🔍</span>
@@ -1413,7 +1421,8 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <div id="loadOv"><div class="spin"></div><p id="loadTxt">저장 중...</p></div>
 <div id="toast"></div>
 
-<script src="https://accounts.google.com/gsi/client" async></script>
+<!-- 구글 로그인 스크립트 -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 const CLIENT_ID = '12663377588-v7o614l1aomfis8f0n5uniom9o7pk7vs.apps.googleusercontent.com';
 const MAIN_ID   = '1a3ZAr3_ZB2ySPEAZDuvjS2mwPY3fdOBZBn0freXZ9tM';
@@ -1748,38 +1757,36 @@ function signIn(){ signInClick(); }
 
 // ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
 function switchProduct(product) {
+  localStorage.setItem('fcrm_current_product', product);
+  
   if(product === 'life') {
-    // Life/Annuity로 이동 (localStorage에 선택 저장)
-    localStorage.setItem('fcrm_current_product', 'life');
-    window.location.href = 'life-annuity.html';
+    // Life/Annuity 탭으로 전환
+    document.getElementById('btnHealth').style.background = '#e8f5e9';
+    document.getElementById('btnHealth').style.color = '#2e7d32';
+    document.getElementById('btnLife').style.background = '#007bff';
+    document.getElementById('btnLife').style.color = '#fff';
+    
+    // 기존 탭 숨기고 Annuity 탭만 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'block');
+    
   } else {
-    // Medicare/Health로 이동
-    localStorage.setItem('fcrm_current_product', 'health');
-    localStorage.removeItem('fcrm_current_product_temp');
+    // Medicare/Health 탭으로 전환
+    document.getElementById('btnHealth').style.background = '#007bff';
+    document.getElementById('btnHealth').style.color = '#fff';
+    document.getElementById('btnLife').style.background = '#e8f5e9';
+    document.getElementById('btnLife').style.color = '#2e7d32';
+    
+    // Annuity 탭 숨기고 기존 탭 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'block');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'none');
   }
 }
 
 // ★ 페이지 로드 시 상품 확인
 window.addEventListener('load', () => {
   const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
-  
-  if(currentProduct === 'life') {
-    // 이미 life-annuity.html에 있어야 함
-  } else {
-    // Medicare/Health 유지
-    const btnHealth = document.getElementById('btnHealth');
-    const btnLife = document.getElementById('btnLife');
-    
-    if(btnHealth) {
-      btnHealth.style.background = '#007bff';
-      btnHealth.style.color = '#fff';
-    }
-    
-    if(btnLife) {
-      btnLife.style.background = '#e8f5e9';
-      btnLife.style.color = '#2e7d32';
-    }
-  }
+  switchProduct(currentProduct);
 });
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
@@ -1818,6 +1825,48 @@ function copyAsCSV(){
     console.log('✅ CSV 형식으로 복사되었습니다!');
     console.log('Google Sheets에서 Ctrl+V로 붙여넣기하세요');
   });
+}
+
+// ★ 상품 선택 모달
+function showProductModal() {
+  const html = `
+    <div id="productModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000">
+      <div style="background:#fff;border-radius:12px;padding:40px;text-align:center;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,0.3)">
+        <div style="font-size:32px;margin-bottom:20px">🎯</div>
+        <div style="font-size:24px;font-weight:bold;margin-bottom:10px;color:#333">상품을 선택하세요</div>
+        <div style="color:#999;margin-bottom:30px">Medicare/Health 또는 Life/Annuity</div>
+        
+        <button onclick="selectProduct('health')" style="width:100%;padding:14px;margin-bottom:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer">
+          🏥 Medicare / Health
+        </button>
+        
+        <button onclick="selectProduct('life')" style="width:100%;padding:14px;margin-bottom:12px;background:#28a745;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer">
+          💰 Life / Annuity
+        </button>
+        
+        <button onclick="closeProductModal()" style="width:100%;padding:10px;background:#f0f0f0;color:#666;border:none;border-radius:8px;font-weight:600;cursor:pointer">
+          취소
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function selectProduct(product) {
+  localStorage.setItem('fcrm_product', product);
+  
+  if(product === 'health') {
+    window.location.href = 'health.html';
+  } else if(product === 'life') {
+    window.location.href = 'life.html';
+  }
+}
+
+function closeProductModal() {
+  const modal = document.getElementById('productModal');
+  if(modal) modal.remove();
 }
 
 function signOut(){
@@ -2105,6 +2154,9 @@ function bootApp(){
   const saved = localStorage.getItem('fcrm_user');
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
   document.getElementById('userWrap').style.display = 'block';
+  
+  // ★ 상품 선택 모달 표시
+  setTimeout(() => showProductModal(), 300);
   
   // ── Twilio 설정 복원 ──
   const t = JSON.parse(localStorage.getItem('twilio')||'{}');
