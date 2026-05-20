@@ -2104,7 +2104,8 @@ function demoMode(){
   bootApp();
 }
 // ★ 페이지 로드 시 로그인 확인
-document.addEventListener('DOMContentLoaded', () => {
+// ★ 페이지 로드 시 로그인 확인 (window load 사용)
+window.addEventListener('load', () => {
   const token = localStorage.getItem('fcrm_token');
   const demoMode = localStorage.getItem('fcrm_demo');
   
