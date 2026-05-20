@@ -72,6 +72,7 @@
     <div class="header-title">💰 Annuity CRM</div>
     <div class="header-user">
       <span id="udName">로그인 필요</span>
+      <button class="btn btn-secondary btn-sm" onclick="showDevModeModal()" style="background:#b45309;color:#fff;margin-right:8px">🔐 개발자</button>
       <button class="btn btn-secondary btn-sm" onclick="signOut()">로그아웃</button>
     </div>
   </div>
@@ -81,7 +82,7 @@
 <div style="background:#fff;border-bottom:1px solid #ccc;padding:10px 20px">
   <div class="container">
     <div class="product-nav">
-      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchToHealth()">🏥 Medicare/Health</button>
+      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="localStorage.setItem('fcrm_product','health');window.location.href='health.html'">🏥 Medicare/Health</button>
       <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default">💰 Life/Annuity</button>
     </div>
   </div>
@@ -426,6 +427,58 @@ function demoMode() {
   isDemo = true;
   bootApp();
 }
+</script>
+
+<!-- ★ 개발자 모드 모달 -->
+<div id="devModeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;width:90%;max-width:500px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+    <div style="padding:20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:20px;font-weight:bold;color:#333">🔐 개발자 모드</div>
+      <button onclick="closeDevModeModal()" style="border:none;background:none;cursor:pointer;font-size:24px;color:#999">✕</button>
+    </div>
+    <div style="padding:20px">
+      <div style="margin-bottom:15px">
+        <label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px">개발자 코드</label>
+        <input id="devCodeInput" type="password" placeholder="개발자 코드 입력" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px">
+      </div>
+      <button onclick="validateDevCode()" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer">확인</button>
+      <div id="devPanel" style="display:none;margin-top:20px;border-top:1px solid #eee;padding-top:20px">
+        <h3 style="font-size:14px;font-weight:bold;margin-bottom:15px">개발자 도구</h3>
+        <div style="padding:10px;background:#f5f5f5;border-radius:6px;font-size:12px;line-height:1.6">
+          <p>✅ 자동화 설정</p>
+          <p>✅ 버그 리포트</p>
+          <p>✅ 데이터 관리</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEV_CODE = 'fincrm_dev_2026';
+function showDevModeModal() {
+  document.getElementById('devModeModal').style.display = 'flex';
+  document.getElementById('devCodeInput').focus();
+}
+function closeDevModeModal() {
+  document.getElementById('devModeModal').style.display = 'none';
+  document.getElementById('devPanel').style.display = 'none';
+}
+function validateDevCode() {
+  const code = document.getElementById('devCodeInput').value;
+  if(code === DEV_CODE) {
+    document.getElementById('devPanel').style.display = 'block';
+    document.getElementById('devCodeInput').style.display = 'none';
+    document.getElementById('devCodeInput').parentElement.style.display = 'none';
+    document.querySelector('button[onclick="validateDevCode()"]').style.display = 'none';
+    alert('✅ 개발자 모드 활성화');
+  } else if(code) {
+    alert('❌ 잘못된 코드');
+  }
+}
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeDevModeModal();
+});
 </script>
 
 </body>
