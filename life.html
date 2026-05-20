@@ -423,8 +423,6 @@ function signOut() {
   localStorage.removeItem('fcrm_demo');
   localStorage.removeItem('fcrm_user');
   localStorage.removeItem('fcrm_product');
-  
-  // index.html로 직접 이동
   window.location.href = 'index.html';
 }
 
@@ -461,26 +459,41 @@ function demoMode() {
 
 <script>
 const DEV_CODE = 'fincrm_dev_2026';
+
 function showDevModeModal() {
-  document.getElementById('devModeModal').style.display = 'flex';
-  document.getElementById('devCodeInput').focus();
+  const modal = document.getElementById('devModeModal');
+  const input = document.getElementById('devCodeInput');
+  modal.style.display = 'flex';
+  input.value = '';
+  input.focus();
 }
+
 function closeDevModeModal() {
-  document.getElementById('devModeModal').style.display = 'none';
-  document.getElementById('devPanel').style.display = 'none';
+  const modal = document.getElementById('devModeModal');
+  const panel = document.getElementById('devPanel');
+  modal.style.display = 'none';
+  panel.style.display = 'none';
 }
+
 function validateDevCode() {
-  const code = document.getElementById('devCodeInput').value;
+  const input = document.getElementById('devCodeInput');
+  const code = input.value;
+  
   if(code === DEV_CODE) {
-    document.getElementById('devPanel').style.display = 'block';
-    document.getElementById('devCodeInput').style.display = 'none';
-    document.getElementById('devCodeInput').parentElement.style.display = 'none';
-    document.querySelector('button[onclick="validateDevCode()"]').style.display = 'none';
+    const panel = document.getElementById('devPanel');
+    const inputWrapper = input.parentElement;
+    const btn = document.querySelector('button[onclick="validateDevCode()"]');
+    
+    panel.style.display = 'block';
+    input.style.display = 'none';
+    inputWrapper.style.display = 'none';
+    btn.style.display = 'none';
     alert('✅ 개발자 모드 활성화');
   } else if(code) {
     alert('❌ 잘못된 코드');
   }
 }
+
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') closeDevModeModal();
 });
