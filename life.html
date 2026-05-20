@@ -219,8 +219,8 @@ window.addEventListener('load', () => {
   const demoMode = localStorage.getItem('fcrm_demo');
   
   if(!token && !demoMode) {
-    // 로그인 안 됨 → index로 리다이렉트
-    window.location.href = 'index.html';
+    // 로그인 안 됨 → 즉시 index로 이동
+    window.location.replace('index.html');
     return;
   }
   
@@ -417,19 +417,13 @@ function signInClick() {
 }
 
 function signOut() {
-  // localStorage 제거
   localStorage.removeItem('fcrm_token');
   localStorage.removeItem('fcrm_demo');
   localStorage.removeItem('fcrm_user');
   localStorage.removeItem('fcrm_product');
   
-  // 화면 검게 처리 후 이동 (flashing 방지)
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity 0.3s ease';
-  
-  setTimeout(() => {
-    window.location.href = 'index.html';
-  }, 300);
+  // index.html로 직접 이동
+  window.location.href = 'index.html';
 }
 
 function demoMode() {
