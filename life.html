@@ -417,10 +417,19 @@ function signInClick() {
 }
 
 function signOut() {
+  // localStorage 제거
   localStorage.removeItem('fcrm_token');
   localStorage.removeItem('fcrm_demo');
   localStorage.removeItem('fcrm_user');
-  window.location.href = 'index.html';
+  localStorage.removeItem('fcrm_product');
+  
+  // 화면 검게 처리 후 이동 (flashing 방지)
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity 0.3s ease';
+  
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 300);
 }
 
 function demoMode() {
