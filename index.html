@@ -1549,12 +1549,8 @@ async function submitApply(){
   const nameEl = document.getElementById('ap_name');
   const emailEl = document.getElementById('ap_email');
   
-  if(!nameEl) {
-    alert('❌ 이름 입력 필드를 찾을 수 없습니다');
-    return;
-  }
-  if(!emailEl) {
-    alert('❌ 이메일 입력 필드를 찾을 수 없습니다');
+  if(!nameEl || !emailEl) {
+    alert('❌ 입력 필드를 찾을 수 없습니다');
     return;
   }
   
@@ -1567,8 +1563,9 @@ async function submitApply(){
   try {
     showLoad('신청 접수 중...');
 
-    // ★ 현재: localStorage에 저장 (개발자가 수동으로 확인)
     const now = new Date().toLocaleString('ko-KR');
+    
+    // localStorage에 저장
     const application = {
       신청일시: now,
       이름: name,
@@ -1576,16 +1573,12 @@ async function submitApply(){
       id: Date.now()
     };
     
-    // localStorage에 저장
     let applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
     applications.push(application);
     localStorage.setItem('fcrm_applications', JSON.stringify(applications));
     
-    console.log('📋 신청 정보 저장:', application);
-    
-    // ★ Google Sheets에 직접 추가 (GAS 우회)
-    // 향후: Google Form 또는 업데이트된 GAS 사용
-    
+    console.log('✅ 신청 저장됨:', application);
+
     hideLoad();
     
     // 정보 표시
@@ -1594,23 +1587,67 @@ async function submitApply(){
     showPanel('lp_applied');
     
     toast('✅ 신청이 접수되었습니다!');
-    
-    // 개발자 알림
-    console.warn('=== 🔔 신청 접수됨 ===');
-    console.warn('이름:', name);
-    console.warn('이메일:', email);
-    console.warn('신청일시:', now);
-    console.warn('');
-    console.warn('📋 모든 신청 확인:');
-    console.warn('콘솔에서 showApplications() 실행');
-    console.warn('또는');
-    console.warn('Google Sheets에 수동으로 입력');
-    console.warn('========================');
 
   } catch(e) {
     hideLoad();
     console.error('신청 처리 오류:', e);
     alert('❌ 신청 처리 중 오류가 발생했습니다.');
+  }
+}
+
+// ★ 개발자용: 신청을 Google Sheets에 일괄 업로드
+async function uploadApplicationsToSheets(){
+  const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
+  
+  if(applications.length === 0){
+    alert('업로드할 신청이 없습니다');
+    return;
+  }
+  
+  console.log('📤 Google Sheets에 업로드 중...');
+  
+  const sheetId = '16j-DWyzI7GgsbIfKeulYwUluhk1d5-6xguyJbnNvJAs';
+  const range = '신청자목록!A:H';
+  
+  try {
+    // 모든 신청을 배열로 변환
+    const values = applications.map(app => [
+      app.신청일시,
+      app.이름,
+      app.이메일,
+      '',  // 에이전시명
+      '',  // 연락처
+      '',  // 지역
+      '',  // 코드
+      '대기'  // 상태
+    ]);
+    
+    // Google Sheets API로 추가
+    const response = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=AIzaSyBx5XR1-VLU-5Vj7t8Z_J0G7yEq_h8c4dg`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values })
+      }
+    );
+    
+    if(response.ok){
+      const result = await response.json();
+      console.log('✅ Google Sheets 업로드 완료:', result);
+      alert(`✅ ${applications.length}건의 신청이 Google Sheets에 업로드되었습니다!`);
+      
+      // 업로드된 데이터 삭제
+      localStorage.removeItem('fcrm_applications');
+      console.log('✅ 로컬 저장소 초기화됨');
+    } else {
+      throw new Error('업로드 실패: ' + response.statusText);
+    }
+  } catch(e) {
+    console.error('❌ 업로드 오류:', e);
+    alert('❌ 업로드 중 오류가 발생했습니다.\n\n' + e.message);
   }
 }
 
@@ -1708,13 +1745,40 @@ function signIn(){ signInClick(); }
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
   console.clear();
-  console.log('=== 신청 목록 (총 ' + applications.length + '건) ===\n');
+  console.log('=== FinCRM 신청 목록 (총 ' + applications.length + '건) ===\n');
+  
+  if(applications.length === 0){
+    console.log('아직 신청이 없습니다.');
+    return;
+  }
+  
   applications.forEach((app, idx) => {
-    console.log(`${idx+1}. ${app.이름} (${app.이메일})`);
+    console.log(`${idx+1}. ${app.이름}`);
+    console.log(`   이메일: ${app.이메일}`);
     console.log(`   신청일시: ${app.신청일시}`);
     console.log('');
   });
-  console.log('💾 이 정보를 Google Sheets의 신청자목록 탭에 입력해주세요');
+  
+  console.log('\n📋 다음 URL에서 Google Sheets에 입력하세요:');
+  console.log('https://docs.google.com/spreadsheets/d/16j-DWyzI7GgsbIfKeulYwUluhk1d5-6xguyJbnNvJAs/edit#gid=0');
+  console.log('');
+  console.log('탭: "신청자목록"');
+  console.log('컬럼: A=신청일시, B=이름, C=이메일, D=에이전시명, E=연락처, F=지역, G=코드, H=상태');
+}
+
+// 신청 데이터를 CSV 형식으로 복사 (Sheets 붙여넣기 용)
+function copyAsCSV(){
+  const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
+  let csv = '신청일시\t이름\t이메일\t에이전시명\t연락처\t지역\t코드\t상태\n';
+  
+  applications.forEach(app => {
+    csv += `${app.신청일시}\t${app.이름}\t${app.이메일}\t\t\t\t\t대기\n`;
+  });
+  
+  navigator.clipboard.writeText(csv).then(() => {
+    console.log('✅ CSV 형식으로 복사되었습니다!');
+    console.log('Google Sheets에서 Ctrl+V로 붙여넣기하세요');
+  });
 }
 
 function signOut(){
@@ -2666,6 +2730,7 @@ function openDetail(rowIdx){
       '<div class="dh-right">' +
         (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)">📞 전화</a>' : '') +
         (c.phone ? '<button class="btn sm" onclick="openSingleSms(\''+esc(c.name)+'\',\''+c.phone+'\');setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9">💬 메시지</button>' : '') +
+        (c.phone ? '<a href="https://open.kakao.com/o/s'+c.phone.replace(/[^0-9]/g,'')+'" target="_blank" class="btn sm" style="background:#FFE812;color:#000;border-color:#FFE812;text-decoration:none" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),500)">🔔 카톡</a>' : '') +
         '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
         '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
         '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +
@@ -4200,35 +4265,40 @@ function removeSmsRecip(i){
   renderSmsRecips();
 }
 function openSingleSms(name, phone, type='general'){
-  // SMS 탭 요소 찾기
-  const smsTabEl = Array.from(document.querySelectorAll('.tab')).find(t => {
-    return t.getAttribute('onclick') && t.getAttribute('onclick').includes("'sms'");
-  });
+  // SMS 탭 직접 활성화
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-sms').classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   
-  // 탭 활성화
-  if(smsTabEl) {
-    showTab('sms', smsTabEl);
-  } else {
-    // 탭 요소가 없으면 ID로 직접 활성화
-    document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-    document.getElementById('pg-sms').classList.add('on');
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-    const tab = Array.from(document.querySelectorAll('.tab')).find(t=>t.textContent.includes('문자'));
-    if(tab) tab.classList.add('on');
-  }
+  // 문자 발송 탭 활성화
+  const smsTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.textContent.includes('문자'));
+  if(smsTab) smsTab.classList.add('on');
+  
+  // URL 변경
+  history.replaceState(null,'','#sms');
   
   // 수신자 설정
   setTimeout(()=>{
     smsRecipients = [{name, phone}];
     renderSmsRecips();
     if(type==='birthday') selectTemplate(0);
-    // Twilio 설정도 복원
+    
+    // Twilio 설정 복원
     const t = JSON.parse(localStorage.getItem('twilio')||'{}');
-    if(t.sid) document.getElementById('twilioSid').value = t.sid;
-    if(t.token) document.getElementById('twilioToken').value = t.token;
-    if(t.from) document.getElementById('twilioFrom').value = t.from;
+    if(t.sid) {
+      const el = document.getElementById('twilioSid');
+      if(el) el.value = t.sid;
+    }
+    if(t.token) {
+      const el = document.getElementById('twilioToken');
+      if(el) el.value = t.token;
+    }
+    if(t.from) {
+      const el = document.getElementById('twilioFrom');
+      if(el) el.value = t.from;
+    }
     updateTwilioStatus();
-  }, 150);
+  }, 100);
 }
 
 // ══════════════════════════════════════
