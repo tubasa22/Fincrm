@@ -37,9 +37,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 /* APP */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.on{display:flex}
-.topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:0 20px;height:54px;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
+.topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:8px 15px;height:auto;min-height:50px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:40;box-shadow:var(--sh);flex-wrap:wrap}
 .logo{font-size:17px;font-weight:800;color:var(--blue);margin-right:14px;white-space:nowrap;flex-shrink:0}
-.tab{padding:7px 13px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);transition:.15s;white-space:nowrap;font-family:inherit}
+.tab{padding:8px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text2);transition:.15s;white-space:nowrap;font-family:inherit;margin:0 2px}
 .tab:hover{background:var(--g2)}.tab.on{background:var(--blue2);color:var(--blue);font-weight:700}
 .tr{margin-left:auto;display:flex;align-items:center;gap:8px}
 .pill{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
@@ -50,7 +50,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .user-av{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--g3)}
 .btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap;text-decoration:none}
 .btn:hover{background:var(--g2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:var(--blue3)}
-.btn.sm{padding:5px 10px;font-size:12px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:4px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
 .btn.red{background:var(--red2);color:var(--red);border-color:var(--red)}
 
 .pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%;flex:1;overflow-y:auto}.pg.on{display:block}
@@ -563,8 +563,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
         🎭 데모 모드 — 가상 데이터
       </div>
       <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
-      <button class="btn sm" onclick="openFeedback()" title="피드백 보내기" style="background:var(--green2);color:var(--green);border-color:var(--green)">💬 피드백</button>
-      <button class="btn sm" onclick="openBugReport()" title="버그 신고" style="background:var(--red2);color:var(--red);border-color:var(--red)">🐛 버그</button>
       <!-- 유저 드롭다운 -->
       <div class="user-wrap" id="userWrap" style="display:none">
         <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
