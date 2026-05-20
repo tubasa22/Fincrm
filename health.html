@@ -554,69 +554,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
       <button class="tab" data-product="health" onclick="showTab('sms',this)">💬 문자 발송</button>
     </div>
   </div>
-    
-    <!-- Annuity 탭 -->
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-dashboard',this)">📊 대시보드</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-clients',this)">👥 고객 관리</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-consultation',this)">📅 상담 이력</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-annual',this)">🔄 Annual Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-statement',this)">📋 Statement Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-contact',this)">📞 연락 추적</button>
-    <div class="tr">
-      <div class="gsrch-wrap">
-        <span class="gsrch-icon">🔍</span>
-        <input class="gsrch" id="globalSearch" placeholder="고객 검색..." oninput="globalSearchFn()" onblur="setTimeout(()=>closeGlobalSearch(),200)">
-        <div class="gsrch-results" id="gsResults"></div>
-      </div>
-      <div class="notif-wrap">
-        <button class="notif-btn" onclick="toggleNotif()" title="알림">🔔<span class="notif-badge" id="notifBadge"></span></button>
-        <div class="notif-panel" id="notifPanel">
-          <div class="notif-head">알림 <button style="border:none;background:none;cursor:pointer;font-size:11px;color:var(--text3)" onclick="clearNotifs()">모두 읽음</button></div>
-          <div id="notifList"><div class="notif-empty">새 알림 없음</div></div>
-        </div>
-      </div>
-      <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
-      <div id="demoBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#92400e;white-space:nowrap">
-        🎭 데모 모드 — 가상 데이터
-      </div>
-      <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
-      <!-- 유저 드롭다운 -->
-      <div class="user-wrap" id="userWrap" style="display:none">
-        <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
-          <img id="userAvatar" class="user-av" style="display:none;width:26px;height:26px;border:none">
-          <div id="userAvatarPlaceholder" style="width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">?</div>
-          <span class="user-btn-name" id="userBtnName">사용자</span>
-          <span style="font-size:10px;color:var(--text3)">▾</span>
-        </button>
-        <div class="user-dropdown" id="userDropdown">
-          <div class="ud-head">
-            <img id="udAvatar" class="ud-avatar" style="display:none">
-            <div id="udAvatarPlaceholder" class="ud-avatar-placeholder">?</div>
-            <div class="ud-name" id="udName">—</div>
-            <div class="ud-email" id="udEmail">—</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px" id="udLoginTime"></div>
-          </div>
-          <div class="ud-body">
-            <div class="ud-item" onclick="showLoginLog()">
-              <span class="ud-icon">📋</span> 로그인 이력
-            </div>
-          </div>
-          <div class="ud-log" id="udLogArea">
-            <div class="ud-log-title">최근 활동</div>
-            <div id="udLogList"></div>
-          </div>
-          <div style="padding:8px 12px;border-top:1px solid var(--g3)">
-            <button class="btn" style="width:100%;justify-content:center;background:var(--amber);color:#fff;margin-bottom:8px" onclick="showDevModeModal()">
-              🔐 개발자 모드
-            </button>
-            <button class="btn red" style="width:100%;justify-content:center" onclick="signOut()">
-              🚪 로그아웃
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- DASHBOARD -->
   <div class="pg on" id="pg-dashboard">
