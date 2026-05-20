@@ -3217,14 +3217,6 @@ function svDoneLoading(){
   setTimeout(function(){ bar.style.width='0%'; bar.style.transition='none'; },400);
 }
 // iframe load 감지
-document.addEventListener('DOMContentLoaded', function(){
-  var frame = document.getElementById('sheetViewFrame');
-  if(frame){
-    frame.addEventListener('load', function(){
-      svDoneLoading();
-    });
-  }
-});
 
 // ══════════════════════════════════════
 // 피드백 & 버그 리포트
