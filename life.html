@@ -67,24 +67,25 @@
 <body>
 
 <!-- 헤더 -->
-<header>
-  <div class="header-content">
-    <div class="header-title">💰 Annuity CRM</div>
-    <div class="header-user">
-      <span id="udName">로그인 필요</span>
-      <button class="btn btn-secondary btn-sm" onclick="showDevModeModal()" style="background:#b45309;color:#fff;margin-right:8px">🔐 개발자</button>
-      <button class="btn btn-secondary btn-sm" onclick="signOut()">로그아웃</button>
+<header style="background:#fff;border-bottom:1px solid #ccc;padding:15px 20px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:24px;font-weight:bold;color:#333">💰 Annuity CRM</div>
+    <div style="display:flex;gap:8px">
+      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:600" onclick="localStorage.setItem('fcrm_product','health');window.location.href='health.html'">🏥 Medicare/Health</button>
+      <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default;font-weight:600">💰 Life/Annuity</button>
     </div>
   </div>
 </header>
 
-<!-- 제품 선택 -->
+<!-- 탭 네비게이션 -->
 <div style="background:#fff;border-bottom:1px solid #ccc;padding:10px 20px">
-  <div class="container">
-    <div class="product-nav">
-      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="localStorage.setItem('fcrm_product','health');window.location.href='health.html'">🏥 Medicare/Health</button>
-      <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default">💰 Life/Annuity</button>
-    </div>
+  <div style="display:flex;gap:8px">
+    <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
+    <button class="tab" onclick="showTab('clients',this)">👥 고객 관리</button>
+    <button class="tab" onclick="showTab('consultation',this)">📅 상담 이력</button>
+    <button class="tab" onclick="showTab('annual',this)">🔄 Annual Review</button>
+    <button class="tab" onclick="showTab('statement',this)">📋 Statement Review</button>
+    <button class="tab" onclick="showTab('contact',this)">📞 연락 추적</button>
   </div>
 </div>
 
@@ -101,15 +102,6 @@
 <!-- 앱 -->
 <div id="app" style="display:none">
   <div class="container">
-    <div class="tabs">
-      <button class="tab on" onclick="showTab('dashboard',this)">📊 대시보드</button>
-      <button class="tab" onclick="showTab('clients',this)">👥 고객 관리</button>
-      <button class="tab" onclick="showTab('consultation',this)">📅 상담 이력</button>
-      <button class="tab" onclick="showTab('annual',this)">🔄 Annual Review</button>
-      <button class="tab" onclick="showTab('statement',this)">📋 Statement Review</button>
-      <button class="tab" onclick="showTab('contact',this)">📞 연락 추적</button>
-    </div>
-
     <!-- 대시보드 -->
     <div id="pg-dashboard" class="pg on">
       <div class="grid">
@@ -265,7 +257,9 @@ function bootApp() {
   document.getElementById('app').style.display = 'block';
   
   const user = JSON.parse(localStorage.getItem('fcrm_user') || '{}');
-  document.getElementById('udName').textContent = user.name || '사용자';
+  // 우하단 패널에 사용자명 표시
+  document.getElementById('udNamePanel').textContent = user.name || '사용자';
+  showUserPanel();  // 우하단 패널 표시
   
   loadDemoData();
   renderDashboard();
@@ -482,6 +476,31 @@ function validateDevCode() {
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') closeDevModeModal();
 });
+</script>
+
+<!-- ★ 우하단 사용자 정보 패널 -->
+<div id="userPanel" style="position:fixed;bottom:20px;right:20px;background:#fff;border:1px solid #ccc;border-radius:8px;padding:15px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:100;display:none;min-width:200px">
+  <div style="font-size:12px;color:#999;margin-bottom:8px">로그인 정보</div>
+  <div style="font-weight:600;color:#333;margin-bottom:12px;font-size:14px" id="udNamePanel">사용자</div>
+  <div style="display:flex;gap:8px;flex-direction:column">
+    <button class="btn btn-secondary btn-sm" onclick="showDevModeModal()" style="background:#b45309;color:#fff;width:100%;padding:8px;border:none;border-radius:4px;cursor:pointer;font-weight:600">🔐 개발자 모드</button>
+    <button class="btn btn-secondary btn-sm" onclick="signOut()" style="background:#dc2626;color:#fff;width:100%;padding:8px;border:none;border-radius:4px;cursor:pointer;font-weight:600">🚪 로그아웃</button>
+  </div>
+</div>
+
+<script>
+// 우하단 사용자 정보 패널 표시 함수
+function showUserPanel() {
+  const userPanel = document.getElementById('userPanel');
+  const udName = localStorage.getItem('fcrm_user');
+  if(udName) {
+    try {
+      const user = JSON.parse(udName);
+      document.getElementById('udNamePanel').textContent = user.name || '사용자';
+    } catch(e) {}
+  }
+  if(userPanel) userPanel.style.display = 'block';
+}
 </script>
 
 </body>
