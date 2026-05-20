@@ -1439,13 +1439,20 @@ let tokenClient  = null;
 let pendingFiles = [];
 let currentUploadClient = '';
 
-// ══════════════════════════════════════
-// OAUTH
-// ══════════════════════════════════════
+// OAuth 토큰 초기화
 window.addEventListener('load', () => {
   const t = localStorage.getItem('fcrm_token');
   const e = localStorage.getItem('fcrm_exp');
-  if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
+  const demo = localStorage.getItem('fcrm_demo');
+  
+  if (t && e && Date.now() < +e) { 
+    accessToken = t; 
+    tokenExpiry = +e; 
+  }
+  
+  if(demo) {
+    isDemo = true;
+  }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1758,6 +1765,7 @@ function signIn(){ signInClick(); }
 // ★ Life/Annuity로 전환
 function switchToLife() {
   localStorage.setItem('fcrm_product', 'life');
+  // 페이지 로드 (history는 새 페이지에서 자동 설정)
   window.location.href = 'life.html';
 }
 
@@ -2085,12 +2093,24 @@ function demoMode(){
 // ★ 페이지 로드 시 로그인 확인 (index에서만 로그인 가능)
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('fcrm_token');
-  const isDemo = localStorage.getItem('fcrm_demo');
+  const demoMode = localStorage.getItem('fcrm_demo');
   
-  if(!token && !isDemo) {
+  if(!token && !demoMode) {
     // 로그인 안 됨 → index로 리다이렉트
     window.location.href = 'index.html';
     return;
+  }
+  
+  // 토큰 설정
+  if(token) {
+    accessToken = token;
+    const exp = localStorage.getItem('fcrm_exp');
+    if(exp) tokenExpiry = +exp;
+  }
+  
+  // 데모 모드 설정
+  if(demoMode) {
+    isDemo = true;
   }
   
   // 로그인됨 → 앱 시작
