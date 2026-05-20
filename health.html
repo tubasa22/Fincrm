@@ -1398,10 +1398,32 @@ let currentUploadClient = '';
 // ══════════════════════════════════════
 // OAUTH
 // ══════════════════════════════════════
+// ★ 통합 window load 이벤트 (한 번만 실행)
 window.addEventListener('load', () => {
-  const t = localStorage.getItem('fcrm_token');
-  const e = localStorage.getItem('fcrm_exp');
-  if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
+  // 1. 기존 토큰 확인
+  const token = localStorage.getItem('fcrm_token');
+  const demoMode = localStorage.getItem('fcrm_demo');
+  
+  // 2. 로그인 확인
+  if(!token && !demoMode) {
+    window.location.replace('index.html');
+    return;
+  }
+  
+  // 3. 토큰 설정
+  if(token) {
+    accessToken = token;
+    const exp = localStorage.getItem('fcrm_exp');
+    if(exp) tokenExpiry = +exp;
+  }
+  
+  // 4. 데모 모드 설정
+  if(demoMode) {
+    isDemo = true;
+  }
+  
+  // 5. 부팅
+  bootApp();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1740,10 +1762,6 @@ function switchProduct(product) {
 }
 
 // ★ 페이지 로드 시 상품 확인
-window.addEventListener('load', () => {
-  const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
-  switchProduct(currentProduct);
-});
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
   console.clear();
@@ -2062,29 +2080,6 @@ function demoMode(){
 }
 
 // ★ 페이지 로드 시 로그인 확인 (window load 사용)
-window.addEventListener('load', () => {
-  const token = localStorage.getItem('fcrm_token');
-  const demoMode = localStorage.getItem('fcrm_demo');
-  
-  if(!token && !demoMode) {
-    // 로그인 안 됨 → 즉시 index로 이동
-    window.location.replace('index.html');
-    return;
-  }
-  
-  if(token) {
-    accessToken = token;
-    const exp = localStorage.getItem('fcrm_exp');
-    if(exp) tokenExpiry = +exp;
-  }
-  
-  if(demoMode) {
-    isDemo = true;
-  }
-  
-  bootApp();
-});
-
 function bootApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('loginSpinner').style.display='none';
@@ -5698,24 +5693,35 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
 const DEV_CODE = 'fincrm_dev_2026';
 
 function showDevModeModal() {
-  document.getElementById('devModeModal').style.display = 'flex';
-  document.getElementById('devCodeInput').value = '';
-  document.getElementById('devCodeInput').focus();
+  const modal = document.getElementById('devModeModal');
+  const input = document.getElementById('devCodeInput');
+  modal.style.display = 'flex';
+  input.value = '';
+  input.focus();
 }
 
 function closeDevModeModal() {
-  document.getElementById('devModeModal').style.display = 'none';
-  document.getElementById('devPanel').style.display = 'none';
-  document.getElementById('devCodeInput').value = '';
+  const modal = document.getElementById('devModeModal');
+  const input = document.getElementById('devCodeInput');
+  const panel = document.getElementById('devPanel');
+  modal.style.display = 'none';
+  panel.style.display = 'none';
+  input.value = '';
 }
 
 function validateDevCode() {
-  const code = document.getElementById('devCodeInput').value;
+  const input = document.getElementById('devCodeInput');
+  const code = input.value;
+  
   if(code === DEV_CODE) {
-    document.getElementById('devPanel').style.display = 'block';
-    document.getElementById('devCodeInput').style.display = 'none';
-    document.getElementById('devCodeInput').parentElement.style.display = 'none';
-    document.querySelector('button[onclick="validateDevCode()"]').style.display = 'none';
+    const panel = document.getElementById('devPanel');
+    const inputWrapper = input.parentElement;
+    const btn = document.querySelector('button[onclick="validateDevCode()"]');
+    
+    panel.style.display = 'block';
+    input.style.display = 'none';
+    inputWrapper.style.display = 'none';
+    btn.style.display = 'none';
     toast('✅ 개발자 모드 활성화');
   } else if(code) {
     toast('❌ 잘못된 코드입니다');
