@@ -397,63 +397,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   .notif-panel{width:260px;right:-60px}
 }
 </style>
-<script>
-// ★ 즉시 필요한 함수들 (HTML onclick 이벤트에서 사용)
-function signInClick(){
-  const btn = document.getElementById('signInBtn');
-  const spinner = document.getElementById('loginSpinner');
-  if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
-  const txtEl = document.getElementById('signInBtnTxt') || btn?.querySelector('span');
-  if(txtEl) txtEl.textContent = '로그인 중...';
-  if(spinner) spinner.style.display = 'block';
-  if(typeof tokenClient !== 'undefined' && tokenClient) tokenClient.requestAccessToken({prompt:''});
-}
-
-function demoMode(){
-  try {
-    window.isDemo = true;
-    localStorage.setItem('fcrm_demo', 'true');
-    localStorage.setItem('fcrm_user', JSON.stringify({name:'데모 사용자', email:'demo@fincrm.app', picture:''}));
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    if(typeof bootApp === 'function') bootApp();
-  } catch(e) {
-    console.error('Demo mode error:', e);
-  }
-}
-
-function showPanel(panelId){
-  document.querySelectorAll('[id^="lp_"]').forEach(el => el.style.display = 'none');
-  const panel = document.getElementById(panelId);
-  if(panel) panel.style.display = 'block';
-}
-
-function switchProduct(product) {
-  localStorage.setItem('fcrm_current_product', product);
-  
-  if(product === 'life') {
-    // Life/Annuity로 이동
-    localStorage.setItem('fcrm_product', 'life');
-    window.location.href = 'life.html';
-    return;
-  } else {
-    // Medicare/Health 탭으로 전환
-    const btnHealth = document.getElementById('btnHealth');
-    const btnLife = document.getElementById('btnLife');
-    if(btnHealth) { btnHealth.style.background = '#007bff'; btnHealth.style.color = '#fff'; }
-    if(btnLife) { btnLife.style.background = '#e8f5e9'; btnLife.style.color = '#2e7d32'; }
-    
-    // Annuity 탭 숨기고 기존 탭 표시
-    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'block');
-    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'none');
-  }
-}
-
-function signOut(){
-  localStorage.clear();
-  location.reload();
-}
-</script>
 </head>
 <body>
 
@@ -1801,6 +1744,15 @@ function verifyCode(){
 }
 */
 
+function signInClick(){
+  const btn = document.getElementById('signInBtn');
+  const spinner = document.getElementById('loginSpinner');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
+  const txtEl = document.getElementById('signInBtnTxt') || btn?.querySelector('span');
+  if(txtEl) txtEl.textContent = '로그인 중...';
+  if(spinner) spinner.style.display = 'block';
+  if(tokenClient) tokenClient.requestAccessToken({prompt:''});
+}
 function signIn(){ signInClick(); }
 
 // ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
@@ -1808,10 +1760,16 @@ function switchProduct(product) {
   localStorage.setItem('fcrm_current_product', product);
   
   if(product === 'life') {
-    // Life/Annuity로 이동
-    localStorage.setItem('fcrm_product', 'life');
-    window.location.href = 'life.html';
-    return;
+    // Life/Annuity 탭으로 전환
+    document.getElementById('btnHealth').style.background = '#e8f5e9';
+    document.getElementById('btnHealth').style.color = '#2e7d32';
+    document.getElementById('btnLife').style.background = '#007bff';
+    document.getElementById('btnLife').style.color = '#fff';
+    
+    // 기존 탭 숨기고 Annuity 탭만 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'block');
+    
   } else {
     // Medicare/Health 탭으로 전환
     document.getElementById('btnHealth').style.background = '#007bff';
@@ -1827,26 +1785,8 @@ function switchProduct(product) {
 
 // ★ 페이지 로드 시 상품 확인
 window.addEventListener('load', () => {
-  // 1. 로그인 상태 확인
-  const token = localStorage.getItem('fcrm_token');
-  const demoMode = localStorage.getItem('fcrm_demo');
-  
-  // 2. 이미 로그인된 경우 자동 로드
-  if(token || demoMode) {
-    if(token) accessToken = token;
-    if(demoMode) isDemo = true;
-    
-    // 약간의 딜레이를 두고 bootApp 호출 (Google API 준비 대기)
-    setTimeout(() => {
-      bootApp();
-    }, 300);
-  }
-  
-  // 3. 상품 선택 확인
   const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
-  if(currentProduct !== 'health') {
-    switchProduct(currentProduct);
-  }
+  switchProduct(currentProduct);
 });
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
@@ -2187,22 +2127,7 @@ function bootApp(){
   } else {
     applyUserCode();
   }
-  
-  // ── 데이터 로드 및 대시보드 활성화 ──
-  if(!isDemo) {
-    loadAll().then(() => {
-      restoreFromHash();
-      // 대시보드 탭 활성화
-      const dashboardTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'dashboard'"));
-      if(dashboardTab) showTab('dashboard', dashboardTab);
-    });
-  } else { 
-    renderAll();
-    restoreFromHash();
-    // 대시보드 탭 활성화
-    const dashboardTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'dashboard'"));
-    if(dashboardTab) showTab('dashboard', dashboardTab);
-  }
+  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
