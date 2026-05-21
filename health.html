@@ -2113,7 +2113,19 @@ function bootApp(){
   } else {
     applyUserCode();
   }
-  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
+  
+  // ── 데이터 로드 및 화면 초기화 ──
+  if(!isDemo) {
+    loadAll().then(() => {
+      renderAll();
+      restoreFromHash();
+      showTab('dashboard');  // 대시보드 탭 활성화
+    });
+  } else { 
+    renderAll();
+    restoreFromHash();
+    showTab('dashboard');  // 대시보드 탭 활성화
+  }
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
@@ -4630,15 +4642,26 @@ function copyWh(id){
 // ══════════════════════════════════════
 // TAB / UI
 // ══════════════════════════════════════
-function showTab(id,el){
-  history.replaceState(null,'','#'+id);
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById('pg-'+id).classList.add('on');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  if(id==='birthday') renderBirthday();
-  if(id==='sms') initSmsTab();
-  if(id==='automation') initAutomation();
+function showTab(id, el) {
+  history.replaceState(null, '', '#' + id);
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-' + id).classList.add('on');
+  
+  // el이 없으면 (bootApp에서 호출) 탭 버튼에서 찾기
+  if (!el) {
+    const btn = document.querySelector('.tab[onclick*="' + id + '"]');
+    if (btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      btn.classList.add('on');
+    }
+  } else {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+  }
+  
+  if (id === 'birthday') renderBirthday();
+  if (id === 'sms') initSmsTab();
+  if (id === 'automation') initAutomation();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
