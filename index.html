@@ -527,7 +527,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <div class="logo">🏦 FinCRM</div>
     <div style="display:flex;gap:10px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:10px">
       <button class="btn" id="btnHealth" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('health')">🏥 Medicare/Health</button>
-      <button class="btn" id="btnLife" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('life')">🛡️ Life/Annuity</button>
     </div>
     
     <button class="tab on" data-product="health" onclick="showTab('dashboard',this)">📊 대시보드</button>
@@ -537,13 +536,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
     <button class="tab" data-product="health" onclick="showTab('sms',this)">💬 문자 발송</button>
     <button class="tab" data-product="health" onclick="showTab('automation',this)">⚡ 자동화</button>
     
-    <!-- Annuity 탭 -->
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-dashboard',this)">📊 대시보드</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-clients',this)">👥 고객 관리</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-consultation',this)">📅 상담 이력</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-annual',this)">🔄 Annual Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-statement',this)">📋 Statement Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-contact',this)">📞 연락 추적</button>
     <div class="tr">
       <div class="gsrch-wrap">
         <span class="gsrch-icon">🔍</span>
@@ -999,9 +991,6 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
               </label>
               <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
                 <input type="checkbox" name="ob_plan" value="D-SNP" style="accent-color:var(--blue)"> D-SNP
-              </label>
-              <label style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--g3);border-radius:20px;cursor:pointer;font-size:12px">
-                <input type="checkbox" name="ob_plan" value="Life" style="accent-color:var(--blue)"> Life
               </label>
             </div>
           </div>
@@ -1755,38 +1744,16 @@ function signInClick(){
 }
 function signIn(){ signInClick(); }
 
-// ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
+// ★ Medicare/Health 제품 관리
 function switchProduct(product) {
   localStorage.setItem('fcrm_current_product', product);
-  
-  if(product === 'life') {
-    // Life/Annuity 탭으로 전환
-    document.getElementById('btnHealth').style.background = '#e8f5e9';
-    document.getElementById('btnHealth').style.color = '#2e7d32';
-    document.getElementById('btnLife').style.background = '#007bff';
-    document.getElementById('btnLife').style.color = '#fff';
-    
-    // 기존 탭 숨기고 Annuity 탭만 표시
-    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'block');
-    
-  } else {
-    // Medicare/Health 탭으로 전환
-    document.getElementById('btnHealth').style.background = '#007bff';
-    document.getElementById('btnHealth').style.color = '#fff';
-    document.getElementById('btnLife').style.background = '#e8f5e9';
-    document.getElementById('btnLife').style.color = '#2e7d32';
-    
-    // Annuity 탭 숨기고 기존 탭 표시
-    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'block');
-    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'none');
-  }
+  // Medicare/Health만 유지
+  localStorage.setItem('fcrm_current_product', 'health');
 }
 
-// ★ 페이지 로드 시 상품 확인
+// ★ 페이지 로드 시 Medicare/Health 설정
 window.addEventListener('load', () => {
-  const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
-  switchProduct(currentProduct);
+  localStorage.setItem('fcrm_current_product', 'health');
 });
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
@@ -1916,11 +1883,11 @@ function demoMode(){
      memo:'한국어 상담만. 가족 동반 상담 선호. 치과 커버리지 문의.',
      ref:'FALSE', agent:'', dob:dobThisMonth(22, 71), next:dAgo(22), durl:'', biz:''},
 
-    // 9. Life — 리퍼, 8일 후 생일
+    // 9. MAPD — 리퍼, 8일 후 생일
     {rowIdx:10, no:'9', fname:'Robert', mname:'J', lname:'Kim', name:'Kim Robert',
      email:'rkim@work.com', address1:'2500 Pacific Coast Hwy', city:'Torrance', zip:'90505', state:'CA',
-     phone:'310-555-0870', phone2:'310-555-0871', plan:'Life', prod:'Prudential Term Life',
-     memo:'생명보험 가입. 은퇴 후 수입 보장 목적. 배우자 추가 가입 검토.',
+     phone:'310-555-0870', phone2:'310-555-0871', plan:'MAPD', prod:'Anthem MAPD',
+     memo:'Medicare Advantage 가입. 은퇴 후 종합 커버리지. 배우자 추가 가입 검토.',
      ref:'TRUE', agent:'박지영', dob:dobSoon(8, 58), next:dAgo(18), durl:'', biz:''},
 
     // 10. MAPD — 45일 미연락
@@ -1994,7 +1961,7 @@ function demoMode(){
      ts:new Date(Date.now()-22*864e5).toLocaleString('ko-KR')},
 
     {name:'Kim Robert', type:'대면 미팅', date:dAgo(18),
-     text:'Prudential Term Life 가입 완료. $500K 커버리지. 배우자 추가 견적 준비 중.',
+     text:'Anthem MAPD 플랜 가입 완료. 종합 커버리지 $7,500 코페이먼트 추가 견적 준비 중.',
      ts:new Date(Date.now()-18*864e5).toLocaleString('ko-KR')},
 
     {name:'강 정숙', type:'전화 상담', date:dAgo(45),
@@ -2699,8 +2666,8 @@ function switchChart(mode, el){
 function renderPlanStats(){
   const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
-  const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309',Life:'#dc2626','미지정':'#9ca3af'};
-  const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam',Life:'bre','미지정':'bgy'};
+  const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309','미지정':'#9ca3af'};
+  const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam','미지정':'bgy'};
   const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
   const el=document.getElementById('planStats');
   if(chartMode==='donut'){
@@ -4670,7 +4637,7 @@ let _tid;
 function toast(msg,dur=2600){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tid);_tid=setTimeout(()=>e.classList.remove('on'),dur);}
 function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=(v===undefined||v===null)?'':v;}
 function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((t-d)/864e5);}
-function pb(p){return{'PDP':'bbl','MAPD':'bgr','MA':'bte','SNP':'bpu','C-SNP':'bpu','D-SNP':'bte','Medigap':'bam','Life':'bre'}[p]||'bgy';}
+function pb(p){return{'PDP':'bbl','MAPD':'bgr','MA':'bte','SNP':'bpu','C-SNP':'bpu','D-SNP':'bte','Medigap':'bam'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
 function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
