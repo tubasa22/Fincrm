@@ -403,7 +403,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen" style="display:none">
+<div id="loginScreen" style="display:flex"">
   <div class="lbox">
     <div class="llogo">🏦 FinCRM</div>
     <p class="lsub">한인 보험 에이전트 전용 고객관리 시스템</p>
@@ -2088,7 +2088,14 @@ function demoMode(){
 
 // ★ 페이지 로드 시 로그인 확인 (window load 사용)
 function bootApp(){
-  document.getElementById('loginScreen').style.display='none';
+  // 로그인 상태가 아니면 로그인 화면 표시
+  if(!accessToken && !isDemo) {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('loginSpinner').style.display='none';
   document.getElementById('app').classList.add('on');
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
@@ -2141,6 +2148,7 @@ function bootApp(){
     // 토큰 없음: 로그인 필요
     setSyncStatus('로그인 필요', false);
   }
+}
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
