@@ -397,6 +397,63 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
   .notif-panel{width:260px;right:-60px}
 }
 </style>
+<script>
+// ★ 즉시 필요한 함수들 (HTML onclick 이벤트에서 사용)
+function signInClick(){
+  const btn = document.getElementById('signInBtn');
+  const spinner = document.getElementById('loginSpinner');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
+  const txtEl = document.getElementById('signInBtnTxt') || btn?.querySelector('span');
+  if(txtEl) txtEl.textContent = '로그인 중...';
+  if(spinner) spinner.style.display = 'block';
+  if(typeof tokenClient !== 'undefined' && tokenClient) tokenClient.requestAccessToken({prompt:''});
+}
+
+function demoMode(){
+  try {
+    window.isDemo = true;
+    localStorage.setItem('fcrm_demo', 'true');
+    localStorage.setItem('fcrm_user', JSON.stringify({name:'데모 사용자', email:'demo@fincrm.app', picture:''}));
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    if(typeof bootApp === 'function') bootApp();
+  } catch(e) {
+    console.error('Demo mode error:', e);
+  }
+}
+
+function showPanel(panelId){
+  document.querySelectorAll('[id^="lp_"]').forEach(el => el.style.display = 'none');
+  const panel = document.getElementById(panelId);
+  if(panel) panel.style.display = 'block';
+}
+
+function switchProduct(product) {
+  localStorage.setItem('fcrm_current_product', product);
+  
+  if(product === 'life') {
+    // Life/Annuity로 이동
+    localStorage.setItem('fcrm_product', 'life');
+    window.location.href = 'life.html';
+    return;
+  } else {
+    // Medicare/Health 탭으로 전환
+    const btnHealth = document.getElementById('btnHealth');
+    const btnLife = document.getElementById('btnLife');
+    if(btnHealth) { btnHealth.style.background = '#007bff'; btnHealth.style.color = '#fff'; }
+    if(btnLife) { btnLife.style.background = '#e8f5e9'; btnLife.style.color = '#2e7d32'; }
+    
+    // Annuity 탭 숨기고 기존 탭 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'block');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'none');
+  }
+}
+
+function signOut(){
+  localStorage.clear();
+  location.reload();
+}
+</script>
 </head>
 <body>
 
@@ -1744,15 +1801,6 @@ function verifyCode(){
 }
 */
 
-function signInClick(){
-  const btn = document.getElementById('signInBtn');
-  const spinner = document.getElementById('loginSpinner');
-  if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
-  const txtEl = document.getElementById('signInBtnTxt') || btn?.querySelector('span');
-  if(txtEl) txtEl.textContent = '로그인 중...';
-  if(spinner) spinner.style.display = 'block';
-  if(tokenClient) tokenClient.requestAccessToken({prompt:''});
-}
 function signIn(){ signInClick(); }
 
 // ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
