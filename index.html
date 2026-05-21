@@ -1404,13 +1404,18 @@ window.addEventListener('load', () => {
   const token = localStorage.getItem('fcrm_token');
   const demoMode = localStorage.getItem('fcrm_demo');
   
-  // 2. 로그인 확인
+  // 2. 로그인 확인 (처음 방문 시에만 리다이렉트, 이미 index에 있으면 계속)
   if(!token && !demoMode) {
+    // 이미 index.html이면 로그인 화면 보여주기
+    if(location.pathname.includes('index.html')) {
+      return;  // 로그인 화면 표시
+    }
+    // 다른 페이지에서 토큰 없으면 index로 이동
     window.location.replace('index.html');
     return;
   }
   
-  // 3. 토큰 설정
+  // 3. 토큰 설정 (기존 로그인 상태에서만)
   if(token) {
     accessToken = token;
     const exp = localStorage.getItem('fcrm_exp');
@@ -1422,8 +1427,10 @@ window.addEventListener('load', () => {
     isDemo = true;
   }
   
-  // 5. 부팅
-  bootApp();
+  // 5. tokenClient 초기화 완료 후 부팅 (50ms 대기)
+  setTimeout(() => {
+    bootApp();
+  }, 50);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2115,16 +2122,24 @@ function bootApp(){
   }
   
   // ── 데이터 로드 및 화면 초기화 ──
-  if(!isDemo) {
+  if(!isDemo && accessToken) {
+    // 실제 로그인: Google Sheets 데이터 로드
     loadAll().then(() => {
       renderAll();
       restoreFromHash();
-      showTab('dashboard');  // 대시보드 탭 활성화
+      showTab('dashboard');
+    }).catch(err => {
+      console.error('데이터 로드 오류:', err);
+      toast('❌ 데이터 로드 실패: ' + err.message, 4000);
     });
-  } else { 
+  } else if(isDemo) {
+    // 데모 모드: 렌더링만
     renderAll();
     restoreFromHash();
-    showTab('dashboard');  // 대시보드 탭 활성화
+    showTab('dashboard');
+  } else {
+    // 토큰 없음: 로그인 필요
+    setSyncStatus('로그인 필요', false);
   }
 }
 
