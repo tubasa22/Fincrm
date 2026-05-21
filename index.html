@@ -37,9 +37,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 /* APP */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.on{display:flex}
-.topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:0 20px;height:54px;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
+.topbar{background:var(--sur);border-bottom:1px solid var(--g3);padding:8px 15px;height:auto;min-height:50px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:40;box-shadow:var(--sh);flex-wrap:wrap}
 .logo{font-size:17px;font-weight:800;color:var(--blue);margin-right:14px;white-space:nowrap;flex-shrink:0}
-.tab{padding:7px 13px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);transition:.15s;white-space:nowrap;font-family:inherit}
+.tab{padding:8px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text2);transition:.15s;white-space:nowrap;font-family:inherit;margin:0 2px}
 .tab:hover{background:var(--g2)}.tab.on{background:var(--blue2);color:var(--blue);font-weight:700}
 .tr{margin-left:auto;display:flex;align-items:center;gap:8px}
 .pill{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
@@ -50,7 +50,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun 
 .user-av{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--g3)}
 .btn{padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g3);background:var(--sur);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:.15s;font-family:inherit;white-space:nowrap;text-decoration:none}
 .btn:hover{background:var(--g2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:var(--blue3)}
-.btn.sm{padding:5px 10px;font-size:12px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:4px}.btn.grn{background:var(--green);color:#fff;border-color:var(--green)}.btn.grn:hover{background:#047857}
 .btn.red{background:var(--red2);color:var(--red);border-color:var(--red)}
 
 .pg{display:none;padding:22px 24px;max-width:1400px;margin:0 auto;width:100%;flex:1;overflow-y:auto}.pg.on{display:block}
@@ -403,7 +403,7 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen">
+<div id="loginScreen" style="display:none">
   <div class="lbox">
     <div class="llogo">🏦 FinCRM</div>
     <p class="lsub">한인 보험 에이전트 전용 고객관리 시스템</p>
@@ -525,79 +525,33 @@ tr.click:hover td{background:#f8f9ff;cursor:pointer}
 
 <!-- APP -->
 <div id="app">
-  <div class="topbar">
-    <div class="logo">🏦 FinCRM</div>
-    <div style="display:flex;gap:10px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:10px">
-      <button class="btn" id="btnHealth" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('health')">🏥 Medicare/Health</button>
-      <button class="btn" id="btnLife" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer" onclick="switchProduct('life')">🛡️ Life/Annuity</button>
+  <header style="background:#fff;border-bottom:1px solid #ccc;padding:12px 20px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:22px;font-weight:bold;color:#333">🏦 FinCRM</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <!-- 사용자 정보 -->
+        <span id="udName" style="font-weight:600;color:#333;font-size:14px">사용자</span>
+        <!-- 개발자 모드 -->
+        <button onclick="showDevModeModal()" style="background:none;border:none;cursor:pointer;font-size:16px;padding:6px 12px;border-radius:4px;hover:background:#f0f0f0" title="개발자 모드">🔐</button>
+        <!-- 로그아웃 -->
+        <button onclick="signOut()" style="background:none;border:none;cursor:pointer;font-size:16px;padding:6px 12px;border-radius:4px;hover:background:#f0f0f0" title="로그아웃">🚪</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 제품 선택 + 탭 -->
+  <div style="background:#fff;border-bottom:1px solid #ccc;padding:10px 20px">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default;font-weight:600">🏦 FinCRM</button>
+      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:600" onclick="localStorage.setItem('fcrm_product','life');window.location.href='life.html'">💰 Life/Annuity</button>
     </div>
     
-    <button class="tab on" data-product="health" onclick="showTab('dashboard',this)">📊 대시보드</button>
-    <button class="tab" data-product="health" onclick="showTab('clients',this)">👥 고객 목록</button>
-    <button class="tab" data-product="health" onclick="showTab('schedule',this)">📅 연락일</button>
-    <button class="tab" data-product="health" onclick="showTab('birthday',this)">🎂 생일</button>
-    <button class="tab" data-product="health" onclick="showTab('sms',this)">💬 문자 발송</button>
-    <button class="tab" data-product="health" onclick="showTab('automation',this)">⚡ 자동화</button>
-    
-    <!-- Annuity 탭 -->
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-dashboard',this)">📊 대시보드</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-clients',this)">👥 고객 관리</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-consultation',this)">📅 상담 이력</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-annual',this)">🔄 Annual Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-statement',this)">📋 Statement Review</button>
-    <button class="tab" data-product="life" style="display:none" onclick="showTab('life-contact',this)">📞 연락 추적</button>
-    <div class="tr">
-      <div class="gsrch-wrap">
-        <span class="gsrch-icon">🔍</span>
-        <input class="gsrch" id="globalSearch" placeholder="고객 검색..." oninput="globalSearchFn()" onblur="setTimeout(()=>closeGlobalSearch(),200)">
-        <div class="gsrch-results" id="gsResults"></div>
-      </div>
-      <div class="notif-wrap">
-        <button class="notif-btn" onclick="toggleNotif()" title="알림">🔔<span class="notif-badge" id="notifBadge"></span></button>
-        <div class="notif-panel" id="notifPanel">
-          <div class="notif-head">알림 <button style="border:none;background:none;cursor:pointer;font-size:11px;color:var(--text3)" onclick="clearNotifs()">모두 읽음</button></div>
-          <div id="notifList"><div class="notif-empty">새 알림 없음</div></div>
-        </div>
-      </div>
-      <div class="pill ok" id="syncPill"><div class="dot ok"></div><span id="syncTxt">연결됨</span></div>
-      <div id="demoBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#92400e;white-space:nowrap">
-        🎭 데모 모드 — 가상 데이터
-      </div>
-      <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
-      <button class="btn sm" onclick="openFeedback()" title="피드백 보내기" style="background:var(--green2);color:var(--green);border-color:var(--green)">💬 피드백</button>
-      <button class="btn sm" onclick="openBugReport()" title="버그 신고" style="background:var(--red2);color:var(--red);border-color:var(--red)">🐛 버그</button>
-      <!-- 유저 드롭다운 -->
-      <div class="user-wrap" id="userWrap" style="display:none">
-        <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
-          <img id="userAvatar" class="user-av" style="display:none;width:26px;height:26px;border:none">
-          <div id="userAvatarPlaceholder" style="width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">?</div>
-          <span class="user-btn-name" id="userBtnName">사용자</span>
-          <span style="font-size:10px;color:var(--text3)">▾</span>
-        </button>
-        <div class="user-dropdown" id="userDropdown">
-          <div class="ud-head">
-            <img id="udAvatar" class="ud-avatar" style="display:none">
-            <div id="udAvatarPlaceholder" class="ud-avatar-placeholder">?</div>
-            <div class="ud-name" id="udName">—</div>
-            <div class="ud-email" id="udEmail">—</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px" id="udLoginTime"></div>
-          </div>
-          <div class="ud-body">
-            <div class="ud-item" onclick="showLoginLog()">
-              <span class="ud-icon">📋</span> 로그인 이력
-            </div>
-          </div>
-          <div class="ud-log" id="udLogArea">
-            <div class="ud-log-title">최근 활동</div>
-            <div id="udLogList"></div>
-          </div>
-          <div style="padding:8px 12px;border-top:1px solid var(--g3)">
-            <button class="btn red" style="width:100%;justify-content:center" onclick="signOut()">
-              🚪 로그아웃
-            </button>
-          </div>
-        </div>
-      </div>
+    <div style="display:flex;gap:8px;border-top:1px solid #eee;padding-top:10px">
+      <button class="tab on" data-product="health" onclick="showTab('dashboard',this)">📊 대시보드</button>
+      <button class="tab" data-product="health" onclick="showTab('clients',this)">👥 고객 목록</button>
+      <button class="tab" data-product="health" onclick="showTab('schedule',this)">📅 연락일</button>
+      <button class="tab" data-product="health" onclick="showTab('birthday',this)">🎂 생일</button>
+      <button class="tab" data-product="health" onclick="showTab('sms',this)">💬 문자 발송</button>
     </div>
   </div>
 
@@ -1444,10 +1398,32 @@ let currentUploadClient = '';
 // ══════════════════════════════════════
 // OAUTH
 // ══════════════════════════════════════
+// ★ 통합 window load 이벤트 (한 번만 실행)
 window.addEventListener('load', () => {
-  const t = localStorage.getItem('fcrm_token');
-  const e = localStorage.getItem('fcrm_exp');
-  if (t && e && Date.now() < +e) { accessToken=t; tokenExpiry=+e; bootApp(); }
+  // 1. 기존 토큰 확인
+  const token = localStorage.getItem('fcrm_token');
+  const demoMode = localStorage.getItem('fcrm_demo');
+  
+  // 2. 로그인 확인
+  if(!token && !demoMode) {
+    window.location.replace('index.html');
+    return;
+  }
+  
+  // 3. 토큰 설정
+  if(token) {
+    accessToken = token;
+    const exp = localStorage.getItem('fcrm_exp');
+    if(exp) tokenExpiry = +exp;
+  }
+  
+  // 4. 데모 모드 설정
+  if(demoMode) {
+    isDemo = true;
+  }
+  
+  // 5. 부팅
+  bootApp();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1759,14 +1735,33 @@ function signIn(){ signInClick(); }
 
 // ★ 상품 전환 (Medicare/Health ↔ Life/Annuity)
 function switchProduct(product) {
-  localStorage.setItem('fcrm_product', product);
+  localStorage.setItem('fcrm_current_product', product);
   
-  if(product === 'health') {
-    window.location.href = 'health.html';
-  } else if(product === 'life') {
-    window.location.href = 'life.html';
+  if(product === 'life') {
+    // Life/Annuity 탭으로 전환
+    document.getElementById('btnHealth').style.background = '#e8f5e9';
+    document.getElementById('btnHealth').style.color = '#2e7d32';
+    document.getElementById('btnLife').style.background = '#007bff';
+    document.getElementById('btnLife').style.color = '#fff';
+    
+    // 기존 탭 숨기고 Annuity 탭만 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'block');
+    
+  } else {
+    // Medicare/Health 탭으로 전환
+    document.getElementById('btnHealth').style.background = '#007bff';
+    document.getElementById('btnHealth').style.color = '#fff';
+    document.getElementById('btnLife').style.background = '#e8f5e9';
+    document.getElementById('btnLife').style.color = '#2e7d32';
+    
+    // Annuity 탭 숨기고 기존 탭 표시
+    document.querySelectorAll('[data-product="health"]').forEach(el => el.style.display = 'block');
+    document.querySelectorAll('[data-product="life"]').forEach(el => el.style.display = 'none');
   }
 }
+
+// ★ 페이지 로드 시 상품 확인
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
   console.clear();
@@ -1806,6 +1801,12 @@ function copyAsCSV(){
   });
 }
 
+// ★ Life로 전환
+function switchToLife() {
+  localStorage.setItem('fcrm_product', 'life');
+  window.location.href = 'life.html';
+}
+
 function signOut(){
   const userName = document.getElementById('udName')?.textContent || '';
   addLoginLog('logout', userName);
@@ -1813,16 +1814,12 @@ function signOut(){
   accessToken='';
   localStorage.removeItem('fcrm_token');
   localStorage.removeItem('fcrm_exp');
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('userWrap').style.display='none';
-  clients=[]; allMemos=[]; isDemo=false;
-  renderLastLoginInfo();
-  // 로그인 버튼 복구
-  const btn = document.getElementById('signInBtn');
-  if(btn){ btn.disabled=false; btn.style.opacity='1'; }
-  document.getElementById('loginSpinner').style.display='none';
-  document.getElementById('signInBtnTxt').textContent='Google 계정으로 로그인';
+  localStorage.removeItem('fcrm_demo');
+  localStorage.removeItem('fcrm_user');
+  localStorage.removeItem('fcrm_product');
+  
+  // index.html로 직접 이동
+  window.location.href = 'index.html';
 }
 function demoMode(){
   isDemo=true;
@@ -2081,6 +2078,8 @@ function demoMode(){
 
   bootApp();
 }
+
+// ★ 페이지 로드 시 로그인 확인 (window load 사용)
 function bootApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('loginSpinner').style.display='none';
@@ -2088,8 +2087,16 @@ function bootApp(){
   setSyncStatus(isDemo?'데모 모드':'연결됨',true);
   const banner = document.getElementById('demoBanner');
   if(banner) banner.style.display = isDemo ? 'block' : 'none';
+  
+  // 사용자 정보 표시 (우측 상단)
   const saved = localStorage.getItem('fcrm_user');
-  if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
+  if(saved){ 
+    try{ 
+      const user = JSON.parse(saved);
+      document.getElementById('udName').textContent = user.name || '사용자';
+      updateUserUI(user);
+    }catch(e){} 
+  }
   document.getElementById('userWrap').style.display = 'block';
   
   // ── Twilio 설정 복원 ──
@@ -2106,7 +2113,19 @@ function bootApp(){
   } else {
     applyUserCode();
   }
-  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
+  
+  // ── 데이터 로드 및 화면 초기화 ──
+  if(!isDemo) {
+    loadAll().then(() => {
+      renderAll();
+      restoreFromHash();
+      showTab('dashboard');  // 대시보드 탭 활성화
+    });
+  } else { 
+    renderAll();
+    restoreFromHash();
+    showTab('dashboard');  // 대시보드 탭 활성화
+  }
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
@@ -4623,15 +4642,26 @@ function copyWh(id){
 // ══════════════════════════════════════
 // TAB / UI
 // ══════════════════════════════════════
-function showTab(id,el){
-  history.replaceState(null,'','#'+id);
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById('pg-'+id).classList.add('on');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  if(id==='birthday') renderBirthday();
-  if(id==='sms') initSmsTab();
-  if(id==='automation') initAutomation();
+function showTab(id, el) {
+  history.replaceState(null, '', '#' + id);
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-' + id).classList.add('on');
+  
+  // el이 없으면 (bootApp에서 호출) 탭 버튼에서 찾기
+  if (!el) {
+    const btn = document.querySelector('.tab[onclick*="' + id + '"]');
+    if (btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      btn.classList.add('on');
+    }
+  } else {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+  }
+  
+  if (id === 'birthday') renderBirthday();
+  if (id === 'sms') initSmsTab();
+  if (id === 'automation') initAutomation();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
@@ -5617,6 +5647,128 @@ window.sendToWebhook = async function(payload, modalId, successMsg){
   이 섹션은 내부용 개발 도구입니다.
   고객에게는 보이지 않으며, 필요한 경우 별도의 관리자 버전 파일을 사용하세요.
 -->
+
+<!-- ★ 개발자 모드 모달 -->
+<div id="devModeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;width:90%;max-width:500px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+    <!-- 헤더 -->
+    <div style="padding:20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:20px;font-weight:bold;color:#333">🔐 개발자 모드</div>
+      <button onclick="closeDevModeModal()" style="border:none;background:none;cursor:pointer;font-size:24px;color:#999">✕</button>
+    </div>
+    
+    <!-- 코드 입력 -->
+    <div style="padding:20px">
+      <div style="margin-bottom:15px">
+        <label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px">개발자 코드 입력</label>
+        <input id="devCodeInput" type="password" placeholder="개발자 코드를 입력하세요" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px">
+      </div>
+      
+      <button onclick="validateDevCode()" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;margin-bottom:20px">
+        확인
+      </button>
+      
+      <!-- 개발자 패널 (숨겨짐) -->
+      <div id="devPanel" style="display:none">
+        <div style="border-top:1px solid #eee;padding-top:20px">
+          <h3 style="font-size:14px;font-weight:bold;margin-bottom:15px;color:#333">개발자 도구</h3>
+          
+          <!-- 자동화 -->
+          <div style="margin-bottom:15px;padding:15px;background:#f5f5f5;border-radius:6px">
+            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;color:#333">⚡ 자동화 설정</h4>
+            <div style="font-size:12px;color:#666;line-height:1.6">
+              <p>• n8n Webhook URL 관리</p>
+              <p>• Zapier 자동화 설정</p>
+              <p>• 자동 SMS/메일 발송</p>
+            </div>
+            <button onclick="showAutomationPanel()" style="width:100%;margin-top:10px;padding:8px;background:#fff;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600">자동화 설정 →</button>
+          </div>
+          
+          <!-- 버그 리포트 -->
+          <div style="margin-bottom:15px;padding:15px;background:#f5f5f5;border-radius:6px">
+            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;color:#333">🐛 버그 리포트</h4>
+            <div style="font-size:12px;color:#666;line-height:1.6">
+              <p>• 버그 및 오류 보고</p>
+              <p>• 성능 모니터링</p>
+              <p>• 피드백 webhook 설정</p>
+            </div>
+            <button onclick="showBugReportPanel()" style="width:100%;margin-top:10px;padding:8px;background:#fff;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600">버그 리포트 →</button>
+          </div>
+          
+          <!-- 데이터 관리 -->
+          <div style="margin-bottom:15px;padding:15px;background:#f5f5f5;border-radius:6px">
+            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;color:#333">💾 데이터 관리</h4>
+            <div style="font-size:12px;color:#666;line-height:1.6">
+              <p>• localStorage 백업</p>
+              <p>• 데이터 복원</p>
+              <p>• 캐시 초기화</p>
+            </div>
+            <button onclick="showDataPanel()" style="width:100%;margin-top:10px;padding:8px;background:#fff;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600">데이터 관리 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ★ 개발자 모드 (코드: fincrm_dev_2026)
+const DEV_CODE = 'fincrm_dev_2026';
+
+function showDevModeModal() {
+  const modal = document.getElementById('devModeModal');
+  const input = document.getElementById('devCodeInput');
+  modal.style.display = 'flex';
+  input.value = '';
+  input.focus();
+}
+
+function closeDevModeModal() {
+  const modal = document.getElementById('devModeModal');
+  const input = document.getElementById('devCodeInput');
+  const panel = document.getElementById('devPanel');
+  modal.style.display = 'none';
+  panel.style.display = 'none';
+  input.value = '';
+}
+
+function validateDevCode() {
+  const input = document.getElementById('devCodeInput');
+  const code = input.value;
+  
+  if(code === DEV_CODE) {
+    const panel = document.getElementById('devPanel');
+    const inputWrapper = input.parentElement;
+    const btn = document.querySelector('button[onclick="validateDevCode()"]');
+    
+    panel.style.display = 'block';
+    input.style.display = 'none';
+    inputWrapper.style.display = 'none';
+    btn.style.display = 'none';
+    toast('✅ 개발자 모드 활성화');
+  } else if(code) {
+    toast('❌ 잘못된 코드입니다');
+  }
+}
+
+function showAutomationPanel() {
+  alert('⚡ 자동화 설정\n\n• n8n Webhook 설정\n• Zapier 자동 연동\n• 자동 SMS/메일 발송\n\n(상세 구현 예정)');
+}
+
+function showBugReportPanel() {
+  alert('🐛 버그 리포트\n\n• 버그 및 오류 보고\n• 성능 모니터링\n• 피드백 webhook 설정\n\n(상세 구현 예정)');
+}
+
+function showDataPanel() {
+  alert('💾 데이터 관리\n\n• localStorage 백업\n• 데이터 복원\n• 캐시 초기화\n\n(상세 구현 예정)');
+}
+
+// ESC로 모달 닫기
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeDevModeModal();
+});
+</script>
+
 
 </body>
 </html>
