@@ -72,7 +72,7 @@
     <div style="font-size:22px;font-weight:bold;color:#333">💰 Annuity CRM</div>
     <div style="display:flex;gap:8px;align-items:center">
       <!-- 제품 선택 버튼 -->
-      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px" onclick="localStorage.setItem('fcrm_product','health');window.location.href='health.html'">🏥 Medicare/Health</button>
+      <button class="product-btn" style="background:#e8f5e9;color:#2e7d32;border:none;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px" onclick="localStorage.setItem('fcrm_product','fincrm');window.location.href='index.html'">🏦 FinCRM</button>
       <button class="product-btn active" style="background:#007bff;color:#fff;border:none;padding:8px 15px;border-radius:4px;cursor:default;font-weight:600;font-size:13px">💰 Life/Annuity</button>
       <!-- 구분선 -->
       <div style="width:1px;height:24px;background:#ccc;margin:0 8px"></div>
@@ -412,15 +412,15 @@ function addStatement() { alert('Statement Review 추가 (구현 필요)'); }
 function addContact() { alert('연락 기록 추가 (구현 필요)'); }
 
 // ★ Health로 전환
-function switchToHealth() {
-  localStorage.setItem('fcrm_product', 'health');
+function switchToFincrm() {
+  localStorage.setItem('fcrm_product', 'fincrm');
   // 페이지 로드
-  window.location.href = 'health.html';
+  window.location.href = 'index.html';
 }
 
 function switchProduct(product) {
-  if(product === 'health') {
-    switchToHealth();
+  if(product === 'fincrm') {
+    switchToFincrm();
   }
 }
 
