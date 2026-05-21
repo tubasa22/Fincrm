@@ -271,6 +271,9 @@ function bootApp() {
   
   loadDemoData();
   renderDashboard();
+  
+  // 대시보드 탭 활성화
+  showTab('dashboard');
 }
 
 function loadDemoData() {
@@ -308,7 +311,14 @@ function showTab(id, el) {
   document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   document.getElementById('pg-' + id).classList.add('on');
-  el.classList.add('on');
+  
+  // el이 없으면 (bootApp에서 호출) 탭 버튼에서 찾기
+  if (!el) {
+    const btn = document.querySelector('.tab[onclick*="' + id + '"]');
+    if (btn) btn.classList.add('on');
+  } else {
+    el.classList.add('on');
+  }
 }
 
 function renderDashboard() {
