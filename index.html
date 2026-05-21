@@ -1827,8 +1827,26 @@ function switchProduct(product) {
 
 // ★ 페이지 로드 시 상품 확인
 window.addEventListener('load', () => {
+  // 1. 로그인 상태 확인
+  const token = localStorage.getItem('fcrm_token');
+  const demoMode = localStorage.getItem('fcrm_demo');
+  
+  // 2. 이미 로그인된 경우 자동 로드
+  if(token || demoMode) {
+    if(token) accessToken = token;
+    if(demoMode) isDemo = true;
+    
+    // 약간의 딜레이를 두고 bootApp 호출 (Google API 준비 대기)
+    setTimeout(() => {
+      bootApp();
+    }, 300);
+  }
+  
+  // 3. 상품 선택 확인
   const currentProduct = localStorage.getItem('fcrm_current_product') || 'health';
-  switchProduct(currentProduct);
+  if(currentProduct !== 'health') {
+    switchProduct(currentProduct);
+  }
 });
 function showApplications(){
   const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
@@ -2169,7 +2187,22 @@ function bootApp(){
   } else {
     applyUserCode();
   }
-  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
+  
+  // ── 데이터 로드 및 대시보드 활성화 ──
+  if(!isDemo) {
+    loadAll().then(() => {
+      restoreFromHash();
+      // 대시보드 탭 활성화
+      const dashboardTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'dashboard'"));
+      if(dashboardTab) showTab('dashboard', dashboardTab);
+    });
+  } else { 
+    renderAll();
+    restoreFromHash();
+    // 대시보드 탭 활성화
+    const dashboardTab = Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'dashboard'"));
+    if(dashboardTab) showTab('dashboard', dashboardTab);
+  }
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
