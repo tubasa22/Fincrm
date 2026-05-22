@@ -3899,31 +3899,42 @@ function parseDob(raw) {
   if (!raw) return null;
   const s = String(raw).trim();
   if (!s) return null;
-  // DD/MM/YYYY (새 입력 형식 — 최우선)
+  
+  // DD/MM/YYYY (새 입력 형식 — 최우선, 엄격한 검증)
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
     const [dd, mm, yyyy] = s.split('/').map(Number);
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
+    // 첫 번째가 31을 초과하거나 두 번째가 12를 초과하면 명확한 DD/MM
+    // 그 외에는 엄격하게 DD/MM으로 해석 (일반적인 입력 순서)
+    if (dd>=1&&dd<=31&&mm>=1&&mm<=12) return {m:mm, d:dd, y:yyyy};
+    // 오류 데이터면 스왑 시도
+    if (mm>=1&&mm<=31&&dd>=1&&dd<=12) return {m:dd, d:mm, y:yyyy};
   }
-  // MM/DD/YYYY (구 형식 호환)
+  
+  // MM/DD/YYYY (구 형식 호환 — 더 이상 사용 금지하지만 호환성 유지)
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
     const parts = s.split('/').map(Number);
-    // DD/MM/YYYY vs MM/DD/YYYY 구분: 첫 번째 값이 12 초과면 DD
     const [a, b, yyyy] = parts;
     if (a > 12) return {m:b, d:a, y:yyyy}; // DD/MM
-    return {m:a, d:b, y:yyyy}; // MM/DD (구형)
+    if (b > 12) return {m:a, d:b, y:yyyy}; // MM/DD (역함수)
+    // 둘 다 12 이하면 DD/MM으로 해석 (새 기본값)
+    return {m:b, d:a, y:yyyy}; 
   }
+  
   // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const [yyyy, mm, dd] = s.split('-').map(Number);
     if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
   }
+  
   // 2자리 연도 처리
   if (/^\d{1,2}\/\d{1,2}\/\d{2}$/.test(s)) {
     const [a, b, yy] = s.split('/').map(Number);
     const yyyy = yy > 30 ? 1900+yy : 2000+yy;
     if (a > 12) return {m:b, d:a, y:yyyy};
-    return {m:a, d:b, y:yyyy};
+    if (b > 12) return {m:a, d:b, y:yyyy};
+    return {m:b, d:a, y:yyyy}; // 기본값 DD/MM
   }
+  
   // 엑셀 시리얼
   if (/^\d+$/.test(s)) {
     const serial = parseInt(s);
