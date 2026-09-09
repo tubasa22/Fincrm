@@ -44,7 +44,6 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
-| 빈 함수(죽은 코드) 5개 | `js/utils/ui-and-onboarding.js` | `renderDevTab`이 `js/dev-dashboard.js`에서 3회 호출되어 삭제 보류. 나머지 함수의 호출 여부·처리 방안은 추후 결정 필요 |
 | 액세스 코드 검증 취약점 | `verifyCode()` | 정규식 형식만 검사, 시트 조회로 실존 여부 확인 안 함. 보안 이슈, 파일 분리와 별개로 처리 예정 |
 | localStorage 19개 키 분산 관리 | 코드 전체 | `utils/storage.js` 래퍼 도입은 계획됐으나 기존 호출부 전수 치환은 아직 범위 밖 |
 
@@ -54,6 +53,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-09 | 죽은 함수 5개와 무효 호출 3곳 삭제 (진입점 자체가 없어 안전 확인됨) | `js/utils/ui-and-onboarding.js`, `js/dev-dashboard.js` | 없음 |
 | 2026-09-09 | 신규 고객 번호(No.)를 시트 A열 직접 조회 방식으로 변경 | `js/features/client-management.js` | 실제 로그인·시트 환경에서 번호 생성 확인 필요 |
 | 2026-09-09 | 죽은 함수 5개 상태 확인 | `js/utils/ui-and-onboarding.js`, `js/dev-dashboard.js` | `renderDevTab` 호출 3곳 처리 방안 결정 후 삭제 여부 재검토 |
 | 2026-09-09 | `sendToWebhook` 3중 오버라이드를 단일 함수로 병합 | `js/features/feedback.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | 실제 로그인 프로필로 피드백 전송 확인 필요 |
