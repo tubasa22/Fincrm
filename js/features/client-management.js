@@ -259,6 +259,21 @@ function openEditClient(rowIdx){
   document.getElementById('clientModal').classList.add('on');
 }
 
+async function getNextClientNo(){
+  try{
+    const res = await sheetsReq('GET', `${MAIN_ID}/values/A:A`);
+    const rows = res.values || [];
+    const maxNo = rows.slice(1).reduce((max, r) => {
+      const n = parseInt(r[0]);
+      return isNaN(n) ? max : Math.max(max, n);
+    }, 0);
+    return (maxNo + 1).toString();
+  }catch(e){
+    // 폴백: API 실패 시 기존 방식(화면에 로드된 목록 기준)으로 대체
+    return (Math.max(0, ...clients.map(c=>parseInt(c.no)||0))+1).toString();
+  }
+}
+
 async function saveClient(){
   const fname=document.getElementById('f_fname').value.trim();
   const lname=document.getElementById('f_lname').value.trim();
@@ -278,7 +293,14 @@ async function saveClient(){
 
   // No(A열) 자동 부여 — 수정 시 기존 번호 유지, 신규 시 최대값+1
   const existingNo=document.getElementById('eNo').value.trim();
-  const autoNo=existingNo||(Math.max(0,...clients.map(c=>parseInt(c.no)||0))+1).toString();
+  let autoNo;
+  if(existingNo){
+    autoNo = existingNo;
+  } else if(isDemo){
+    autoNo = (Math.max(0,...clients.map(c=>parseInt(c.no)||0))+1).toString();
+  } else {
+    autoNo = await getNextClientNo();
+  }
 
   // A~O 컬럼 순서: no, fname, mname, lname, email, address1, city, zip, phone, plan, prod, memo, ref, (N=에이전트 빈칸), (O=durl 빈칸)
   // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
