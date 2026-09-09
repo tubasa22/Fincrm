@@ -317,13 +317,3 @@ function devAddLog(){
   toast('📋 로그 추가됨');
   document.getElementById('devLogMsg').value='';
 }
-
-// 피드백 전송 시 로컬 로그에도 저장 (기존 sendToWebhook 오버라이드)
-const _origSendToWebhook = sendToWebhook;
-window.sendToWebhook = async function(payload, modalId, successMsg){
-  // 로컬 피드백 로그에 저장
-  const log = JSON.parse(localStorage.getItem('fcrm_feedback_log')||'[]');
-  log.push(payload);
-  localStorage.setItem('fcrm_feedback_log', JSON.stringify(log.slice(-500)));
-  await _origSendToWebhook(payload, modalId, successMsg);
-};

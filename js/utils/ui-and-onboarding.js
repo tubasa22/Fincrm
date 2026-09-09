@@ -606,30 +606,6 @@ function applyUserCode(){
   window.CURRENT_USER_PROFILE = profile;
 }
 
-// 피드백 전송 시 사용자 코드 자동 포함 (sendToWebhook 보강)
-const _baseSendToWebhook = window.sendToWebhook;
-window.sendToWebhook = async function(payload, modalId, successMsg){
-  const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
-  if(profile){
-    payload.user_code  = profile.code;
-    payload.user_name  = profile.name;
-    payload.user_agency= profile.agency;
-  }
-  // 로컬 피드백 로그 저장
-  const log = JSON.parse(localStorage.getItem('fcrm_feedback_log')||'[]');
-  log.push(payload);
-  localStorage.setItem('fcrm_feedback_log', JSON.stringify(log.slice(-500)));
-  // 원본 전송
-  if(_baseSendToWebhook) await _baseSendToWebhook(payload, modalId, successMsg);
-  else {
-    const url = localStorage.getItem('fcrm_feedback_webhook')||'';
-    if(url){
-      try{ await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }
-      catch(e){}
-    }
-    closeOv(modalId); toast(successMsg);
-  }
-};
 const DEV_KEY = 'fincrm_dev_2026';
 let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
 let devTab = 'agents';

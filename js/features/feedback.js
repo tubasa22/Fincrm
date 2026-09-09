@@ -83,6 +83,17 @@ async function submitBugReport(){
 }
 
 async function sendToWebhook(payload, modalId, successMsg){
+  const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
+  if(profile){
+    payload.user_code   = profile.code;
+    payload.user_name   = profile.name;
+    payload.user_agency = profile.agency;
+  }
+
+  const log = JSON.parse(localStorage.getItem('fcrm_feedback_log')||'[]');
+  log.push(payload);
+  localStorage.setItem('fcrm_feedback_log', JSON.stringify(log.slice(-500)));
+
   if(!FEEDBACK_WEBHOOK){
     // webhook 미설정 시 — localStorage에 임시 저장 + 안내
     const stored = JSON.parse(localStorage.getItem('fcrm_pending_reports')||'[]');
