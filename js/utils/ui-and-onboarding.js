@@ -60,7 +60,7 @@ function toLower(el){
 }
 
 // 단어 첫글자 대문자 (이름, 도시)
-function toTitleCase(el){
+function titleCaseInput(el){
   const pos = el.selectionStart;
   el.value = el.value.replace(/\b\w/g, c=>c.toUpperCase());
   try{ el.setSelectionRange(pos,pos); }catch(e){}
@@ -512,8 +512,6 @@ function setProdValue(val){
   }
 }
 
-function populateMemoSel(){}
-
 // ══════════════════════════════════════
 // 온보딩 & 사용자 코드 시스템
 // ══════════════════════════════════════
@@ -606,30 +604,6 @@ function applyUserCode(){
   window.CURRENT_USER_PROFILE = profile;
 }
 
-// 피드백 전송 시 사용자 코드 자동 포함 (sendToWebhook 보강)
-const _baseSendToWebhook = window.sendToWebhook;
-window.sendToWebhook = async function(payload, modalId, successMsg){
-  const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
-  if(profile){
-    payload.user_code  = profile.code;
-    payload.user_name  = profile.name;
-    payload.user_agency= profile.agency;
-  }
-  // 로컬 피드백 로그 저장
-  const log = JSON.parse(localStorage.getItem('fcrm_feedback_log')||'[]');
-  log.push(payload);
-  localStorage.setItem('fcrm_feedback_log', JSON.stringify(log.slice(-500)));
-  // 원본 전송
-  if(_baseSendToWebhook) await _baseSendToWebhook(payload, modalId, successMsg);
-  else {
-    const url = localStorage.getItem('fcrm_feedback_webhook')||'';
-    if(url){
-      try{ await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }
-      catch(e){}
-    }
-    closeOv(modalId); toast(successMsg);
-  }
-};
 const DEV_KEY = 'fincrm_dev_2026';
 let devUnlocked = sessionStorage.getItem('dev_unlocked') === '1';
 let devTab = 'agents';
@@ -637,11 +611,6 @@ let devTab = 'agents';
 // ★ 개발자 모드는 비활성화됨 (고객용 버전)
 
 // ★ 개발자 모드는 비활성화됨 (고객용 버전)
-
-function openDevPanel(){} // 비활성화됨
-function closeDevPanel(){} // 비활성화됨
-function switchDevTab(t){} // 비활성화됨
-function renderDevTab(t){} // 비활성화됨
 
 // Google 로그인 초기화
 function initGoogleSignIn(){

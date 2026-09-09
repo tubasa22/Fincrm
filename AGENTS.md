@@ -44,9 +44,6 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
-| `toTitleCase` 중복 정의 | 3287줄, 3519줄(원본 기준) | 어느 버전이 최종본인지 확인 후 통합 필요. 임의로 하나를 지우지 말고 사용자 확인 받을 것 |
-| `sendToWebhook` 몽키패치 오버라이드 | 원본 4203~4210줄 부근 | 원본 함수와 병합 대상. 파일 분리 시 `features/feedback.js`로 합쳐서 이동 |
-| 빈 함수(죽은 코드) 5개 | `openDevPanel`/`closeDevPanel`/`switchDevTab`/`renderDevTab`/`populateMemoSel` | 삭제할지 dev-dashboard.js로 이동만 할지 미결정 — 사용자 확인 필요 |
 | 액세스 코드 검증 취약점 | `verifyCode()` | 정규식 형식만 검사, 시트 조회로 실존 여부 확인 안 함. 보안 이슈, 파일 분리와 별개로 처리 예정 |
 | localStorage 19개 키 분산 관리 | 코드 전체 | `utils/storage.js` 래퍼 도입은 계획됐으나 기존 호출부 전수 치환은 아직 범위 밖 |
 
@@ -56,6 +53,11 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-09 | 죽은 함수 5개와 무효 호출 3곳 삭제 (진입점 자체가 없어 안전 확인됨) | `js/utils/ui-and-onboarding.js`, `js/dev-dashboard.js` | 없음 |
+| 2026-09-09 | 신규 고객 번호(No.)를 시트 A열 직접 조회 방식으로 변경 | `js/features/client-management.js` | 실제 로그인·시트 환경에서 번호 생성 확인 필요 |
+| 2026-09-09 | 죽은 함수 5개 상태 확인 | `js/utils/ui-and-onboarding.js`, `js/dev-dashboard.js` | `renderDevTab` 호출 3곳 처리 방안 결정 후 삭제 여부 재검토 |
+| 2026-09-09 | `sendToWebhook` 3중 오버라이드를 단일 함수로 병합 | `js/features/feedback.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | 실제 로그인 프로필로 피드백 전송 확인 필요 |
+| 2026-09-09 | 고객 입력용 제목 형식 함수 이름 충돌 해소 | `index.html`, `js/utils/ui-and-onboarding.js` | 브라우저 고객 등록 화면에서 입력 동작 재확인 |
 | 2026-09-03 | CSS·JavaScript 파일 분리 및 오프라인 스냅샷 모드 추가 | `index.html`, `css/*`, `js/*`, `README.md`, `AGENTS.md` | 랩탑 브라우저에서 온라인 동기화·오프라인 조회 테스트 후 사용자 확인 시 커밋 |
 | (예시, 아직 미적용) | 오프라인 모드 추가 (loadOfflineSnapshot, 스냅샷 캐시 저장) | `index.html` | 로컬 반영 여부 확인, README 업데이트 |
 
