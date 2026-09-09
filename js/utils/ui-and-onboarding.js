@@ -512,8 +512,6 @@ function setProdValue(val){
   }
 }
 
-function populateMemoSel(){}
-
 // ══════════════════════════════════════
 // 온보딩 & 사용자 코드 시스템
 // ══════════════════════════════════════
@@ -613,11 +611,6 @@ let devTab = 'agents';
 // ★ 개발자 모드는 비활성화됨 (고객용 버전)
 
 // ★ 개발자 모드는 비활성화됨 (고객용 버전)
-
-function openDevPanel(){} // 비활성화됨
-function closeDevPanel(){} // 비활성화됨
-function switchDevTab(t){} // 비활성화됨
-function renderDevTab(t){} // 비활성화됨
 
 // Google 로그인 초기화
 function initGoogleSignIn(){

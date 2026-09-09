@@ -79,7 +79,6 @@ function exportFeedbackCsv(){
 function clearFeedbackLog(){
   if(!confirm('모든 리포트를 삭제할까요?')) return;
   localStorage.removeItem('fcrm_feedback_log');
-  renderDevTab('feedback');
   toast('🗑 삭제 완료');
 }
 
@@ -139,7 +138,6 @@ function renderAgentsDash(){
 function clearAgentLog(){
   if(!confirm('에이전트 로그를 초기화할까요?')) return;
   localStorage.removeItem('fcrm_agent_log');
-  renderDevTab('agents');
   toast('🗑 로그 초기화');
 }
 
@@ -274,7 +272,7 @@ function devClearLS(){
   Object.keys(localStorage).filter(k=>!keep.some(kk=>k.includes(kk)))
     .filter(k=>k.startsWith('fcrm')||k.startsWith('sms_')||k.startsWith('agent_')||k.startsWith('dev_status'))
     .forEach(k=>localStorage.removeItem(k));
-  renderDevTab('tools'); toast('🗑 초기화 완료');
+  toast('🗑 초기화 완료');
 }
 
 async function devSendTestFeedback(){
