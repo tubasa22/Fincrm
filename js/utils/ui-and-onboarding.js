@@ -60,7 +60,7 @@ function toLower(el){
 }
 
 // 단어 첫글자 대문자 (이름, 도시)
-function toTitleCase(el){
+function titleCaseInput(el){
   const pos = el.selectionStart;
   el.value = el.value.replace(/\b\w/g, c=>c.toUpperCase());
   try{ el.setSelectionRange(pos,pos); }catch(e){}
