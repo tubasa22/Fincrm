@@ -1,4 +1,4 @@
-# AGENTS.md — FinCRM 작업 에이전트 지침
+# AGENTS.md — MedCare CRM 작업 에이전트 지침
 
 이 파일은 Codex(또는 다른 코딩 에이전트)가 이 저장소에서 작업할 때 매 세션 자동으로 읽는 지침서다.
 **작업을 시작하기 전에 이 문서 전체를, 특히 "미해결 이슈"와 "변경 이력"을 반드시 먼저 읽는다.**
@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 브랜드명을 MedCare CRM으로, 아이콘을 ⚕️로 변경 (배포 URL은 유지) | `index.html`, `README.md`, `AGENTS.md` | 없음 |
 | 2026-09-14 | 고객 수정 후 목록 새로고침 시 플랜/검색 필터가 풀리던 버그 수정 (`renderClients` → `filterClients` 호출로 변경) | `js/main.js` | 브라우저에서 수정 저장 후 필터 유지 재확인 |
 | 2026-09-14 | 전화/메시지 버튼 클릭 시 Phone Link 등 외부 앱이 열리지 않으면 안내 메시지 표시 | `js/features/sms.js` | Phone Link 연결 환경에서 경고 미표시 재확인 |
 | 2026-09-14 | Twilio 기반 문자발송 탭·생일 일괄문자·주소록 기능 전체 제거, 메시지 버튼은 `sms:` 링크(Phone Link 등 OS 기본 문자 앱 호출)로 대체 | `index.html`, `js/features/sms.js`, `js/main.js`, `js/features/demo.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | OS에 SMS 프로토콜 처리 앱이 설치된 실제 환경에서 호출 확인 |
