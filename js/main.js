@@ -149,7 +149,7 @@ async function loadAll(){
       biz:'',
     })).filter(c=>c.name.trim());
     try{
-      const md=await sheetsReq('GET',`${DETAIL_ID}/values/A:F`);
+      const md=await sheetsReq('GET',`${DETAIL_ID}/values/${encodeURIComponent('상담 이력!A:F')}`);
       allMemos=(md.values||[]).slice(1).map(r=>({
         name:String(r[1]||''),type:String(r[2]||''),text:String(r[3]||''),
         date:String(r[4]||''),ts:String(r[5]||''),
