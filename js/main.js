@@ -172,7 +172,7 @@ async function loadAll(){
   }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
 }
 function renderAll(){
-  updateKPIs();renderClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();
+  updateKPIs();filterClients();renderSchedule();renderFollowup();renderPlanStats();renderCalendar();buildNotifs();
   renderBdThisMonth();
   renderMedicareReminder();
   // 수동 일정 대상 datalist 채우기
