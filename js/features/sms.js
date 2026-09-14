@@ -1,6 +1,11 @@
 function openSingleSms(name, phone, type='general'){
   if(!phone) return;
   window.location.href = 'sms:' + phone.replace(/[^0-9+]/g,'');
+  setTimeout(()=>{
+    if(document.hasFocus()){
+      toast('⚠️ 문자 앱이 열리지 않았습니다. Windows에서 Phone Link가 설치·연결되어 있는지 확인해주세요.', 5000);
+    }
+  }, 1200);
 }
 
 // ══════════════════════════════════════
@@ -30,8 +35,13 @@ async function updateLastContact(rowIdx, skipConfirm){
 // 전화 클릭 시 연락일 리셋 확인
 function callAndReset(phone, rowIdx){
   window.location.href = 'tel:'+phone;
-  // 전화 앱 열린 직후 연락일 업데이트 제안
-  setTimeout(()=> updateLastContact(rowIdx, false), 1000);
+  setTimeout(()=>{
+    if(document.hasFocus()){
+      toast('⚠️ 전화 앱이 열리지 않았습니다. Windows에서 Phone Link가 설치·연결되어 있는지 확인해주세요.', 5000);
+    } else {
+      updateLastContact(rowIdx, false);
+    }
+  }, 1200);
 }
 
 // 문자 탭 열고 수신자 세팅 + 연락일 리셋 확인
