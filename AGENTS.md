@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | saveClient() 중복 실행 방지 잠금 추가 - 신규 고객번호 중복 발생 버그(더블클릭 경쟁 조건) 수정 | `js/features/client-management.js` | 브라우저에서 빠른 연속 저장 동작 확인 필요 |
 | 2026-09-09 | fix/cleanup-batch → main 병합 완료 (PR, 충돌 없음). 오프라인 모드 + 정리 작업 4건(toTitleCase 충돌, sendToWebhook 병합, 죽은 함수 삭제, 고객번호 버그)이 main에 전부 반영됨. | `index.html`, `js/*`, `AGENTS.md`, `README.md` | 실제 로그인·오프라인 전환 및 시트 번호 생성 확인 필요 |
 | 2026-09-09 | 죽은 함수 5개와 무효 호출 3곳 삭제 (진입점 자체가 없어 안전 확인됨) | `js/utils/ui-and-onboarding.js`, `js/dev-dashboard.js` | 없음 |
 | 2026-09-09 | 신규 고객 번호(No.)를 시트 A열 직접 조회 방식으로 변경 | `js/features/client-management.js` | 실제 로그인·시트 환경에서 번호 생성 확인 필요 |
