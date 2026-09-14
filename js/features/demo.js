@@ -244,14 +244,5 @@ function demoMode(){
     localStorage.setItem('fcrm_schedules', JSON.stringify(demoSched));
   }
 
-  // 데모용 SMS 발송 이력
-  smsHistory = [
-    {time:new Date(Date.now()-2*864e5).toLocaleString('ko'), name:'홍 문례',   phone:'949-664-0113', msg:'안녕하세요 홍 문례님! 생일을 진심으로 축하드립니다…', status:'✅ 발송됨(데모)'},
-    {time:new Date(Date.now()-5*864e5).toLocaleString('ko'), name:'최 순희',   phone:'323-555-0540', msg:'안녕하세요 최 순희님, 플랜 갱신 시즌이 다가왔습니다…', status:'✅ 발송됨(데모)'},
-    {time:new Date(Date.now()-8*864e5).toLocaleString('ko'), name:'장 정순',   phone:'213-555-3344', msg:'🎂 생일 축하드립니다! 항상 건강하세요…',             status:'✅ 발송됨(데모)'},
-    {time:new Date(Date.now()-12*864e5).toLocaleString('ko'), name:'이 수진', phone:'323-555-1122', msg:'65세 Medicare 전환 관련 안내드립니다…',              status:'✅ 발송됨(데모)'},
-  ];
-  localStorage.setItem('sms_history', JSON.stringify(smsHistory));
-
   bootApp();
 }

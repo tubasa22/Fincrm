@@ -5,7 +5,6 @@ function showTab(id,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
   if(id==='birthday') renderBirthday();
-  if(id==='sms') initSmsTab();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
