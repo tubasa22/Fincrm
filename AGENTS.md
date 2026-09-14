@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 자동화 탭(Zapier 연동) 및 고객 상세페이지 카톡 버튼 전체 제거 | `index.html`, `js/features/automation.js`, `js/features/client-detail.js`, `js/utils/ui-and-onboarding.js` | 없음 |
 | 2026-09-14 | 피드백/버그 신고 기능(헤더 버튼, 모달 2개, feedback.js, automation.js의 웹훅/미전송리포트 함수) 전체 제거 완료 — Zapier 자동화는 그대로 유지 | `index.html`, `js/features/automation.js`, `js/features/feedback.js` | 없음 |
 | 2026-09-14 | fix/save-race-condition → main 병합 완료. saveClient() 중복 실행 방지로 신규 고객번호 중복 생성 버그 해결. | `js/features/client-management.js`, `AGENTS.md`, `README.md` | 실제 로그인 환경에서 빠른 연속 저장 동작 확인 필요 |
 | 2026-09-14 | saveClient() 중복 실행 방지 잠금 추가 - 신규 고객번호 중복 발생 버그(더블클릭 경쟁 조건) 수정 | `js/features/client-management.js` | 브라우저에서 빠른 연속 저장 동작 확인 필요 |
