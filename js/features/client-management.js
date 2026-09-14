@@ -497,7 +497,7 @@ async function saveMemo(){
   const ts=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
   showLoad('메모 저장 중...');
   try{
-    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/A%3AF:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{values:[[Date.now(),name,type,text,date,ts]]});
+    if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/${encodeURIComponent('상담 이력!A:F')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{values:[[Date.now(),name,type,text,date,ts]]});
     allMemos.unshift({name,type,text,date,ts});
     const ci=clients.findIndex(c=>c.name===name);
     if(ci>=0){

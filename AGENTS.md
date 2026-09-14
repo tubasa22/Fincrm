@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 메모 읽기/쓰기가 '왼쪽 첫 탭' 암묵 의존 → '상담 이력' 탭 이름 명시적 참조로 변경 | `js/main.js`, `js/features/client-management.js` | 실제 로그인 환경에서 기존 메모 조회·새 메모 저장 탭 확인 |
 | 2026-09-14 | 가입상품 드롭다운을 실제 취급 보험사(Aetna, AARP, Anthem, Blue Shield, Health Springs/구 Cigna, WellCare)로 축소, 나머지는 기타(직접입력)로 처리 | `index.html` | 기존 고객의 드롭다운 미등록 상품 수정 시 직접 입력 동작 확인 |
 | 2026-09-14 | 브랜드명을 MedCare CRM으로, 아이콘을 ⚕️로 변경 (배포 URL은 유지) | `index.html`, `README.md`, `AGENTS.md` | 없음 |
 | 2026-09-14 | 고객 수정 후 목록 새로고침 시 플랜/검색 필터가 풀리던 버그 수정 (`renderClients` → `filterClients` 호출로 변경) | `js/main.js` | 브라우저에서 수정 저장 후 필터 유지 재확인 |
