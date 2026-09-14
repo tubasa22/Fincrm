@@ -9,13 +9,6 @@ function bootApp(){
   if(saved){ try{ updateUserUI(JSON.parse(saved)); }catch(e){} }
   document.getElementById('userWrap').style.display = 'block';
   
-  // ── Twilio 설정 복원 ──
-  const t = JSON.parse(localStorage.getItem('twilio')||'{}');
-  if(t.sid) document.getElementById('twilioSid').value = t.sid;
-  if(t.token) document.getElementById('twilioToken').value = t.token;
-  if(t.from) document.getElementById('twilioFrom').value = t.from;
-  updateTwilioStatus();
-  
   // ── 온보딩 체크 ── 최초 실행 시 프로필 입력 (데모 제외)
   const profile = localStorage.getItem('fcrm_user_profile');
   if(!profile && !isDemo){  // ★ 데모 모드면 onboarding 스킵

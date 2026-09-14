@@ -150,7 +150,7 @@ window.addAgentLog = function(agent, msg){
 
 // ── 시스템 상태 ──
 function renderSystemDash(){
-  const lsKeys = Object.keys(localStorage).filter(k=>k.startsWith('fcrm')||k.startsWith('sms')||k.startsWith('twilio')||k.startsWith('agent'));
+  const lsKeys = Object.keys(localStorage).filter(k=>k.startsWith('fcrm')||k.startsWith('agent'));
   const lsSize = JSON.stringify(localStorage).length;
   const pending = JSON.parse(localStorage.getItem('fcrm_pending_reports')||'[]');
   const feedbackLog = JSON.parse(localStorage.getItem('fcrm_feedback_log')||'[]');
@@ -268,9 +268,9 @@ function devImportAll(){
 
 function devClearLS(){
   if(!confirm('FinCRM 관련 LocalStorage를 모두 초기화할까요?\n(구글 로그인 정보 제외)')) return;
-  const keep=['twilio','fcrm_radar_key','fcrm_feedback_webhook','zap_url','dev_unlocked'];
+  const keep=['fcrm_radar_key','fcrm_feedback_webhook','zap_url','dev_unlocked'];
   Object.keys(localStorage).filter(k=>!keep.some(kk=>k.includes(kk)))
-    .filter(k=>k.startsWith('fcrm')||k.startsWith('sms_')||k.startsWith('agent_')||k.startsWith('dev_status'))
+    .filter(k=>k.startsWith('fcrm')||k.startsWith('agent_')||k.startsWith('dev_status'))
     .forEach(k=>localStorage.removeItem(k));
   toast('🗑 초기화 완료');
 }

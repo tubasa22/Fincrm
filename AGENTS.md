@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | Twilio 기반 문자발송 탭·생일 일괄문자·주소록 기능 전체 제거, 메시지 버튼은 `sms:` 링크(Phone Link 등 OS 기본 문자 앱 호출)로 대체 | `index.html`, `js/features/sms.js`, `js/main.js`, `js/features/demo.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | OS에 SMS 프로토콜 처리 앱이 설치된 실제 환경에서 호출 확인 |
 | 2026-09-14 | 로그아웃 시 `isOffline` 플래그가 초기화되지 않아 재로그인 후 데이터를 불러오지 못하는 버그 수정 | `js/auth.js` | 실제 Google 로그인 환경에서 오프라인→로그아웃→재로그인 동작 재확인 |
 | 2026-09-14 | 자동화 탭(Zapier 연동) 및 고객 상세페이지 카톡 버튼 전체 제거 | `index.html`, `js/features/automation.js`, `js/features/client-detail.js`, `js/utils/ui-and-onboarding.js` | 없음 |
 | 2026-09-14 | 피드백/버그 신고 기능(헤더 버튼, 모달 2개, feedback.js, automation.js의 웹훅/미전송리포트 함수) 전체 제거 완료 — Zapier 자동화는 그대로 유지 | `index.html`, `js/features/automation.js`, `js/features/feedback.js` | 없음 |
