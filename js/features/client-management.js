@@ -275,6 +275,11 @@ async function getNextClientNo(){
 }
 
 async function saveClient(){
+  if(window.__savingClient) return;
+  window.__savingClient = true;
+  const saveBtn = document.querySelector('.btn.pri[onclick="saveClient()"]');
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.style.opacity = '0.6'; }
+  try{
   const fname=document.getElementById('f_fname').value.trim();
   const lname=document.getElementById('f_lname').value.trim();
   if(!fname||!lname){alert('First Name과 Last Name은 필수입니다');return;}
@@ -453,6 +458,10 @@ async function saveClient(){
     console.error('saveClient error:', e);
   } finally {
     hideLoad();
+  }
+  } finally {
+    window.__savingClient = false;
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
   }
 }
 
