@@ -164,8 +164,6 @@
         🎭 데모 모드 — 가상 데이터
       </div>
       <button class="btn sm" onclick="loadAll()" title="새로고침">🔄</button>
-      <button class="btn sm" onclick="openFeedback()" title="피드백 보내기" style="background:var(--green2);color:var(--green);border-color:var(--green)">💬 피드백</button>
-      <button class="btn sm" onclick="openBugReport()" title="버그 신고" style="background:var(--red2);color:var(--red);border-color:var(--red)">🐛 버그</button>
       <!-- 유저 드롭다운 -->
       <div class="user-wrap" id="userWrap" style="display:none">
         <button class="user-btn" onclick="toggleUserMenu()" id="userBtn">
@@ -432,30 +430,6 @@
   <!-- AUTOMATION -->
   <div class="pg" id="pg-automation">
 
-    <!-- 피드백 & n8n Webhook 설정 — 최상단 -->
-    <div class="sh">
-      <div class="st">🔗 n8n / Zapier Webhook 연동</div>
-    </div>
-    <div style="background:var(--blue2);border:1.5px solid var(--blue);border-radius:var(--rs);padding:14px;font-size:13px;color:var(--blue);margin-bottom:16px;line-height:1.8">
-      💡 n8n Webhook URL을 등록하면 <strong>피드백·버그·신청·온보딩</strong> 데이터가 자동으로 Jarvice로 전달됩니다.
-    </div>
-    <div class="dc" style="box-shadow:var(--sh);margin-bottom:20px">
-      <h4>🏓 Webhook URL 등록</h4>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <input id="feedbackWebhookUrl" placeholder="https://your-n8n.app/webhook/fincrm-feedback" style="flex:1;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
-        <button class="btn pri" onclick="saveFeedbackWebhook()">💾 저장</button>
-        <button class="btn" onclick="testFeedbackWebhook()">🏓 Ping</button>
-      </div>
-      <div style="font-size:11px;margin-top:6px" id="feedbackWebhookStatus"></div>
-      <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--g3)">
-        <span style="font-size:12px;color:var(--text2)">미전송 임시 저장</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span id="pendingReportCount" style="font-size:12px;font-weight:600;color:var(--blue)"></span>
-          <button class="btn sm" onclick="sendPendingReports()">📤 재전송</button>
-          <button class="btn sm" onclick="clearPendingReports()">🗑 삭제</button>
-        </div>
-      </div>
-    </div>
 
     <div class="sh"><div class="st">⚡ Zapier 자동화 연동</div><a href="https://zapier.com" target="_blank" class="btn">Zapier 열기 →</a></div>
     <div style="background:var(--amber2);border:1px solid #fcd34d;border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--amber);margin-bottom:18px;line-height:1.7">
@@ -618,7 +592,7 @@
         <div style="background:linear-gradient(135deg,#e8f0fe,#ede9fe);border-radius:12px;padding:20px;text-align:center;margin-bottom:16px">
           <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600">회원 코드 (User Code)</div>
           <div id="ob_code_display" style="font-size:28px;font-weight:800;color:var(--blue);letter-spacing:4px;font-family:monospace"></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:6px">피드백·버그 신고 시 자동으로 포함됩니다</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">프로필에 표시됩니다</div>
           <button onclick="copyUserCode()" style="margin-top:10px;padding:6px 14px;background:#fff;border:1px solid var(--blue);border-radius:6px;font-size:12px;color:var(--blue);cursor:pointer">📋 코드 복사</button>
         </div>
         <div style="background:var(--g2);border-radius:10px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">
@@ -898,90 +872,6 @@
   </div>
 </div>
 
-<!-- MODAL: 피드백 -->
-<div class="ov" id="feedbackModal">
-  <div class="modal" style="max-width:480px">
-    <h3>💬 피드백 보내기</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">사용하시면서 불편한 점, 개선 아이디어, 좋았던 점 무엇이든 보내주세요!</p>
-    <div class="fg">
-      <label>종류</label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="fbType" value="개선 아이디어" checked> 💡 개선 아이디어</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="fbType" value="칭찬"> 👍 칭찬</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="fbType" value="불편사항"> 😅 불편사항</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="fbType" value="기타"> 📌 기타</label>
-      </div>
-    </div>
-    <div class="fg">
-      <label>현재 화면</label>
-      <input id="fb_page" readonly style="background:var(--g2);color:var(--text2);font-size:12px">
-    </div>
-    <div class="fg">
-      <label>내용 *</label>
-      <textarea id="fb_text" placeholder="자유롭게 작성해 주세요..." style="min-height:100px"></textarea>
-    </div>
-    <div class="fg">
-      <label>연락처 (선택 — 답변 원하시면 입력)</label>
-      <input id="fb_contact" placeholder="이메일 또는 전화번호">
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <label style="font-size:12px;color:var(--text2)">만족도</label>
-      <div id="fb_stars" style="display:flex;gap:4px;font-size:20px;cursor:pointer">
-        <span onclick="setStars(1)" class="fb-star">☆</span>
-        <span onclick="setStars(2)" class="fb-star">☆</span>
-        <span onclick="setStars(3)" class="fb-star">☆</span>
-        <span onclick="setStars(4)" class="fb-star">☆</span>
-        <span onclick="setStars(5)" class="fb-star">☆</span>
-      </div>
-      <span id="fb_star_val" style="font-size:12px;color:var(--text3)"></span>
-    </div>
-    <div class="mf">
-      <button class="btn" onclick="closeOv('feedbackModal')">취소</button>
-      <button class="btn pri" onclick="submitFeedback()">📤 보내기</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: 버그 리포트 -->
-<div class="ov" id="bugModal">
-  <div class="modal" style="max-width:500px">
-    <h3>🐛 버그 신고</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">발견하신 오류를 알려주세요. 빠르게 수정하겠습니다.</p>
-    <div class="fg">
-      <label>심각도</label>
-      <div style="display:flex;gap:8px">
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="bugSeverity" value="심각" > 🔴 심각 (앱이 안 됨)</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="bugSeverity" value="보통" checked> 🟡 보통 (불편함)</label>
-        <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="bugSeverity" value="낮음"> 🟢 낮음 (사소함)</label>
-      </div>
-    </div>
-    <div class="fg">
-      <label>발생 화면</label>
-      <input id="bug_page" readonly style="background:var(--g2);color:var(--text2);font-size:12px">
-    </div>
-    <div class="fg">
-      <label>어떤 동작을 했나요? *</label>
-      <input id="bug_action" placeholder="예: 고객 수정 버튼을 눌렀을 때">
-    </div>
-    <div class="fg">
-      <label>어떤 문제가 발생했나요? *</label>
-      <textarea id="bug_desc" placeholder="예: 저장 후 정보가 바뀌지 않음" style="min-height:80px"></textarea>
-    </div>
-    <div class="fg">
-      <label>예상했던 동작</label>
-      <input id="bug_expected" placeholder="예: 수정한 내용이 저장되어야 함">
-    </div>
-    <div class="fg">
-      <label>환경 정보</label>
-      <input id="bug_env" readonly style="background:var(--g2);color:var(--text2);font-size:11px">
-    </div>
-    <div class="mf">
-      <button class="btn" onclick="closeOv('bugModal')">취소</button>
-      <button class="btn" style="background:var(--red2);color:var(--red);border-color:var(--red)" onclick="submitBugReport()">🐛 버그 신고</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: 수동 일정 추가/수정 -->
 <div class="ov" id="msModal">
   <div class="modal" style="max-width:460px">
@@ -1028,7 +918,6 @@
 <script src="js/main.js"></script>
 <script src="js/features/dashboard.js"></script>
 <script src="js/features/client-detail.js"></script>
-<script src="js/features/feedback.js"></script>
 <script src="js/features/schedule.js"></script>
 <script src="js/features/client-management.js"></script>
 <script src="js/features/sms.js"></script>
