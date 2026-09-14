@@ -309,7 +309,7 @@ function qfFilter(type, el){
   // ref 필터에서 에이전트 이름 검색 가능하도록 cSearch 연동은 filterClients에서 처리
   else if(type==='urgent') filtered=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
   else if(type==='recent') filtered=[...clients].reverse();
-  else filtered=clients.filter(c=>c.plan===type);
+  else filtered=clients.filter(c=>(c.plan||'미지정').toUpperCase()===type);
   renderClients(filtered);
 }
 
@@ -421,60 +421,20 @@ function renderCalendar(){
 // ══════════════════════════════════════
 // CHART
 // ══════════════════════════════════════
-let chartMode = 'bar';
-function switchChart(mode, el){
-  chartMode = mode;
-  document.querySelectorAll('#chartToggleBar,#chartToggleDot').forEach(b=>b.classList.remove('on'));
-  if(el) el.classList.add('on');
-  renderPlanStats();
-}
 function renderPlanStats(){
-  const cnt={};clients.forEach(c=>{const p=c.plan||'미지정';cnt[p]=(cnt[p]||0)+1;});
+  const cnt={};clients.forEach(c=>{const p=(c.plan||'미지정').toUpperCase();cnt[p]=(cnt[p]||0)+1;});
   const total=clients.length||1;
-  const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',Medigap:'#b45309','미지정':'#9ca3af'};
-  const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',Medigap:'bam','미지정':'bgy'};
+  const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',MEDIGAP:'#b45309','미지정':'#9ca3af'};
+  const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',MEDIGAP:'bam','미지정':'bgy'};
   const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
   const el=document.getElementById('planStats');
-  if(chartMode==='donut'){
-    const r=54,cx=70,cy=70,stroke=22;
-    const circ=2*Math.PI*r;
-    let offset=0;
-    const slices=sorted.map(([p,n])=>{
-      const pct=n/total;
-      const slice={p,n,pct,offset,col:barCol[p]||'#9ca3af'};
-      offset+=pct;
-      return slice;
-    });
-    const paths=slices.map(s=>{
-      const start=s.offset*circ;
-      const len=s.pct*circ;
-      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.col}" stroke-width="${stroke}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${circ/4-start}" transform="rotate(-90 ${cx} ${cy})" />`;
-    });
-    el.innerHTML=`<div class="donut-wrap">
-      <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r="54" fill="none" stroke="var(--g3)" stroke-width="22"/>
-        ${paths.join('')}
-        <text x="70" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${total}</text>
-        <text x="70" y="82" text-anchor="middle" font-size="10" fill="var(--text3)">전체</text>
-      </svg>
-      <div class="donut-legend">
-        ${slices.map(s=>`<div class="dl-item">
-          <div class="dl-dot" style="background:${s.col}"></div>
-          <span class="dl-label">${s.p}</span>
-          <span class="dl-val">${s.n}명</span>
-          <span style="font-size:11px;color:var(--text3);margin-left:4px">${Math.round(s.pct*100)}%</span>
-        </div>`).join('')}
+  el.innerHTML=sorted.map(([p,n])=>`
+    <div class="ps" style="cursor:pointer" onclick="qfFilter('${p}')">
+      <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
+        <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
       </div>
-    </div>`;
-  } else {
-    el.innerHTML=sorted.map(([p,n])=>`
-      <div class="ps">
-        <div class="ps-top"><span class="badge ${pcol[p]||'bgy'}">${p}</span>
-          <span style="font-size:13px;font-weight:600">${n}명 <span style="font-size:11px;color:var(--text3)">(${Math.round(n/total*100)}%)</span></span>
-        </div>
-        <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${barCol[p]||'#9ca3af'}"></div></div>
-      </div>`).join('');
-  }
+      <div class="ps-bar"><div class="ps-fill" style="width:${Math.round(n/total*100)}%;background:${barCol[p]||'#9ca3af'}"></div></div>
+    </div>`).join('');
 }
 
 // ══════════════════════════════════════
