@@ -26,7 +26,6 @@ function openDetail(rowIdx){
       '<div class="dh-right">' +
         (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)">📞 전화</a>' : '') +
         (c.phone ? '<button class="btn sm" onclick="openSingleSms(\''+esc(c.name)+'\',\''+c.phone+'\');setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9">💬 메시지</button>' : '') +
-        (c.phone ? '<a href="https://open.kakao.com/o/s'+c.phone.replace(/[^0-9]/g,'')+'" target="_blank" class="btn sm" style="background:#FFE812;color:#000;border-color:#FFE812;text-decoration:none" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),500)">🔔 카톡</a>' : '') +
         '<button class="btn sm" onclick="openAddMemoFor(\''+esc(c.name)+'\')">📝 메모</button>' +
         '<button class="btn sm" onclick="openFileUpload(\''+esc(c.name)+'\')">📎 서류 업로드</button>' +
         '<button class="btn sm" onclick="openEditClient('+c.rowIdx+')">✏️ 수정</button>' +

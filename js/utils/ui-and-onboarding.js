@@ -6,7 +6,6 @@ function showTab(id,el){
   el.classList.add('on');
   if(id==='birthday') renderBirthday();
   if(id==='sms') initSmsTab();
-  if(id==='automation') initAutomation();
 }
 function closeOv(id){document.getElementById(id).classList.remove('on');}
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
