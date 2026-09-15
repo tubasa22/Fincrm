@@ -34,7 +34,7 @@ async function updateLastContact(rowIdx, skipConfirm){
 
 // 전화 클릭 시 연락일 리셋 확인
 function callAndReset(phone, rowIdx){
-  window.location.href = 'tel:'+phone;
+  window.location.href = 'tel:' + phone.replace(/[^0-9+]/g,'');
   setTimeout(()=>{
     if(document.hasFocus()){
       toast('⚠️ 전화 앱이 열리지 않았습니다. Windows에서 Phone Link가 설치·연결되어 있는지 확인해주세요.', 5000);
