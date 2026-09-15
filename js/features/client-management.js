@@ -78,7 +78,7 @@ async function uploadFiles(){
 // ══════════════════════════════════════
 function togglePlanFields(){
   const plan = document.getElementById('f_plan').value;
-  document.getElementById('planExtraFields').style.display = ['MAPD','PDP'].includes(plan) ? 'block' : 'none';
+  document.getElementById('planExtraFields').style.display = 'block';
 
   const sel = document.getElementById('f_prod_sel');
   const prev = getProdValue();
