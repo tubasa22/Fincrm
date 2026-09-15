@@ -23,7 +23,6 @@
 - 한인 보험 에이전트용 고객 관리(CRM) 웹앱. 순수 프론트엔드(HTML/CSS/JS, 프레임워크 없음) + Google Sheets/Drive를 백엔드로 사용.
 - 배포: GitHub Pages (`https://tubasa22.github.io/Fincrm`).
 - 인증: Google Identity Services(OAuth) — `sheetsReq()`가 발급받은 `accessToken`으로 Sheets API를 직접 호출.
-- 별도로 `Code.gs`(Google Apps Script)가 존재하나, 현재 index.html의 메인 데이터 흐름과는 별개(액세스 코드 검증 등 일부 기능에만 연동)로 취급한다. 함부로 통합하지 않는다.
 
 ## 2. 확정된 아키텍처 원칙 (임의로 바꾸지 말 것)
 
@@ -46,19 +45,18 @@
 | Medigap PDP 상품 입력·결합 저장 | 완료 |
 | 고객 활성/비활성 상태 관리 | 완료 |
 | 가입상품(회사)과 구체적 상품명 분리 관리 | 완료 |
+| 로그인 화면 죽은 코드 전체 정리 | 완료 |
 
 ### 다음 세션 인계 메모 (2026-09-14)
 
 - `feat/prod-free-input`의 가입상품 자유 입력 + 기존 고객 데이터 기반 자동완성 변경은 main에 병합됐다.
 - 이 작업의 실제 로그인 검증은 아직 필요하다: 등록·수정 모달에서 기존 상품값 표시, 플랜 변경 시 해당 플랜 상품 우선 추천, 저장 동작을 확인한다.
 - 별도 작업트리 `fix-save-race-condition`의 `fix/client-filter-reset` 브랜치에는 필터 재현용 `[DEBUG-A/B/C]` 로그 3줄이 **커밋되지 않은 채 남아 있다**. 사용자가 결과를 검토할 때까지 삭제하거나 커밋하지 않는다.
-- `chore/remove-dead-auth-code` 브랜치는 `lp_code` 패널 삭제 작업이 중단된 상태다. 다른 기능 작업과 섞지 않고 별도 재개한다.
 
 ## 4. 미해결 이슈 (건드릴 때 주의)
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
-| 액세스 코드 검증 취약점 | `verifyCode()` | 정규식 형식만 검사, 시트 조회로 실존 여부 확인 안 함. 보안 이슈, 파일 분리와 별개로 처리 예정 |
 | 과거 시트 번호 중복·순서 뒤바뀜 | 실제 시트(예: No.263) | 과거 수동 편집 이력 때문으로 확인됨. saveClient() 경쟁조건 수정 이후 새 중복은 방지되지만 기존 데이터는 자동 정리하지 않음. 필요시 사용자가 COUNTIF로 찾아 수동 정리 |
 | localStorage 19개 키 분산 관리 | 코드 전체 | `utils/storage.js` 래퍼 도입은 계획됐으나 기존 호출부 전수 치환은 아직 범위 밖 |
 
@@ -74,6 +72,7 @@
 | 2026-09-14 | MAPD 가입상품 목록에서 PPO 옵션 제거 (HMO만 취급) | `js/features/client-management.js` | 실제 등록 화면에서 MAPD 선택 목록 확인 |
 | 2026-09-14 | 가입상품을 하드코딩 드롭다운에서 자유입력+자동완성(기존 데이터 기반)으로 변경 — 상품명 목록 유지보수 불필요해짐 | `index.html`, `js/utils/ui-and-onboarding.js`, `js/features/client-management.js` | 실제 고객 데이터로 플랜별 자동완성·수정 화면 값 확인 |
 | 2026-09-14 | Medigap 선택 시 PDP 상품 입력칸 자동 표시, 저장 시 `메디갭 / PDP` 형태로 합쳐서 기록, 수정 시 자동 분리 | `index.html`, `js/features/client-management.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 시트 O열 저장 결과 확인 |
+| 2026-09-14 | 로그인 화면 죽은 코드 전체 정리: 신청 기능(API 키 포함), 액세스 코드 패널(백도어 코드 포함), `Code.gs`, `CODE_REVIEW_REPORT.md` 삭제 | `index.html`, `js/auth.js`, `Code.gs`, `CODE_REVIEW_REPORT.md`, `README.md`, `AGENTS.md` | 없음 |
 | 2026-09-14 | 플랜 상세 입력창(약 리스트 포함)을 플랜 종류와 무관하게 항상 표시하도록 변경 (MAPD/PDP 하드코딩 제거 - C-SNP/D-SNP 등도 Part D 필요) | `js/features/client-management.js` | 실제 등록·수정 화면에서 Medigap 선택 시 상세 입력창 표시 확인 |
 | 2026-09-14 | 플랜별 현황: 도넛 뷰 제거, 막대만 유지, 플랜명 대문자 통일, 클릭 시 고객 목록 필터링 추가 | `index.html`, `js/features/dashboard.js` | 실제 로그인 데이터에서 LIFE 항목 클릭 결과 확인 |
 | 2026-09-14 | 메모 읽기/쓰기가 '왼쪽 첫 탭' 암묵 의존 → '상담 이력' 탭 이름 명시적 참조로 변경 | `js/main.js`, `js/features/client-management.js` | 실제 로그인 환경에서 기존 메모 조회·새 메모 저장 탭 확인 |
