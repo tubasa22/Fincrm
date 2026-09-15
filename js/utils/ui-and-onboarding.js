@@ -6,7 +6,42 @@ function showTab(id,el){
   el.classList.add('on');
   if(id==='birthday') renderBirthday();
 }
-function closeOv(id){document.getElementById(id).classList.remove('on');}
+function closeOv(id){
+  document.getElementById(id).classList.remove('on');
+  if(id==='clientModal'){
+    currentEditingRowIdx=null;
+    resetMbiDuplicateWarning();
+  }
+}
+
+let currentEditingRowIdx = null;
+
+function resetMbiDuplicateWarning(){
+  const warnEl=document.getElementById('mbiDupWarning');
+  if(!warnEl) return;
+  warnEl.style.display='none';
+  warnEl.textContent='';
+  warnEl.onclick=null;
+}
+
+function checkMbiDuplicate(el){
+  const val=el.value.trim().toUpperCase();
+  const warnEl=document.getElementById('mbiDupWarning');
+  if(!warnEl) return;
+  if(!val){resetMbiDuplicateWarning();return;}
+  const match=allPlanInfo.find(p=>{
+    if(!p.mbi || p.mbi.trim().toUpperCase()!==val) return false;
+    return clients.some(c=>c.rowIdx!==currentEditingRowIdx && c.name.trim()===p.name.trim());
+  });
+  if(match){
+    const dupClient=clients.find(c=>c.rowIdx!==currentEditingRowIdx && c.name.trim()===match.name.trim());
+    warnEl.textContent=`⚠️ 중복된 MBI — 이미 "${match.name}" 님에게 등록되어 있습니다 (클릭해서 확인)`;
+    warnEl.style.display='block';
+    warnEl.onclick=()=>{if(dupClient){closeOv('clientModal');openDetail(dupClient.rowIdx);}};
+  }else{
+    resetMbiDuplicateWarning();
+  }
+}
 function setSyncStatus(txt,ok){set('syncTxt',txt);const p=document.getElementById('syncPill'),dot=p.querySelector('.dot');p.className='pill '+(ok?'ok':'err');dot.className='dot '+(ok?'ok':'err');}
 function showLoad(t){set('loadTxt',t);document.getElementById('loadOv').classList.add('on');}
 function hideLoad(){document.getElementById('loadOv').classList.remove('on');}
