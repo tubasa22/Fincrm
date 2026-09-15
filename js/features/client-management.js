@@ -89,6 +89,8 @@ function clearPlanFields(){
   document.getElementById('planExtraFields').style.display='none';
 }
 function openAddClient(){
+  currentEditingRowIdx=null;
+  resetMbiDuplicateWarning();
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
   document.getElementById('eActive').value='TRUE';
@@ -113,6 +115,8 @@ function openAddClient(){
 }
 function openEditClient(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);if(!c)return;
+  currentEditingRowIdx=rowIdx;
+  resetMbiDuplicateWarning();
   set('mTitle','✏️ 고객 정보 수정');
   document.getElementById('eRow').value=rowIdx;
   document.getElementById('eNo').value=c.no;

@@ -84,6 +84,23 @@ function filterClients(){
   renderClients(clients.filter(c=>(!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||c.phone2.includes(q)||(c.memo||'').toLowerCase().includes(q)||(c.agent||'').toLowerCase().includes(q))&&(!pf||c.plan===pf)&&(!rf||c.ref===rf)));
 }
 
+function checkAllMbiDuplicates(){
+  const groups={};
+  allPlanInfo.forEach(p=>{
+    const mbi=(p.mbi||'').trim().toUpperCase();
+    if(!mbi) return;
+    if(!groups[mbi]) groups[mbi]=[];
+    groups[mbi].push(p.name);
+  });
+  const dups=Object.entries(groups).filter(([mbi,names])=>names.length>1);
+  if(!dups.length){
+    alert('✅ 중복된 MBI가 없습니다.');
+    return;
+  }
+  const msg=dups.map(([mbi,names])=>`MBI ${mbi}: ${names.join(', ')}`).join('\n');
+  alert(`⚠️ 중복된 MBI ${dups.length}건 발견:\n\n${msg}\n\n각 고객을 열어서 확인 후 정리해주세요.`);
+}
+
 // ══════════════════════════════════════
 // SCHEDULE
 // ══════════════════════════════════════
