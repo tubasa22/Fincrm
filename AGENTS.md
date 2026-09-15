@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | MAPD 가입상품 목록에서 PPO 옵션 제거 (HMO만 취급) | `js/features/client-management.js` | 실제 등록 화면에서 MAPD 선택 목록 확인 |
 | 2026-09-14 | 플랜 상세 입력창(약 리스트 포함)을 플랜 종류와 무관하게 항상 표시하도록 변경 (MAPD/PDP 하드코딩 제거 - C-SNP/D-SNP 등도 Part D 필요) | `js/features/client-management.js` | 실제 등록·수정 화면에서 Medigap 선택 시 상세 입력창 표시 확인 |
 | 2026-09-14 | 플랜별 현황: 도넛 뷰 제거, 막대만 유지, 플랜명 대문자 통일, 클릭 시 고객 목록 필터링 추가 | `index.html`, `js/features/dashboard.js` | 실제 로그인 데이터에서 LIFE 항목 클릭 결과 확인 |
 | 2026-09-14 | 메모 읽기/쓰기가 '왼쪽 첫 탭' 암묵 의존 → '상담 이력' 탭 이름 명시적 참조로 변경 | `js/main.js`, `js/features/client-management.js` | 실제 로그인 환경에서 기존 메모 조회·새 메모 저장 탭 확인 |

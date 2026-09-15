@@ -86,22 +86,15 @@ function togglePlanFields(){
   const OPTS = {
     'MAPD': [
       'Aetna HMO',
-      'Aetna PPO',
       'Anthem HMO',
-      'Anthem PPO',
       'Alignment HMO',
-      'Alignment PPO',
       'Blue Shield HMO',
-      'Blue Shield PPO',
       'CleverCare HMO',
       'Humana HMO',
-      'Humana PPO',
       'Molina HMO',
       'SCAN HMO',
       'AARP / UnitedHealthcare HMO',
-      'AARP / UnitedHealthcare PPO',
       'WellCare HMO',
-      'WellCare PPO',
     ],
     'PDP': [
       'Aetna SilverScript Choice',
