@@ -1,7 +1,8 @@
 function updateKPIs(){
-  const n=clients.length,wp=clients.filter(c=>c.plan).length;
-  const td=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length;
-  const rf=clients.filter(c=>c.ref==='TRUE').length;
+  const activeClients=clients.filter(c=>c.active!=='FALSE');
+  const n=activeClients.length,wp=activeClients.filter(c=>c.plan).length;
+  const td=activeClients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;}).length;
+  const rf=activeClients.filter(c=>c.ref==='TRUE').length;
   set('kT',n);set('kTs','명 등록됨');
   set('kP',wp);set('kPs',n?Math.round(wp/n*100)+'%':'—');
   set('kC',td);set('kCs',td?'즉시 연락 필요':'양호');
@@ -122,12 +123,12 @@ function dismissFu(rowIdx){
 
 function renderFollowup(){
   const items = clients
-    .filter(c=>c.next && !fuDismissed.includes(c.rowIdx))
+    .filter(c=>c.active!=='FALSE' && c.next && !fuDismissed.includes(c.rowIdx))
     .map(c=>({...c, d:elapsed(c.next)}))
     .filter(c=>c.d!==null && c.d>=7)
     .sort((a,b)=>b.d-a.d)
     .slice(0,8);
-  const dismissedCount = clients.filter(c=>c.next && fuDismissed.includes(c.rowIdx) && (elapsed(c.next)||0)>=7).length;
+  const dismissedCount = clients.filter(c=>c.active!=='FALSE' && c.next && fuDismissed.includes(c.rowIdx) && (elapsed(c.next)||0)>=7).length;
   set('fuCnt', items.length+'명'+(dismissedCount?` <span style="font-size:11px;color:var(--text3);cursor:pointer" onclick="fuDismissed=[];localStorage.removeItem('fcrm_fu_dismissed');renderFollowup()" title="숨김 해제">(+${dismissedCount}명 숨김 · 초기화)</span>`:''));
   const el = document.getElementById('fuList');
   if(!items.length){
@@ -168,7 +169,7 @@ function renderBdThisMonth(){
   const thisY = today.getFullYear();
   const list = getBirthdays().filter(c=>{
     // 이번 달 생일 (올해 기준)
-    return c.bdMonth === thisM;
+    return c.active!=='FALSE' && c.bdMonth === thisM;
   }).sort((a,b)=>a.bdDay-b.bdDay);
   set('bdThisMonthCnt', list.length+'명');
   if(!list.length){
@@ -207,6 +208,7 @@ function renderMedicareReminder(){
   const today = new Date(); today.setHours(0,0,0,0);
   const list = [];
   clients.forEach(c=>{
+    if(c.active==='FALSE') return;
     const parsed = parseDob(c.dob);
     if(!parsed) return;
     const {m, d, y} = parsed;
@@ -274,11 +276,12 @@ function closeGlobalSearch(){document.getElementById('gsResults').classList.remo
 let notifs=[];
 function buildNotifs(){
   notifs=[];
-  const urgent=clients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
+  const activeClients=clients.filter(c=>c.active!=='FALSE');
+  const urgent=activeClients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
   if(urgent.length) notifs.push({icon:'📞',title:`장기 미연락 ${urgent.length}명`,sub:'30일 이상 연락 없는 고객'});
-  const bdays=getBirthdays().filter(c=>c.daysLeft<=7);
+  const bdays=getBirthdays().filter(c=>c.active!=='FALSE' && c.daysLeft<=7);
   if(bdays.length) notifs.push({icon:'🎂',title:`이번 주 생일 ${bdays.length}명`,sub:bdays.map(c=>c.name).join(', ')});
-  const newRef=clients.filter(c=>c.ref==='TRUE');
+  const newRef=activeClients.filter(c=>c.ref==='TRUE');
   if(newRef.length) notifs.push({icon:'🔗',title:`리퍼 고객 ${newRef.length}명`,sub:'에이전트 리퍼 연결 고객'});
   renderNotifs();
 }
@@ -434,8 +437,9 @@ function renderCalendar(){
 // CHART
 // ══════════════════════════════════════
 function renderPlanStats(){
-  const cnt={};clients.forEach(c=>{const p=(c.plan||'미지정').toUpperCase();cnt[p]=(cnt[p]||0)+1;});
-  const total=clients.length||1;
+  const activeClients=clients.filter(c=>c.active!=='FALSE');
+  const cnt={};activeClients.forEach(c=>{const p=(c.plan||'미지정').toUpperCase();cnt[p]=(cnt[p]||0)+1;});
+  const total=activeClients.length||1;
   const barCol={PDP:'#1a56db',MAPD:'#059669',MA:'#0d9488',SNP:'#7c3aed',MEDIGAP:'#b45309','미지정':'#9ca3af'};
   const pcol={PDP:'bbl',MAPD:'bgr',MA:'bte',SNP:'bpu',MEDIGAP:'bam','미지정':'bgy'};
   const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);

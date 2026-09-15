@@ -66,6 +66,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 비활성 고객을 대시보드 카운트·플랜 통계·팔로우업·생일·메디케어 리마인더에서 제외 (고객 목록 자체는 유지), 상세페이지 마지막 연락일 날짜 포맷 통일 누락분 수정 | `js/features/dashboard.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 비활성 토글 후 각 집계·목록 및 새로고침 유지 확인 |
 | 2026-09-14 | DOB 플레이스홀더 오타(DD/MM→MM/DD) 수정, 이름/도시 자동 대문자 추가, 화면에 표시되는 날짜를 MM/DD/YYYY로 통일(입력값 자체는 ISO 유지) | `index.html`, `js/utils/ui-and-onboarding.js`, `js/features/dashboard.js`, `js/features/client-detail.js`, `js/features/client-management.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 신규 메모 작성 시각과 날짜 입력·재수정 확인 |
 | 2026-09-14 | 고객 목록의 상세/수정/전화/문자 버튼을 제거 (상세 페이지에 이미 존재), 목록에는 활성 토글/파일/삭제만 남김 — 토글 추가로 인한 레이아웃 깨짐 해결 | `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 사이트에서 목록 액션 배치와 상세 페이지 진입·기존 액션 확인 |
 | 2026-09-14 | 가입상품(회사)과 별개로 구체적 상품명 필드 추가 (메인 시트 U열, 자동완성 포함) | `index.html`, `js/main.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 U열 저장·자동완성·목록 표시 확인 |
