@@ -66,6 +66,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-15 | 전화하기 버튼의 `tel:` 링크에 사용되는 전화번호에서 하이픈 등 구분 문자를 제거해 Phone Link 호출 문제 수정 | `js/features/sms.js`, `README.md`, `AGENTS.md` | Phone Link가 연결된 실제 Windows 환경에서 전화 앱 호출 확인 |
 | 2026-09-14 | MBI 중복 검사 기능 추가 - 등록/수정 시 실시간 감지 + 전체 고객 대상 일괄 검사 도구 | `index.html`, `js/utils/ui-and-onboarding.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 중복 경고·자기 자신 제외·상세 이동·일괄 검사 확인 |
 | 2026-09-14 | 활성/비활성 토글 시 빠른 필터(qfFilter) 상태가 풀리던 버그 수정 - 마지막으로 렌더링된 목록을 기억해뒀다가 그대로 재사용하는 방식으로 변경 | `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 빠른 필터·검색어 적용 후 토글 및 목록 유지 확인 |
 | 2026-09-14 | 비활성 고객을 대시보드 카운트·플랜 통계·팔로우업·생일·메디케어 리마인더에서 제외 (고객 목록 자체는 유지), 상세페이지 마지막 연락일 날짜 포맷 통일 누락분 수정 | `js/features/dashboard.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 비활성 토글 후 각 집계·목록 및 새로고침 유지 확인 |
