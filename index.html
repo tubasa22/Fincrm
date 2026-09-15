@@ -523,19 +523,10 @@
       </div>
       <div class="fg">
         <label>가입 상품</label>
-        <select id="f_prod_sel" onchange="prodSelChange()">
-          <option value="">선택...</option>
-          <option>Aetna</option>
-          <option>AARP</option>
-          <option>Anthem</option>
-          <option>Blue Shield</option>
-          <option>Health Springs (구 Cigna)</option>
-          <option>WellCare</option>
-          <option value="__other__">기타 (직접 입력)</option>
-        </select>
-        <input id="f_prod" placeholder="상품명 직접 입력..."
-          style="display:none;margin-top:6px;width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 11px;font-size:13px;font-family:inherit;outline:none"
+        <input id="f_prod" list="prodSuggestions" placeholder="상품명 입력 (입력할수록 자동완성 목록에 쌓임)"
+          style="width:100%;border:1px solid var(--g3);border-radius:var(--rs);padding:8px 11px;font-size:13px;font-family:inherit;outline:none"
           onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--g3)'">
+        <datalist id="prodSuggestions"></datalist>
       </div>
     </div>
     <!-- MAPD/PDP 전용 추가 정보 -->
