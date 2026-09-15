@@ -52,10 +52,6 @@ function renderClients(list){
       <td style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${memoEl}${mc?` <span class="badge bgy" style="font-size:10px">${mc}</span>`:''}</td>
       <td style="text-align:center" onclick="event.stopPropagation()"><div class="ra" style="justify-content:center">
         <button class="ib" onclick="toggleActive(${c.rowIdx},'${c.active||'TRUE'}');event.stopPropagation()" title="${c.active==='FALSE'?'활성화':'비활성화'}">${c.active==='FALSE'?'⭕':'🟢'}</button>
-        <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
-        <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
-        ${c.phone?`<a href="tel:${c.phone}" class="ib" title="전화" style="text-decoration:none" onclick="setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
-        ${c.phone?`<button class="ib" onclick="smsAndReset('${esc(c.name)}','${c.phone}',${c.rowIdx});event.stopPropagation()" title="문자">💬</button>`:''}
         <button class="ib" onclick="openFileUpload('${esc(c.name)}')" title="파일 업로드">📎</button>
         <button class="ib del" onclick="delClient(${c.rowIdx},'${esc(c.name)}')" title="삭제">🗑</button>
       </div></td>

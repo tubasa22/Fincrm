@@ -68,6 +68,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 고객 목록의 상세/수정/전화/문자 버튼을 제거 (상세 페이지에 이미 존재), 목록에는 활성 토글/파일/삭제만 남김 — 토글 추가로 인한 레이아웃 깨짐 해결 | `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 사이트에서 목록 액션 배치와 상세 페이지 진입·기존 액션 확인 |
 | 2026-09-14 | 가입상품(회사)과 별개로 구체적 상품명 필드 추가 (메인 시트 U열, 자동완성 포함) | `index.html`, `js/main.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 U열 저장·자동완성·목록 표시 확인 |
 | 2026-09-14 | 고객 활성/비활성 상태 추가 (메인 시트 T열, 목록에서 토글로 즉시 전환, 비활성은 회색 처리+배지로 구분) | `index.html`, `js/main.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 T열 저장·새로고침 후 상태 유지 확인 |
 | 2026-09-14 | MAPD 가입상품 목록에서 PPO 옵션 제거 (HMO만 취급) | `js/features/client-management.js` | 실제 등록 화면에서 MAPD 선택 목록 확인 |
