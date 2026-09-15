@@ -92,6 +92,7 @@ function openAddClient(){
   set('mTitle','👤 신규 고객 등록');
   document.getElementById('eRow').value='';document.getElementById('eNo').value='';
   document.getElementById('eActive').value='TRUE';
+  document.getElementById('f_prod_name').value='';
   ['fname','mname','lname','address1','city','state','zip','phone','phone2','email','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
   document.getElementById('f_dob').value='';
   document.getElementById('f_next').value='';
@@ -116,6 +117,7 @@ function openEditClient(rowIdx){
   document.getElementById('eRow').value=rowIdx;
   document.getElementById('eNo').value=c.no;
   document.getElementById('eActive').value=c.active||'TRUE';
+  document.getElementById('f_prod_name').value=c.prodName||'';
   document.getElementById('f_fname').value=c.fname;
   document.getElementById('f_mname').value=c.mname;
   document.getElementById('f_lname').value=c.lname;
@@ -212,7 +214,7 @@ async function saveClient(){
   // A~O 컬럼 순서: no, fname, mname, lname, email, address1, city, zip, phone, plan, prod, memo, ref, (N=에이전트 빈칸), (O=durl 빈칸)
   // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
   // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
-  // N=Plan  O=Product  P=Memo  Q=Ref  R=에이전트이름  S=상세URL  T=활성상태
+  // N=Plan  O=Product  P=Memo  Q=Ref  R=에이전트이름  S=상세URL  T=활성상태  U=상품명
   const vals=[[
     autoNo,
     fnameClean, mname, lnameClean,
@@ -232,6 +234,7 @@ async function saveClient(){
     document.getElementById('f_agent').value.trim(),                // R 에이전트이름
     '',                                                             // S 상세URL
     document.getElementById('eActive')?.value || 'TRUE',             // T 활성상태
+    document.getElementById('f_prod_name').value.trim(),              // U 상품명
   ]];
 
   // MAPD/PDP 추가정보 수집
@@ -263,7 +266,7 @@ async function saveClient(){
         plan:vals[0][13], prod:vals[0][14],
         memo:vals[0][15], ref:vals[0][16],
         agent:vals[0][17]||'',
-        durl:'', active:vals[0][19]||'TRUE', biz:''
+        durl:'', active:vals[0][19]||'TRUE', prodName:vals[0][20]||'', biz:''
       };
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
@@ -279,12 +282,12 @@ async function saveClient(){
       if(rowIdx){
         // 수정: 해당 행 덮어쓰기
         await sheetsReq('PUT',
-          `${MAIN_ID}/values/A${rowIdx}:T${rowIdx}?valueInputOption=USER_ENTERED`,
+          `${MAIN_ID}/values/A${rowIdx}:U${rowIdx}?valueInputOption=USER_ENTERED`,
           {values:vals});
       } else {
         // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
         await sheetsReq('POST',
-          `${MAIN_ID}/values/A%3AT:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+          `${MAIN_ID}/values/A%3AU:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
           {values:vals});
       }
 

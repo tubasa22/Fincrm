@@ -125,10 +125,10 @@ async function findOrCreateFolder(name, parentId=null) {
 async function loadAll(){
   setSyncStatus('동기화 중...',false);
   try{
-    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:T`);
+    const d=await sheetsReq('GET',`${MAIN_ID}/values/A:U`);
     // A=No  B=First  C=Middle  D=Last   E=Email   F=Address  G=City  H=Zip
     // I=State  J=DOB  K=NextContact  L=Phone1  M=Phone2
-    // N=Plan  O=Product  P=Memo  Q=Ref(TRUE/FALSE)  R=에이전트이름  S=상세URL  T=활성상태
+    // N=Plan  O=Product  P=Memo  Q=Ref(TRUE/FALSE)  R=에이전트이름  S=상세URL  T=활성상태  U=상품명
     clients=(d.values||[]).slice(1).map((r,i)=>({
       rowIdx:i+2, no:String(r[0]||''),
       fname:String(r[1]||''), mname:String(r[2]||''), lname:String(r[3]||''),
@@ -147,6 +147,7 @@ async function loadAll(){
       agent:String(r[17]||''),
       durl:String(r[18]||''),
       active:String(r[19]||'TRUE'),
+      prodName:String(r[20]||''),
       biz:'',
     })).filter(c=>c.name.trim());
     try{
