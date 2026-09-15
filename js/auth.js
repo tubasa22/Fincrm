@@ -9,7 +9,7 @@ function addLoginLog(type, userName){
 // 로그인 화면 패널 전환
 // ══════════════════════════════════════
 function showPanel(id){
-  ['lp_main','lp_apply','lp_applied','lp_code'].forEach(p=>{
+  ['lp_main','lp_code'].forEach(p=>{
     const el = document.getElementById(p);
     if(el) el.style.display = p===id ? 'block' : 'none';
   });
@@ -67,113 +67,6 @@ function fmtAccessCode(el){
   } catch(e) {
     console.error('코드 포맷 중 오류:', e);
     el.value = 'FC-';
-  }
-}
-
-// 사용 신청 제출
-async function submitApply(){
-  const nameEl = document.getElementById('ap_name');
-  const emailEl = document.getElementById('ap_email');
-  
-  if(!nameEl || !emailEl) {
-    alert('❌ 입력 필드를 찾을 수 없습니다');
-    return;
-  }
-  
-  const name  = nameEl.value.trim();
-  const email = emailEl.value.trim();
-  if(!name){ alert('이름을 입력해주세요'); return; }
-  if(!email){ alert('이메일을 입력해주세요'); return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('올바른 이메일 형식을 입력해주세요'); return; }
-
-  try {
-    showLoad('신청 접수 중...');
-
-    const now = new Date().toLocaleString('ko-KR');
-    
-    // localStorage에 저장
-    const application = {
-      신청일시: now,
-      이름: name,
-      이메일: email,
-      id: Date.now()
-    };
-    
-    let applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
-    applications.push(application);
-    localStorage.setItem('fcrm_applications', JSON.stringify(applications));
-    
-    console.log('✅ 신청 저장됨:', application);
-
-    hideLoad();
-    
-    // 정보 표시
-    document.getElementById('ap_name_confirm').textContent = name;
-    document.getElementById('ap_email_confirm').textContent = email;
-    showPanel('lp_applied');
-    
-    toast('✅ 신청이 접수되었습니다!');
-
-  } catch(e) {
-    hideLoad();
-    console.error('신청 처리 오류:', e);
-    alert('❌ 신청 처리 중 오류가 발생했습니다.');
-  }
-}
-
-// ★ 개발자용: 신청을 Google Sheets에 일괄 업로드
-async function uploadApplicationsToSheets(){
-  const applications = JSON.parse(localStorage.getItem('fcrm_applications') || '[]');
-  
-  if(applications.length === 0){
-    alert('업로드할 신청이 없습니다');
-    return;
-  }
-  
-  console.log('📤 Google Sheets에 업로드 중...');
-  
-  const sheetId = '16j-DWyzI7GgsbIfKeulYwUluhk1d5-6xguyJbnNvJAs';
-  const range = '신청자목록!A:H';
-  
-  try {
-    // 모든 신청을 배열로 변환
-    const values = applications.map(app => [
-      app.신청일시,
-      app.이름,
-      app.이메일,
-      '',  // 에이전시명
-      '',  // 연락처
-      '',  // 지역
-      '',  // 코드
-      '대기'  // 상태
-    ]);
-    
-    // Google Sheets API로 추가
-    const response = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&key=AIzaSyBx5XR1-VLU-5Vj7t8Z_J0G7yEq_h8c4dg`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ values })
-      }
-    );
-    
-    if(response.ok){
-      const result = await response.json();
-      console.log('✅ Google Sheets 업로드 완료:', result);
-      alert(`✅ ${applications.length}건의 신청이 Google Sheets에 업로드되었습니다!`);
-      
-      // 업로드된 데이터 삭제
-      localStorage.removeItem('fcrm_applications');
-      console.log('✅ 로컬 저장소 초기화됨');
-    } else {
-      throw new Error('업로드 실패: ' + response.statusText);
-    }
-  } catch(e) {
-    console.error('❌ 업로드 오류:', e);
-    alert('❌ 업로드 중 오류가 발생했습니다.\n\n' + e.message);
   }
 }
 
