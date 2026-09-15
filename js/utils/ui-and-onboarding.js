@@ -31,6 +31,16 @@ function fmtPhone(el){
   else el.value=v;
 }
 
+function fmtDateUS(dateStr){
+  if(!dateStr) return '';
+  // 이미 MM/DD/YYYY면 그대로
+  if(/^\d{1,2}\/\d{1,2}\/\d{4}/.test(dateStr)) return dateStr;
+  // ISO(YYYY-MM-DD)면 변환
+  const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return `${m[2]}/${m[3]}/${m[1]}`;
+  return dateStr; // 그 외 형식은 손대지 않고 그대로 반환
+}
+
 // MBI: 1XX9-XX9-XX99 형식 (영숫자 11자, 하이픈 자동)
 function fmtMbi(el){
   const pos = el.selectionStart;

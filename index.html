@@ -389,9 +389,9 @@
     <h3 id="mTitle">👤 신규 고객 등록</h3>
     <input type="hidden" id="eRow"><input type="hidden" id="eNo"><input type="hidden" id="eActive">
     <div class="fgr" style="grid-template-columns:1fr 0.8fr 1fr">
-      <div class="fg"><label>First Name *</label><input id="f_fname" placeholder="John" oninput="titleCaseInput(this)"></div>
+      <div class="fg"><label>First Name *</label><input id="f_fname" placeholder="John" oninput="titleCaseInput(this);toUpper(this)"></div>
       <div class="fg"><label>Middle Name</label><input id="f_mname" placeholder="M." oninput="toUpper(this)"></div>
-      <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith" oninput="titleCaseInput(this)"></div>
+      <div class="fg"><label>Last Name *</label><input id="f_lname" placeholder="Smith" oninput="titleCaseInput(this);toUpper(this)"></div>
     </div>
     <div class="fg"><label>주소 (Street Address)</label>
       <div style="position:relative">
@@ -402,13 +402,13 @@
       </div>
     </div>
     <div class="fgr" style="grid-template-columns:1fr 0.6fr 0.7fr">
-      <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles" oninput="titleCaseInput(this)"></div>
+      <div class="fg"><label>City</label><input id="f_city" placeholder="Los Angeles" oninput="titleCaseInput(this);toUpper(this)"></div>
       <div class="fg"><label>State</label><input id="f_state" placeholder="CA" maxlength="2" style="text-transform:uppercase" oninput="toUpper(this)"></div>
       <div class="fg"><label>ZIP Code</label><input id="f_zip" placeholder="90001" oninput="numOnly(this,5)"></div>
     </div>
     <div class="fgr">
-      <div class="fg"><label>생년월일 (DOB) — DD/MM/YYYY</label>
-        <input id="f_dob" placeholder="DD/MM/YYYY" maxlength="10" oninput="fmtDob(this)" style="font-family:monospace;letter-spacing:1px">
+      <div class="fg"><label>생년월일 (DOB) — MM/DD/YYYY</label>
+        <input id="f_dob" placeholder="MM/DD/YYYY" maxlength="10" oninput="fmtDob(this)" style="font-family:monospace;letter-spacing:1px">
       </div>
       <div class="fg"><label>마지막 연락일</label><input type="date" id="f_next"></div>
     </div>
