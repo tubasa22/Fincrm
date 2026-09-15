@@ -58,6 +58,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-15 | `fix/client-filter-reset`의 필터 재현용 디버그 로그 3줄 제거 | `js/features/dashboard.js`, `js/main.js`, `README.md`, `AGENTS.md` | 없음 |
 | 2026-09-14 | 고객 수정 후 목록 새로고침 시 플랜/검색 필터가 풀리던 버그 수정 (`renderClients` → `filterClients` 호출로 변경) | `js/main.js` | 브라우저에서 수정 저장 후 필터 유지 재확인 |
 | 2026-09-14 | 전화/메시지 버튼 클릭 시 Phone Link 등 외부 앱이 열리지 않으면 안내 메시지 표시 | `js/features/sms.js` | Phone Link 연결 환경에서 경고 미표시 재확인 |
 | 2026-09-14 | Twilio 기반 문자발송 탭·생일 일괄문자·주소록 기능 전체 제거, 메시지 버튼은 `sms:` 링크(Phone Link 등 OS 기본 문자 앱 호출)로 대체 | `index.html`, `js/features/sms.js`, `js/main.js`, `js/features/demo.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | OS에 SMS 프로토콜 처리 앱이 설치된 실제 환경에서 호출 확인 |
