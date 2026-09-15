@@ -469,24 +469,59 @@ setInterval(function(){
 // 가입상품 자유입력 + 기존 고객 데이터 기반 자동완성
 // ══════════════════════════════════════
 function getProdValue(){
-  return document.getElementById('f_prod').value.trim();
+  const main = document.getElementById('f_prod').value.trim();
+  const plan = document.getElementById('f_plan')?.value || '';
+  if(plan.toUpperCase()==='MEDIGAP'){
+    const pdp = document.getElementById('f_pdp_prod')?.value.trim() || '';
+    if(pdp) return main + ' / ' + pdp;
+  }
+  return main;
 }
 
 function setProdValue(val){
-  document.getElementById('f_prod').value = val || '';
+  const plan = document.getElementById('f_plan')?.value || '';
+  if(plan.toUpperCase()==='MEDIGAP' && val && val.includes(' / ')){
+    const parts = val.split(' / ');
+    document.getElementById('f_prod').value = parts[0].trim();
+    const pdpEl = document.getElementById('f_pdp_prod');
+    if(pdpEl) pdpEl.value = parts.slice(1).join(' / ').trim();
+  } else {
+    document.getElementById('f_prod').value = val || '';
+    const pdpEl = document.getElementById('f_pdp_prod');
+    if(pdpEl) pdpEl.value = '';
+  }
 }
 
 function updateProdSuggestions(){
   const dl = document.getElementById('prodSuggestions');
-  if(!dl) return;
-  const plan = document.getElementById('f_plan')?.value || '';
-  // 같은 플랜 고객들의 상품명 우선, 없으면 전체
-  let pool = plan ? clients.filter(c=>c.plan===plan) : clients;
-  if(!pool.length) pool = clients;
-  const freq = {};
-  pool.forEach(c=>{ const p=(c.prod||'').trim(); if(p) freq[p]=(freq[p]||0)+1; });
-  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
-  dl.innerHTML = sorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
+  if(dl){
+    const plan = document.getElementById('f_plan')?.value || '';
+    // 같은 플랜 고객들의 상품명 우선, 없으면 전체
+    let pool = plan ? clients.filter(c=>c.plan===plan) : clients;
+    if(!pool.length) pool = clients;
+    const freq = {};
+    pool.forEach(c=>{ const p=(c.prod||'').trim(); if(p) freq[p]=(freq[p]||0)+1; });
+    const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
+    dl.innerHTML = sorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
+  }
+
+  // PDP 자동완성 (Medigap 고객의 prod에서 " / " 뒤 부분 + PDP 고객의 prod)
+  const pdpDl = document.getElementById('pdpProdSuggestions');
+  if(pdpDl){
+    const pdpFreq = {};
+    clients.forEach(c=>{
+      if((c.plan||'').toUpperCase()==='MEDIGAP' && c.prod && c.prod.includes(' / ')){
+        const p = c.prod.split(' / ').slice(1).join(' / ').trim();
+        if(p) pdpFreq[p] = (pdpFreq[p]||0) + 1;
+      }
+      if((c.plan||'').toUpperCase()==='PDP'){
+        const p = (c.prod||'').trim();
+        if(p) pdpFreq[p] = (pdpFreq[p]||0) + 1;
+      }
+    });
+    const pdpSorted = Object.entries(pdpFreq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
+    pdpDl.innerHTML = pdpSorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
+  }
 }
 
 // ══════════════════════════════════════
