@@ -45,7 +45,7 @@ function renderClients(list){
       <td style="font-size:12px">${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3);margin-top:2px'>${c.phone2}</div>`:''}</td>
       <td style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.email||'—'}</td>
       <td style="text-align:center">${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
-      <td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.prod||'—'}</td>
+      <td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.prod||'—'}${c.prodName?`<div style="font-size:11px;color:var(--text3)">${c.prodName}</div>`:''}</td>
       <td style="text-align:center;font-size:12px">${c.next||'—'}</td>
       <td style="text-align:center">${dh}</td>
       <td style="text-align:center">${c.ref==='TRUE'?`<span class="badge bpu" style="font-size:10px">리퍼</span>${c.agent?`<div style="font-size:10px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.agent}</div>`:''}`:'—'}</td>

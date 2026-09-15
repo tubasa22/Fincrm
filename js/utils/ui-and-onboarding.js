@@ -522,6 +522,14 @@ function updateProdSuggestions(){
     const pdpSorted = Object.entries(pdpFreq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
     pdpDl.innerHTML = pdpSorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
   }
+
+  const prodNameDl = document.getElementById('prodNameSuggestions');
+  if(prodNameDl){
+    const nameFreq = {};
+    clients.forEach(c=>{ const p=(c.prodName||'').trim(); if(p) nameFreq[p]=(nameFreq[p]||0)+1; });
+    const nameSorted = Object.entries(nameFreq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
+    prodNameDl.innerHTML = nameSorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
+  }
 }
 
 // ══════════════════════════════════════

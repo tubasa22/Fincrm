@@ -45,6 +45,7 @@
 | 신규 고객 번호(No.) 시트 직접 조회 | 완료 |
 | Medigap PDP 상품 입력·결합 저장 | 완료 |
 | 고객 활성/비활성 상태 관리 | 완료 |
+| 가입상품(회사)과 구체적 상품명 분리 관리 | 완료 |
 
 ### 다음 세션 인계 메모 (2026-09-14)
 
@@ -67,6 +68,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-14 | 가입상품(회사)과 별개로 구체적 상품명 필드 추가 (메인 시트 U열, 자동완성 포함) | `index.html`, `js/main.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 U열 저장·자동완성·목록 표시 확인 |
 | 2026-09-14 | 고객 활성/비활성 상태 추가 (메인 시트 T열, 목록에서 토글로 즉시 전환, 비활성은 회색 처리+배지로 구분) | `index.html`, `js/main.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 T열 저장·새로고침 후 상태 유지 확인 |
 | 2026-09-14 | MAPD 가입상품 목록에서 PPO 옵션 제거 (HMO만 취급) | `js/features/client-management.js` | 실제 등록 화면에서 MAPD 선택 목록 확인 |
 | 2026-09-14 | 가입상품을 하드코딩 드롭다운에서 자유입력+자동완성(기존 데이터 기반)으로 변경 — 상품명 목록 유지보수 불필요해짐 | `index.html`, `js/utils/ui-and-onboarding.js`, `js/features/client-management.js` | 실제 고객 데이터로 플랜별 자동완성·수정 화면 값 확인 |
