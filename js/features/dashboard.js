@@ -1,3 +1,5 @@
+let lastClientsList = null;
+
 function updateKPIs(){
   const activeClients=clients.filter(c=>c.active!=='FALSE');
   const n=activeClients.length,wp=activeClients.filter(c=>c.plan).length;
@@ -14,6 +16,7 @@ function updateKPIs(){
 // ══════════════════════════════════════
 function renderClients(list){
   const data=list||clients;
+  lastClientsList=data;
   set('cntBadge','('+data.length+'명)');
   const tb=document.getElementById('cBody');
   if(!data.length){tb.innerHTML=`<tr class="empty"><td colspan="12">고객 없음<br><br><button class="btn pri sm" onclick="openAddClient()" style="margin-top:8px">+ 등록</button></td></tr>`;return;}
@@ -67,7 +70,7 @@ async function toggleActive(rowIdx, currentVal){
   try{
     await sheetsReq('PUT',`${MAIN_ID}/values/T${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[newVal]]});
     c.active = newVal;
-    filterClients();
+    renderClients(lastClientsList);
     toast(newVal==='TRUE' ? '✅ 활성으로 변경됨' : '⏸ 비활성으로 변경됨');
   }catch(e){
     toast('❌ 상태 변경 실패: '+e.message);
