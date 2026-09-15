@@ -21,7 +21,7 @@ function openDetail(rowIdx){
           (c.ref==='TRUE' ? ' <span class="badge bpu">리퍼</span>'+(c.agent?' <span style="font-size:12px;color:var(--text2)">'+c.agent+'</span>':'') : '') +
           (c.plan ? ' <span class="badge '+pb(c.plan)+'">'+c.plan+'</span>' : '') +
         '</h2>' +
-        '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next||'없음')+' '+db+'</p>' +
+        '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next?fmtDateUS(c.next):'없음')+' '+db+'</p>' +
       '</div>' +
       '<div class="dh-right">' +
         (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)">📞 전화</a>' : '') +
@@ -38,7 +38,7 @@ function openDetail(rowIdx){
     return '<div class="mi" style="border-left:3px solid var(--blue);padding-left:12px;margin-bottom:10px;background:var(--sur);border-radius:0 var(--rs) var(--rs) 0">' +
       '<div class="mi-d" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
         '<span class="badge bbl" style="font-size:10px">'+(m.type||'기타')+'</span>' +
-        '<span style="font-weight:600;color:var(--text)">'+(m.date||'')+'</span>' +
+        '<span style="font-weight:600;color:var(--text)">'+fmtDateUS(m.date)+'</span>' +
         (m.ts ? '<span style="font-size:11px;color:var(--text3)">작성: '+m.ts+'</span>' : '') +
       '</div>' +
       '<div class="mi-t" style="margin-top:6px;white-space:pre-wrap">'+(m.text||'')+'</div>' +
@@ -61,7 +61,7 @@ function openDetail(rowIdx){
       '</div>' +
       '<div class="dc">' +
         '<h4>메모 &amp; 일정 <button class="btn sm" onclick="toggleMemoEdit('+c.rowIdx+',\''+esc(c.memo||'')+'\')">✏️ 수정</button></h4>' +
-        dr('마지막 연락일', (c.next||'없음')+' '+db) +
+        dr('마지막 연락일', (c.next?fmtDateUS(c.next):'없음')+' '+db) +
         '<div id="memoView_'+c.rowIdx+'" style="margin-top:10px;background:var(--g2);border-radius:var(--rs);padding:10px;font-size:13px;line-height:1.7;color:var(--text2)">'+(c.memo||'(메모 없음)')+'</div>' +
         '<div id="memoEdit_'+c.rowIdx+'" style="display:none;margin-top:10px">' +
           '<textarea id="memoTa_'+c.rowIdx+'" style="width:100%;border:1px solid var(--blue);border-radius:var(--rs);padding:10px;font-size:13px;min-height:80px;resize:vertical;font-family:inherit;outline:none;line-height:1.7">'+(c.memo||'')+'</textarea>' +

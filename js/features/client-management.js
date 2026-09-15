@@ -400,7 +400,8 @@ async function saveMemo(){
   if(!text){alert('내용을 입력해주세요');return;}
   const type=document.getElementById('m_type').value;
   const date=document.getElementById('m_date').value||new Date().toISOString().slice(0,10);
-  const ts=new Date().toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const now=new Date();
+  const ts=`${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}/${now.getFullYear()} ${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;
   showLoad('메모 저장 중...');
   try{
     if(!isDemo) await sheetsReq('POST',`${DETAIL_ID}/values/${encodeURIComponent('상담 이력!A:F')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,{values:[[Date.now(),name,type,text,date,ts]]});
