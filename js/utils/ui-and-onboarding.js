@@ -466,48 +466,27 @@ setInterval(function(){
 }, 5*60*1000);
 
 // ══════════════════════════════════════
-// 가입상품 셀렉트 + 직접입력 연동
+// 가입상품 자유입력 + 기존 고객 데이터 기반 자동완성
 // ══════════════════════════════════════
-function prodSelChange(){
-  const sel = document.getElementById('f_prod_sel');
-  const inp = document.getElementById('f_prod');
-  if(sel.value === '__other__'){
-    inp.style.display = 'block';
-    inp.value = '';
-    inp.focus();
-  } else {
-    inp.style.display = 'none';
-    inp.value = sel.value;
-  }
-}
-
 function getProdValue(){
-  const sel = document.getElementById('f_prod_sel');
-  const inp = document.getElementById('f_prod');
-  if(sel.value === '__other__' || sel.value === ''){
-    return inp.value.trim();
-  }
-  return sel.value;
+  return document.getElementById('f_prod').value.trim();
 }
 
 function setProdValue(val){
-  if(!val){
-    document.getElementById('f_prod_sel').value='';
-    document.getElementById('f_prod').value='';
-    document.getElementById('f_prod').style.display='none';
-    return;
-  }
-  const sel = document.getElementById('f_prod_sel');
-  const hasOpt = Array.from(sel.options).some(o=>o.value===val||o.text===val);
-  if(hasOpt){
-    sel.value = val;
-    document.getElementById('f_prod').value = val;
-    document.getElementById('f_prod').style.display = 'none';
-  } else {
-    sel.value = '__other__';
-    document.getElementById('f_prod').value = val;
-    document.getElementById('f_prod').style.display = 'block';
-  }
+  document.getElementById('f_prod').value = val || '';
+}
+
+function updateProdSuggestions(){
+  const dl = document.getElementById('prodSuggestions');
+  if(!dl) return;
+  const plan = document.getElementById('f_plan')?.value || '';
+  // 같은 플랜 고객들의 상품명 우선, 없으면 전체
+  let pool = plan ? clients.filter(c=>c.plan===plan) : clients;
+  if(!pool.length) pool = clients;
+  const freq = {};
+  pool.forEach(c=>{ const p=(c.prod||'').trim(); if(p) freq[p]=(freq[p]||0)+1; });
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([p])=>p);
+  dl.innerHTML = sorted.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">`).join('');
 }
 
 // ══════════════════════════════════════

@@ -77,107 +77,8 @@ async function uploadFiles(){
 // ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
 function togglePlanFields(){
-  const plan = document.getElementById('f_plan').value;
   document.getElementById('planExtraFields').style.display = 'block';
-
-  const sel = document.getElementById('f_prod_sel');
-  const prev = getProdValue();
-
-  const OPTS = {
-    'MAPD': [
-      'Aetna HMO',
-      'Anthem HMO',
-      'Alignment HMO',
-      'Blue Shield HMO',
-      'CleverCare HMO',
-      'Humana HMO',
-      'Molina HMO',
-      'SCAN HMO',
-      'AARP / UnitedHealthcare HMO',
-      'WellCare HMO',
-    ],
-    'PDP': [
-      'Aetna SilverScript Choice',
-      'Cigna Assurance Rx',
-      'Cigna Extra Rx',
-      'WellCare Value Script',
-      'WellCare Classic',
-      'AARP Medicare Rx Preferred (UHC)',
-      'AARP Medicare Rx Saver (UHC)',
-    ],
-    'Medigap': [
-      'Aetna Medigap Plan A',
-      'Aetna Medigap Plan F',
-      'Aetna Medigap Plan G',
-      'Aetna Medigap Plan N',
-      'Anthem Medigap Plan F',
-      'Anthem Medigap Plan G',
-      'Anthem Medigap Plan N',
-      'Blue Shield Medigap Plan F',
-      'Blue Shield Medigap Plan G',
-      'Blue Shield Medigap Plan N',
-      'Humana Medigap Plan F',
-      'Humana Medigap Plan G',
-      'Humana Medigap Plan N',
-      'AARP Medigap Plan F (UHC)',
-      'AARP Medigap Plan G (UHC)',
-      'AARP Medigap Plan N (UHC)',
-    ],
-    'SNP': [
-      // C-SNP: 만성질환자 플랜 (HMO)
-      'Aetna C-SNP HMO',
-      'Anthem C-SNP HMO',
-      'Alignment C-SNP HMO',
-      'Humana C-SNP HMO',
-      'SCAN C-SNP HMO',
-      'WellCare C-SNP HMO',
-      // D-SNP: 메디칼+메디케어 동시 보유자 플랜 (HMO)
-      'Aetna D-SNP HMO',
-      'Anthem D-SNP HMO',
-      'Blue Shield D-SNP HMO',
-      'Humana D-SNP HMO',
-      'LA Care D-SNP HMO',
-      'Molina D-SNP HMO',
-      'SCAN D-SNP HMO',
-      'WellCare D-SNP HMO',
-    ],
-    'C-SNP': [
-      'Aetna C-SNP HMO',
-      'Anthem C-SNP HMO',
-      'Alignment C-SNP HMO',
-      'Humana C-SNP HMO',
-      'SCAN C-SNP HMO',
-      'WellCare C-SNP HMO',
-    ],
-    'D-SNP': [
-      'Aetna D-SNP HMO',
-      'Anthem D-SNP HMO',
-      'Blue Shield D-SNP HMO',
-      'Humana D-SNP HMO',
-      'LA Care D-SNP HMO',
-      'Molina D-SNP HMO',
-      'SCAN D-SNP HMO',
-      'WellCare D-SNP HMO',
-    ],
-    '': [
-      'Aetna HMO', 'Aetna PPO',
-      'Anthem HMO', 'Anthem PPO',
-      'Alignment HMO', 'Blue Shield HMO', 'Blue Shield PPO',
-      'CleverCare HMO', 'Humana HMO', 'Humana PPO',
-      'Molina HMO', 'SCAN HMO',
-      'AARP / UnitedHealthcare HMO', 'AARP / UnitedHealthcare PPO',
-      'WellCare HMO', 'WellCare PPO',
-    ],
-  };
-
-  const opts = OPTS[plan] || OPTS[''];
-  sel.innerHTML = '<option value="">선택...</option>'
-    + opts.map(o => `<option${prev===o?' selected':''}>${o}</option>`).join('')
-    + '<option value="__other__"'+((!opts.includes(prev)&&prev)?' selected':'')+'>기타 (직접 입력)</option>';
-
-  if(prev && opts.includes(prev)) sel.value = prev;
-  else if(prev && !opts.includes(prev)) sel.value = '__other__';
-  prodSelChange();
+  updateProdSuggestions();
 }
 function clearPlanFields(){
   ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
@@ -190,9 +91,7 @@ function openAddClient(){
   ['fname','mname','lname','address1','city','state','zip','phone','phone2','email','memo'].forEach(f=>{const el=document.getElementById('f_'+f);if(el)el.value='';})
   document.getElementById('f_dob').value='';
   document.getElementById('f_next').value='';
-  document.getElementById('f_prod_sel').value='';
   document.getElementById('f_prod').value='';
-  document.getElementById('f_prod').style.display='none';
   document.getElementById('f_plan').value='';
   document.getElementById('f_ref').value='FALSE';
   document.getElementById('f_ref_chk').checked=false;
@@ -200,6 +99,7 @@ function openAddClient(){
   document.getElementById('f_agent_badge') && (document.getElementById('f_ref_badge').style.display='none');
   const agEl=document.getElementById('f_agent'); if(agEl) agEl.value='';
   clearPlanFields();
+  updateProdSuggestions();
   document.getElementById('clientModal').classList.add('on');
 }
 function openEditClient(rowIdx){
