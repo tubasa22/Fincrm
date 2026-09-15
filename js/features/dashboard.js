@@ -36,10 +36,10 @@ function renderClients(list){
       ageHtml = `<span style="font-weight:600">${age}세</span>`
         + (showMedicare ? `<div style="font-size:10px;background:#dbeafe;color:#1e40af;border-radius:3px;padding:1px 5px;margin-top:2px;white-space:nowrap">🏥 New Medicare D-${daysTo65}</div>` : '');
     }
-    return `<tr class="click" onclick="openDetail(${c.rowIdx})">
+    return `<tr class="click" onclick="openDetail(${c.rowIdx})" style="${c.active==='FALSE'?'opacity:0.5':''}">
       <td style="text-align:center;font-size:11px;color:var(--text3)">${c.no}</td>
       <td><div class="nc"><div class="av" style="background:${ac(c.name)};flex-shrink:0">${c.name[0]}</div>
-        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}${c.active==='FALSE'?' <span class="badge bgy" style="font-size:9px">비활성</span>':''}</div>
       </div></td>
       <td style="text-align:center;font-size:12px">${ageHtml}</td>
       <td style="font-size:12px">${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3);margin-top:2px'>${c.phone2}</div>`:''}</td>
@@ -51,6 +51,7 @@ function renderClients(list){
       <td style="text-align:center">${c.ref==='TRUE'?`<span class="badge bpu" style="font-size:10px">리퍼</span>${c.agent?`<div style="font-size:10px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.agent}</div>`:''}`:'—'}</td>
       <td style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${memoEl}${mc?` <span class="badge bgy" style="font-size:10px">${mc}</span>`:''}</td>
       <td style="text-align:center" onclick="event.stopPropagation()"><div class="ra" style="justify-content:center">
+        <button class="ib" onclick="toggleActive(${c.rowIdx},'${c.active||'TRUE'}');event.stopPropagation()" title="${c.active==='FALSE'?'활성화':'비활성화'}">${c.active==='FALSE'?'⭕':'🟢'}</button>
         <button class="ib" onclick="openDetail(${c.rowIdx})" title="상세">🔍</button>
         <button class="ib" onclick="openEditClient(${c.rowIdx})" title="수정">✏️</button>
         ${c.phone?`<a href="tel:${c.phone}" class="ib" title="전화" style="text-decoration:none" onclick="setTimeout(()=>updateLastContact(${c.rowIdx},false),1000)">📞</a>`:''}
@@ -61,6 +62,21 @@ function renderClients(list){
     </tr>`;
   }).join('');
 }
+
+async function toggleActive(rowIdx, currentVal){
+  const newVal = currentVal==='FALSE' ? 'TRUE' : 'FALSE';
+  const c = clients.find(x=>x.rowIdx===rowIdx);
+  if(!c) return;
+  try{
+    await sheetsReq('PUT',`${MAIN_ID}/values/T${rowIdx}?valueInputOption=USER_ENTERED`,{values:[[newVal]]});
+    c.active = newVal;
+    filterClients();
+    toast(newVal==='TRUE' ? '✅ 활성으로 변경됨' : '⏸ 비활성으로 변경됨');
+  }catch(e){
+    toast('❌ 상태 변경 실패: '+e.message);
+  }
+}
+
 function filterClients(){
   const q=document.getElementById('cSearch').value.toLowerCase();
   const pf=document.getElementById('planF').value;
