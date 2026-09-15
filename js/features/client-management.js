@@ -77,7 +77,10 @@ async function uploadFiles(){
 // ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
 function togglePlanFields(){
+  const plan = document.getElementById('f_plan').value;
   document.getElementById('planExtraFields').style.display = 'block';
+  const pdpWrap = document.getElementById('pdpProdWrap');
+  if(pdpWrap) pdpWrap.style.display = (plan.toUpperCase()==='MEDIGAP') ? 'block' : 'none';
   updateProdSuggestions();
 }
 function clearPlanFields(){
@@ -92,6 +95,10 @@ function openAddClient(){
   document.getElementById('f_dob').value='';
   document.getElementById('f_next').value='';
   document.getElementById('f_prod').value='';
+  const pdpEl = document.getElementById('f_pdp_prod');
+  if(pdpEl) pdpEl.value = '';
+  const pdpWrap = document.getElementById('pdpProdWrap');
+  if(pdpWrap) pdpWrap.style.display = 'none';
   document.getElementById('f_plan').value='';
   document.getElementById('f_ref').value='FALSE';
   document.getElementById('f_ref_chk').checked=false;
@@ -126,7 +133,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_plan').value=c.plan;
   togglePlanFields();
   setProdValue(c.prod||'');
-  document.getElementById('f_prod').value=c.prod;
+  updateProdSuggestions();
   document.getElementById('f_memo').value=c.memo;
   const isRef = c.ref==='TRUE';
   document.getElementById('f_ref').value=c.ref;
