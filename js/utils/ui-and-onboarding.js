@@ -51,7 +51,7 @@ function set(id,v){const e=document.getElementById(id);if(e)e.innerHTML=(v===und
 function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);return Math.ceil((t-d)/864e5);}
 function pb(p){return{'PDP':'bbl','MAPD':'bgr','MA':'bte','SNP':'bpu','C-SNP':'bpu','D-SNP':'bte','Medigap':'bam'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
-function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function esc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/\r?\n/g,'\\n');}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
 function ac(n){return AVC[(n||'A').charCodeAt(0)%AVC.length];}
 
