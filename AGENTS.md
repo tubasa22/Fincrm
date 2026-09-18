@@ -66,6 +66,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-09-18 | 고객 서류 업로드 종류를 신청서·개인 정보·기타로 단순화 (기존 업로드 라벨은 유지) | `index.html`, `README.md`, `AGENTS.md` | 실제 업로드 시 새 종류가 파일명 접두사로 저장되는지 확인 |
 | 2026-09-16 | 인라인 메모 수정 버튼에 전달되는 문자열의 백슬래시·따옴표·줄바꿈 이스케이프를 보완해 여러 줄 메모에서 버튼이 무반응이던 문제 수정 | `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인 데이터에서 여러 줄·따옴표 포함 메모 수정 및 저장 확인 |
 | 2026-09-15 | 전화하기 버튼의 `tel:` 링크에 사용되는 전화번호에서 하이픈 등 구분 문자를 제거해 Phone Link 호출 문제 수정 | `js/features/sms.js`, `README.md`, `AGENTS.md` | Phone Link가 연결된 실제 Windows 환경에서 전화 앱 호출 확인 |
 | 2026-09-14 | MBI 중복 검사 기능 추가 - 등록/수정 시 실시간 감지 + 전체 고객 대상 일괄 검사 도구 | `index.html`, `js/utils/ui-and-onboarding.js`, `js/features/client-management.js`, `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 로그인 환경에서 중복 경고·자기 자신 제외·상세 이동·일괄 검사 확인 |
