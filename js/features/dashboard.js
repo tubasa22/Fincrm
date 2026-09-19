@@ -299,6 +299,12 @@ function buildNotifs(){
   const activeClients=clients.filter(c=>c.active!=='FALSE');
   const urgent=activeClients.filter(c=>{const d=elapsed(c.next);return d!==null&&d>=30;});
   if(urgent.length) notifs.push({icon:'📞',title:`장기 미연락 ${urgent.length}명`,sub:'30일 이상 연락 없는 고객'});
+  activeClients
+    .filter(c=>c.next && elapsed(c.next)>=120)
+    .forEach(c=>{
+      const days=elapsed(c.next);
+      notifs.push({icon:'📞',title:`${c.name}님 - 마지막 연락 ${days}일 경과`,sub:'고객 상세에서 연락 기록을 확인하세요',rowIdx:c.rowIdx});
+    });
   const bdays=getBirthdays().filter(c=>c.active!=='FALSE' && c.daysLeft<=7);
   if(bdays.length) notifs.push({icon:'🎂',title:`이번 주 생일 ${bdays.length}명`,sub:bdays.map(c=>c.name).join(', ')});
   const newRef=activeClients.filter(c=>c.ref==='TRUE');
@@ -311,7 +317,7 @@ function renderNotifs(){
   if(!notifs.length){badge.classList.remove('on');list.innerHTML='<div class="notif-empty">새 알림 없음</div>';return;}
   badge.textContent=notifs.length;badge.classList.add('on');
   list.innerHTML=notifs.map((n,i)=>`
-    <div class="notif-item">
+    <div class="notif-item"${n.rowIdx?` onclick="closeNotif();openDetail(${n.rowIdx})" style="cursor:pointer"`:''}>
       <div class="ni-title">${n.icon} ${n.title}</div>
       <div class="ni-sub">${n.sub}</div>
     </div>`).join('');
