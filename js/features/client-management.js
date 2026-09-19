@@ -182,6 +182,43 @@ async function getNextClientNo(){
   }
 }
 
+let mainSheetIdCache=null;
+
+async function getMainSheetId(){
+  if(mainSheetIdCache!==null) return mainSheetIdCache;
+  const meta=await sheetsReq('GET',`${MAIN_ID}?fields=sheets.properties(sheetId)`);
+  const sheetId=meta.sheets?.[0]?.properties?.sheetId;
+  if(sheetId===undefined) throw new Error('메인 시트 탭 ID를 확인할 수 없습니다');
+  mainSheetIdCache=sheetId;
+  return sheetId;
+}
+
+function getAppendedRowIdx(result){
+  const updatedRange=result?.updates?.updatedRange||'';
+  const match=updatedRange.match(/![A-Z]+(\d+)(?::[A-Z]+\d+)?$/i);
+  if(!match) throw new Error('추가된 고객 행 번호를 확인할 수 없습니다');
+  return Number(match[1]);
+}
+
+async function applyDobDateFormat(rowIdx){
+  const sheetId=await getMainSheetId();
+  await sheetsReq('POST',`${MAIN_ID}:batchUpdate`,{
+    requests:[{
+      repeatCell:{
+        range:{
+          sheetId,
+          startRowIndex:Number(rowIdx)-1,
+          endRowIndex:Number(rowIdx),
+          startColumnIndex:9,
+          endColumnIndex:10,
+        },
+        cell:{userEnteredFormat:{numberFormat:{type:'DATE',pattern:'MM/dd/yyyy'}}},
+        fields:'userEnteredFormat.numberFormat',
+      }
+    }]
+  });
+}
+
 async function saveClient(){
   if(window.__savingClient) return;
   window.__savingClient = true;
@@ -259,6 +296,7 @@ async function saveClient(){
 
   showLoad('저장 중...');
   try{
+    let dobFormatError=null;
     if(isDemo){
       // 데모 모드: 메모리에만 저장
       const obj={
@@ -283,16 +321,26 @@ async function saveClient(){
       }
     } else {
       // ── 1. 메인 시트 저장 ──
+      let savedRowIdx;
       if(rowIdx){
         // 수정: 해당 행 덮어쓰기
         await sheetsReq('PUT',
           `${MAIN_ID}/values/A${rowIdx}:U${rowIdx}?valueInputOption=USER_ENTERED`,
           {values:vals});
+        savedRowIdx=Number(rowIdx);
       } else {
         // 신규: 맨 아래 추가 (%3A = 콜론 URL 인코딩)
-        await sheetsReq('POST',
+        const appendResult=await sheetsReq('POST',
           `${MAIN_ID}/values/A%3AU:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
           {values:vals});
+        savedRowIdx=getAppendedRowIdx(appendResult);
+      }
+
+      try{
+        await applyDobDateFormat(savedRowIdx);
+      }catch(formatErr){
+        dobFormatError=formatErr;
+        console.warn('DOB 날짜 서식 적용 오류:',formatErr.message);
       }
 
       // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
@@ -355,7 +403,11 @@ async function saveClient(){
 
     closeOv('clientModal');
     renderAll();
-    toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장됨!');
+    if(dobFormatError){
+      toast('⚠️ 고객 정보는 저장됐지만 DOB 날짜 서식 적용 실패: '+dobFormatError.message,5000);
+    }else{
+      toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장됨!');
+    }
 
     // 수정 후 저장 시 → 해당 고객 상세 페이지 자동 갱신
     if(rowIdx){
