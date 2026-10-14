@@ -35,7 +35,6 @@
 | 작업 | 상태 |
 |---|---|
 | index.html 함수→파일 매핑표 작성 (37개 배너 구역 기준) | 완료 |
-| 오프라인 모드 추가 (실제 동기화 데이터를 localStorage 캐시로 저장 후 오프라인에서 조회) | 완료 |
 | CSS 4개 파일 분리 (variables/base/layout/components) | 완료 |
 | JS 기능별 모듈 분리 (features/*) | 완료 (일반 script 로드 순서 유지) |
 | 제목 형식 함수 충돌 해소 | 완료 |
@@ -57,6 +56,7 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
+| 기존 고객 캐시 삭제용 1회성 코드 유지 | `js/config.js` | 모든 사용 브라우저에서 정리된 후 제거 가능 |
 | 연락 기록 없는 고객의 120일 알림 제외 | `js/features/dashboard.js` `buildNotifs()` | 고객 등록일 필드가 없어 경과 기간을 판정할 수 없음. 향후 등록일 필드 추가 시 재검토 |
 | 과거 시트 번호 중복·순서 뒤바뀜 | 실제 시트(예: No.263) | 과거 수동 편집 이력 때문으로 확인됨. saveClient() 경쟁조건 수정 이후 새 중복은 방지되지만 기존 데이터는 자동 정리하지 않음. 필요시 사용자가 COUNTIF로 찾아 수동 정리 |
 | localStorage 19개 키 분산 관리 | 코드 전체 | `utils/storage.js` 래퍼 도입은 계획됐으나 기존 호출부 전수 치환은 아직 범위 밖 |
@@ -67,6 +67,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-10-14 | 오프라인 모드 제거 및 실제 고객 데이터의 브라우저 로컬 저장 중단, 기존 캐시 삭제용 1회성 정리 추가 | `index.html`, `js/config.js`, `js/main.js`, `js/auth.js`, `README.md`, `AGENTS.md` | 실제 로그인 화면·로그인/로그아웃/재로그인 흐름 및 기존 사용 브라우저의 캐시 키 삭제 확인 |
 | 2026-09-18 | 마지막 연락 후 120일 이상 지난 활성 고객을 개별 알림으로 표시하고 클릭 시 고객 상세로 이동하도록 추가 | `js/features/dashboard.js`, `README.md`, `AGENTS.md` | 실제 활성 고객 중 120일 이상 미연락 사례로 알림 표시·상세 이동 확인; 등록일 필드 추가 시 연락 기록 없는 고객 처리 재검토 |
 | 2026-09-18 | 신규·수정 고객 저장 후 J열(DOB)에 `MM/DD/YYYY` 날짜 표시 형식을 `repeatCell`로 명시 적용해 일련번호 노출 재발 방지 | `js/features/client-management.js`, `README.md`, `AGENTS.md` | 실제 Google Sheets에서 신규 등록·수정 후 J열 표시 형식 확인; 기존 302~307행은 시트에서 서식 수동 복구 |
 | 2026-09-18 | 고객 서류 업로드 종류를 신청서·개인 정보·기타로 단순화 (기존 업로드 라벨은 유지) | `index.html`, `README.md`, `AGENTS.md` | 실제 업로드 시 새 종류가 파일명 접두사로 저장되는지 확인 |
@@ -103,7 +104,6 @@
 | 2026-09-09 | `sendToWebhook` 3중 오버라이드를 단일 함수로 병합 | `js/features/feedback.js`, `js/dev-dashboard.js`, `js/utils/ui-and-onboarding.js` | 실제 로그인 프로필로 피드백 전송 확인 필요 |
 | 2026-09-09 | 고객 입력용 제목 형식 함수 이름 충돌 해소 | `index.html`, `js/utils/ui-and-onboarding.js` | 브라우저 고객 등록 화면에서 입력 동작 재확인 |
 | 2026-09-03 | CSS·JavaScript 파일 분리 및 오프라인 스냅샷 모드 추가 | `index.html`, `css/*`, `js/*`, `README.md`, `AGENTS.md` | 랩탑 브라우저에서 온라인 동기화·오프라인 조회 테스트 후 사용자 확인 시 커밋 |
-| (예시, 아직 미적용) | 오프라인 모드 추가 (loadOfflineSnapshot, 스냅샷 캐시 저장) | `index.html` | 로컬 반영 여부 확인, README 업데이트 |
 
 ---
 

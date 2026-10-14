@@ -9,22 +9,16 @@ let clients      = [];
 let allMemos     = [];
 let allPlanInfo  = [];
 let isDemo       = false;
-let isOffline    = false;
-const OFFLINE_SNAPSHOT_KEY = 'fcrm_offline_snapshot';
 let tokenClient  = null;
 let pendingFiles = [];
 let currentUploadClient = '';
 
+// 기존 오프라인 고객 캐시가 브라우저에 남지 않도록 제거
+try { localStorage.removeItem('fcrm_offline_snapshot'); } catch(e) {}
+
 // ══════════════════════════════════════
 // OAUTH
 // ══════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem(OFFLINE_SNAPSHOT_KEY)) {
-    const btn = document.getElementById('offlineModeBtn');
-    if (btn) btn.style.display = '';
-  }
-});
-
 window.addEventListener('load', () => {
   const t = localStorage.getItem('fcrm_token');
   const e = localStorage.getItem('fcrm_exp');

@@ -86,7 +86,7 @@ function signOut(){
   document.getElementById('app').classList.remove('on');
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('userWrap').style.display='none';
-  clients=[]; allMemos=[]; isDemo=false; isOffline=false;
+  clients=[]; allMemos=[]; isDemo=false;
   renderLastLoginInfo();
   // 로그인 버튼 복구
   const btn = document.getElementById('signInBtn');
