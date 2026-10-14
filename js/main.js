@@ -2,7 +2,7 @@ function bootApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('loginSpinner').style.display='none';
   document.getElementById('app').classList.add('on');
-  setSyncStatus(isDemo?'데모 모드':(isOffline?'📴 오프라인 (마지막 동기화 데이터)':'연결됨'),true);
+  setSyncStatus(isDemo?'데모 모드':'연결됨',true);
   const banner = document.getElementById('demoBanner');
   if(banner) banner.style.display = isDemo ? 'block' : 'none';
   const saved = localStorage.getItem('fcrm_user');
@@ -16,32 +16,7 @@ function bootApp(){
   } else {
     applyUserCode();
   }
-  if(!isDemo && !isOffline) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
-}
-
-// ══════════════════════════════════════
-// 📴 오프라인 모드 — 마지막으로 동기화했던 실제 시트 데이터를 캐시에서 불러옴
-// (fabricated demo 데이터가 아니라, 온라인 상태에서 loadAll()이 실제로 가져온 데이터임)
-// ══════════════════════════════════════
-function loadOfflineSnapshot(){
-  const raw = localStorage.getItem(OFFLINE_SNAPSHOT_KEY);
-  if(!raw){
-    toast('❌ 저장된 오프라인 데이터가 없습니다. 온라인 상태에서 한 번 로그인해 동기화해주세요.', 4000);
-    return;
-  }
-  try{
-    const snap = JSON.parse(raw);
-    clients = snap.clients || [];
-    allMemos = snap.allMemos || [];
-    allPlanInfo = snap.allPlanInfo || [];
-    isDemo = false;
-    isOffline = true;
-    bootApp();
-    const savedDate = snap.savedAt ? new Date(snap.savedAt).toLocaleString('ko-KR') : '알 수 없음';
-    toast(`📴 오프라인 모드 — ${savedDate} 기준 데이터`, 3500);
-  }catch(e){
-    toast('❌ 오프라인 데이터 로드 실패: ' + e.message, 4000);
-  }
+  if(!isDemo) loadAll().then(restoreFromHash); else { renderAll(); restoreFromHash(); }
 }
 
 // 새로고침 시 URL hash 보고 위치 복원
@@ -167,9 +142,6 @@ async function loadAll(){
       })).filter(p=>p.name.trim());
     }catch(e){ allPlanInfo=[]; }
     setSyncStatus('연결됨',true);
-    try{
-      localStorage.setItem(OFFLINE_SNAPSHOT_KEY, JSON.stringify({clients, allMemos, allPlanInfo, savedAt: Date.now()}));
-    }catch(e){ /* 저장 용량 초과 등은 무시 — 오프라인 캐시는 best-effort */ }
     renderAll();
   }catch(e){setSyncStatus('오류',false);toast('❌ '+e.message,4000);}
 }
