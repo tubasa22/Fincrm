@@ -268,10 +268,42 @@ const STATE_ABBR = {
 // ══════════════════════════════════════
 // 약 리스트 스마트 파싱
 // ══════════════════════════════════════
+function splitMedList(raw){
+  const text = String(raw||'');
+  const items = [];
+  let current = '';
+
+  const pushCurrent = () => {
+    const cleaned = current.trim().replace(/^(?:[*•]\s*|-\s+)/, '').trim();
+    if(cleaned) items.push(cleaned);
+    current = '';
+  };
+
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(ch==='\r' || ch==='\n'){
+      pushCurrent();
+      if(ch==='\r' && text[i+1]==='\n') i++;
+      continue;
+    }
+    if(ch===','){
+      const beforeIsDigit = /\d/.test(text[i-1]||'');
+      const hasThreeDigitGroup = /^\d{3}(?=\s|$)/.test(text.slice(i+1));
+      if(!(beforeIsDigit && hasThreeDigitGroup)){
+        pushCurrent();
+        continue;
+      }
+    }
+    current += ch;
+  }
+  pushCurrent();
+  return items;
+}
+
 function parseMeds(el){
   const raw = el.value;
   // 줄바꿈 또는 쉼표로 분리
-  const lines = raw.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+  const lines = splitMedList(raw);
   if(lines.length < 2){ 
     document.getElementById('medsTags').innerHTML='';
     document.getElementById('medsPreview').style.display='none';
@@ -321,7 +353,7 @@ function parseMeds(el){
 
 function removeMed(idx){
   const ta = document.getElementById('f_meds');
-  const lines = ta.value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+  const lines = splitMedList(ta.value);
   // 중복제거+정렬 후 idx 제거
   const seen = new Set(); 
   const unique = [];
@@ -349,7 +381,7 @@ function getCleanMeds(){
   const ta = document.getElementById('f_meds');
   if(ta.dataset.parsed) return ta.dataset.parsed;
   // dataset 없으면 현재 값 그대로 한줄로
-  return ta.value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean).join(', ');
+  return splitMedList(ta.value).join(', ');
 }
 
 // ══════════════════════════════════════
@@ -395,7 +427,7 @@ function renderPlanInfo(clientName){
   html += '</div>';
 
   if(pi.meds){
-    const medList = pi.meds.split(',').map(function(m){return m.trim();}).filter(Boolean).sort();
+    const medList = splitMedList(pi.meds).sort();
     html += '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--rs);padding:12px 14px;margin-bottom:10px">'
           + '<div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">💊 복용 약 리스트 <span style="font-weight:400;color:var(--text3)">('+medList.length+'개)</span></div>'
           + '<div style="display:flex;flex-wrap:wrap;gap:5px">'
