@@ -84,8 +84,9 @@ function togglePlanFields(){
   updateProdSuggestions();
 }
 function clearPlanFields(){
-  ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_meds','f_conditions']
+  ['f_mbi','f_medical_no','f_pcp','f_pcp_phone','f_network','f_group_no','f_conditions']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  setMedListState('');
   document.getElementById('planExtraFields').style.display='none';
 }
 function openAddClient(){
@@ -149,6 +150,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_agent_wrap').style.display=isRef?'block':'none';
   document.getElementById('f_ref_badge').style.display=isRef?'inline-flex':'none';
   const agEl=document.getElementById('f_agent'); if(agEl) agEl.value=c.agent||'';
+  setMedListState('');
   if(['MAPD','PDP'].includes(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
     const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
@@ -158,10 +160,7 @@ function openEditClient(rowIdx){
     document.getElementById('f_pcp_phone').value=pi.pcp_phone||'';
     document.getElementById('f_network').value=pi.network||'';
     document.getElementById('f_group_no').value=pi.group_no||'';
-    const medsEl=document.getElementById('f_meds');
-    medsEl.value=pi.meds||'';
-    medsEl.dataset.parsed=pi.meds||'';
-    if(pi.meds) parseMeds(medsEl);
+    setMedListState(pi.meds||'');
     document.getElementById('f_conditions').value=pi.conditions||'';
   }
   document.getElementById('clientModal').classList.add('on');
@@ -297,6 +296,7 @@ async function saveClient(){
   showLoad('저장 중...');
   try{
     let dobFormatError=null;
+    let planInfoSaveSucceeded=true;
     if(isDemo){
       // 데모 모드: 메모리에만 저장
       const obj={
@@ -392,6 +392,7 @@ async function saveClient(){
           toast('✅ PlanInfo 저장 완료!');
 
         } catch(piErr){
+          planInfoSaveSucceeded=false;
           console.warn('PlanInfo 저장 오류:', piErr.message);
           toast('⚠️ 기본정보는 저장됨. PlanInfo 오류: '+piErr.message, 5000);
         }
@@ -401,6 +402,7 @@ async function saveClient(){
       await loadAll();
     }
 
+    if(piVals && planInfoSaveSucceeded) setMedListState(piVals[0][7]);
     closeOv('clientModal');
     renderAll();
     if(dobFormatError){
