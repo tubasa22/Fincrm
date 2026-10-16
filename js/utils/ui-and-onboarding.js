@@ -300,15 +300,7 @@ function splitMedList(raw){
   return items;
 }
 
-function parseMeds(el){
-  const raw = el.value;
-  // 줄바꿈 또는 쉼표로 분리
-  const lines = splitMedList(raw);
-  if(lines.length < 2){ 
-    document.getElementById('medsTags').innerHTML='';
-    document.getElementById('medsPreview').style.display='none';
-    return;
-  }
+function normalizeMedList(lines){
   const parsed = lines.map(line => {
     // 약 이름과 용량 분리: "Metformin 500mg" → {name:"Metformin", dose:"500mg"}
     const m = line.match(/^([A-Za-z][A-Za-z\s\-\/]+?)[\s]+(\d[\d\.]*\s*(?:mg|gm|g|mcg|ml|iu|units?|%|dr|hcl|tab|cap)?[\w\/]*)$/i);
@@ -332,10 +324,13 @@ function parseMeds(el){
 
   // 알파벳 정렬
   unique.sort((a,b)=>a.name.localeCompare(b.name));
+  return unique;
+}
 
+function renderMedChips(el, items, showPreview){
   // 태그 렌더
   const tags = document.getElementById('medsTags');
-  tags.innerHTML = unique.map((p,i)=>`
+  tags.innerHTML = items.map((p,i)=>`
     <span style="display:inline-flex;align-items:center;gap:4px;background:var(--blue2);color:var(--blue);
       border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:4px">
       💊 ${p.full}
@@ -344,27 +339,40 @@ function parseMeds(el){
 
   // 프리뷰
   const preview = document.getElementById('medsPreview');
-  const resultStr = unique.map(p=>p.full).join(', ');
-  // textarea 값도 정리된 값으로 업데이트 (포커스 잃을 때)
+  const resultStr = items.map(p=>p.full).join(', ');
   el.dataset.parsed = resultStr;
-  preview.innerHTML = `✅ ${unique.length}개 정리됨 → 저장 시 자동 반영`;
-  preview.style.display = 'block';
+  preview.innerHTML = `✅ ${items.length}개 정리됨 → 저장 시 자동 반영`;
+  preview.style.display = showPreview && items.length ? 'block' : 'none';
+}
+
+function getCombinedMedItems(el){
+  return normalizeMedList([
+    ...splitMedList(el.dataset.medBase||''),
+    ...splitMedList(el.value),
+  ]);
+}
+
+function setMedListState(raw, showPreview=false){
+  const el = document.getElementById('f_meds');
+  if(!el) return;
+  const items = normalizeMedList(splitMedList(raw));
+  el.value = '';
+  el.dataset.medBase = items.map(p=>p.full).join(', ');
+  renderMedChips(el, items, showPreview);
+}
+
+function parseMeds(el){
+  const hasNewInput = splitMedList(el.value).length>0;
+  renderMedChips(el, getCombinedMedItems(el), hasNewInput);
 }
 
 function removeMed(idx){
   const ta = document.getElementById('f_meds');
-  const lines = splitMedList(ta.value);
-  // 중복제거+정렬 후 idx 제거
-  const seen = new Set(); 
-  const unique = [];
-  lines.forEach(l=>{
-    const k = l.toLowerCase().replace(/\s+/g,'');
-    if(!seen.has(k)){seen.add(k);unique.push(l);}
-  });
-  unique.sort((a,b)=>a.localeCompare(b));
-  unique.splice(idx,1);
-  ta.value = unique.join('\n');
-  parseMeds(ta);
+  const items = getCombinedMedItems(ta);
+  items.splice(idx,1);
+  ta.value = '';
+  ta.dataset.medBase = items.map(p=>p.full).join(', ');
+  renderMedChips(ta, items, true);
 }
 
 function toTitleCase(str){
@@ -379,9 +387,10 @@ function toTitleCase(str){
 // 저장 직전 meds textarea 값 정리된 값으로 교체
 function getCleanMeds(){
   const ta = document.getElementById('f_meds');
-  if(ta.dataset.parsed) return ta.dataset.parsed;
-  // dataset 없으면 현재 값 그대로 한줄로
-  return splitMedList(ta.value).join(', ');
+  const items = getCombinedMedItems(ta);
+  const result = items.map(p=>p.full).join(', ');
+  ta.dataset.parsed = result;
+  return result;
 }
 
 // ══════════════════════════════════════
