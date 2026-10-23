@@ -77,7 +77,7 @@ function copyAsCSV(){
 }
 
 function signOut(){
-  const userName = document.getElementById('udName')?.textContent || '';
+  const userName = resolveUserName(isDemo ? {name:'데모 사용자'} : getCachedGoogleUser());
   addLoginLog('logout', userName);
   if(accessToken && !isDemo) google.accounts.oauth2.revoke(accessToken,()=>{});
   accessToken='';

@@ -56,6 +56,8 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
+| Google userinfo 프로필 범위 검토 | `js/config.js` OAuth `SCOPES` | 현재 profile/email 범위가 없어 이름을 받지 못할 수 있음. 수정 후에도 `사용자` 기록이 생기면 재동의를 수반하는 범위 추가 별도 검토 |
+| 기존 로그인 이력의 `사용자` 기록 | 브라우저 localStorage `fcrm_login_log` | 과거 기록은 수정하지 않으며 최근 20건 제한에 따라 자연 소멸. 실제 로그인→로그아웃 이름 확인 필요 |
 | MEDIGAP 약 목록 누락 데이터 확인 | 실제 PlanInfo 시트 | 박 명이 고객은 약 목록 수동 재입력 필요. 이전 MEDIGAP 고객도 입력값이 유실됐을 수 있으므로 확인 필요 |
 | MEDIGAP PlanInfo 저장 실사용 검증 | 고객 등록·수정 화면, PlanInfo 시트 | MEDIGAP 신규 등록 → 약 저장 → 수정 화면 재열기 흐름 확인 필요 |
 | 약 목록 추가 입력 전용 흐름 실사용 검증 | 고객 등록·수정 화면, PlanInfo 시트 | 기존 칩 표시 → 신규 추가·중복 제거 → 저장·재열기 → 칩 삭제 저장의 전체 흐름 확인 필요 |
@@ -73,6 +75,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-10-23 | 헤더·프로필·로그인·로그아웃 이력의 사용자 이름 출처를 온보딩 프로필 우선 규칙으로 통일하고 Google userinfo 오류 시 기존 캐시를 보존해 사용하도록 개선 | `js/config.js`, `js/auth.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인→로그아웃→최근 활동 이름 확인; 계속 `사용자`로 기록되면 OAuth profile/email 범위 추가 별도 검토 |
 | 2026-10-23 | MEDIGAP 고객도 PlanInfo와 복용 약 목록을 저장·불러오도록 플랜 판정을 통합하고 PlanInfo 저장 실패 경고가 성공 메시지로 덮이지 않도록 수정 | `js/features/client-management.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 박 명이 고객 약 목록 수동 재입력; 과거 MEDIGAP 누락 데이터 확인; 실제 신규 저장·재열기 검증 |
 | 2026-10-16 | 복용 약 textarea를 신규 추가 전용으로 분리하고 저장된 약은 칩으로 표시, 기존·신규 병합·중복 제거·칩 삭제 후 저장 지원 | `js/utils/ui-and-onboarding.js`, `js/features/client-management.js`, `README.md`, `AGENTS.md` | 실제 환경에서 기존 5개+신규 3줄(중복 1개)→7개 저장·재열기 및 칩 삭제 저장 흐름 확인 |
 | 2026-10-16 | 약 목록 분리 시 `36,000` 같은 숫자 쉼표를 보존하고 입력·삭제·저장·상세 재표시에 공통 분리 규칙 적용 | `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 환경에서 12줄 저장·재열기 확인; 기존 `000 Unit` 분리 데이터 수동 점검; 대문자·정렬 정책 결정 |
