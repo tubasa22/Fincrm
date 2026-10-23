@@ -71,8 +71,8 @@ function openDetail(rowIdx){
           '</div>' +
         '</div>' +
       '</div>' +
-      // MAPD/PDP 플랜 추가 정보 패널
-      (['MAPD','PDP'].includes(c.plan) ?
+      // MAPD/PDP/Medigap 플랜 추가 정보 패널
+      (hasPlanInfo(c.plan) ?
         '<div class="dc full" style="border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff)">' +
           '<h4 style="color:var(--blue)">🏥 '+c.plan+' 플랜 상세 정보' +
             ' <button class="btn sm" onclick="openEditClient('+c.rowIdx+')" style="font-size:11px">✏️ 수정</button>' +

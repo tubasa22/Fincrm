@@ -76,6 +76,10 @@ async function uploadFiles(){
 // ══════════════════════════════════════
 // ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
+function hasPlanInfo(plan){
+  return ['MAPD','PDP','MEDIGAP'].includes(String(plan||'').toUpperCase());
+}
+
 function togglePlanFields(){
   const plan = document.getElementById('f_plan').value;
   document.getElementById('planExtraFields').style.display = 'block';
@@ -151,7 +155,7 @@ function openEditClient(rowIdx){
   document.getElementById('f_ref_badge').style.display=isRef?'inline-flex':'none';
   const agEl=document.getElementById('f_agent'); if(agEl) agEl.value=c.agent||'';
   setMedListState('');
-  if(['MAPD','PDP'].includes(c.plan)){
+  if(hasPlanInfo(c.plan)){
     document.getElementById('planExtraFields').style.display='block';
     const pi=allPlanInfo.find(p=>p.name.trim()===c.name.trim())||{};
     document.getElementById('f_mbi').value=pi.mbi||'';
@@ -277,9 +281,9 @@ async function saveClient(){
     document.getElementById('f_prod_name').value.trim(),              // U 상품명
   ]];
 
-  // MAPD/PDP 추가정보 수집
+  // MAPD/PDP/Medigap 추가정보 수집
   let piVals=null;
-  if(['MAPD','PDP'].includes(plan)){
+  if(hasPlanInfo(plan)){
     piVals=[[
       name,
       document.getElementById('f_mbi').value.trim(),
@@ -297,6 +301,7 @@ async function saveClient(){
   try{
     let dobFormatError=null;
     let planInfoSaveSucceeded=true;
+    let planInfoError=null;
     if(isDemo){
       // 데모 모드: 메모리에만 저장
       const obj={
@@ -343,7 +348,7 @@ async function saveClient(){
         console.warn('DOB 날짜 서식 적용 오류:',formatErr.message);
       }
 
-      // ── 2. PlanInfo 시트 저장 (MAPD/PDP만) ──
+      // ── 2. PlanInfo 시트 저장 (MAPD/PDP/Medigap) ──
       if(piVals){
         try{
           // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
@@ -393,8 +398,8 @@ async function saveClient(){
 
         } catch(piErr){
           planInfoSaveSucceeded=false;
+          planInfoError=piErr;
           console.warn('PlanInfo 저장 오류:', piErr.message);
-          toast('⚠️ 기본정보는 저장됨. PlanInfo 오류: '+piErr.message, 5000);
         }
       }
 
@@ -405,7 +410,9 @@ async function saveClient(){
     if(piVals && planInfoSaveSucceeded) setMedListState(piVals[0][7]);
     closeOv('clientModal');
     renderAll();
-    if(dobFormatError){
+    if(planInfoError){
+      toast('⚠️ 고객 정보는 저장됐으나 약 목록 저장에 실패했습니다. 다시 확인해 주세요',5000);
+    }else if(dobFormatError){
       toast('⚠️ 고객 정보는 저장됐지만 DOB 날짜 서식 적용 실패: '+dobFormatError.message,5000);
     }else{
       toast(rowIdx?'✅ 수정되었습니다':'✅ Google Sheets에 저장됨!');
