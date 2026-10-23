@@ -459,7 +459,7 @@ function renderPlanInfo(clientName){
 function updateUserUI(u){
   // 온보딩에서 입력한 이름을 우선 사용
   const profile = JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
-  const name = profile?.name || u.name || u.email || '사용자';
+  const name = resolveUserName(u);
   const email = u.email || profile?.email || '';
   const picture = u.picture || '';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);

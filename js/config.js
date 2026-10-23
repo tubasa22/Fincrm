@@ -13,6 +13,25 @@ let tokenClient  = null;
 let pendingFiles = [];
 let currentUploadClient = '';
 
+function getCachedGoogleUser(){
+  try{
+    return JSON.parse(localStorage.getItem('fcrm_user')||'null') || {};
+  }catch(e){
+    console.warn('저장된 Google 사용자 정보 읽기 실패:',e.message);
+    return {};
+  }
+}
+
+function resolveUserName(googleUser){
+  let profile=null;
+  try{
+    profile=JSON.parse(localStorage.getItem('fcrm_user_profile')||'null');
+  }catch(e){
+    console.warn('저장된 사용자 프로필 읽기 실패:',e.message);
+  }
+  return profile?.name || googleUser?.name || googleUser?.email || '사용자';
+}
+
 // 기존 오프라인 고객 캐시가 브라우저에 남지 않도록 제거
 try { localStorage.removeItem('fcrm_offline_snapshot'); } catch(e) {}
 
@@ -39,11 +58,21 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fcrm_token', accessToken);
           localStorage.setItem('fcrm_exp', tokenExpiry);
           fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
-            .then(r=>r.json()).then(u=>{
-              const name = u.name||u.email||'사용자';
-              localStorage.setItem('fcrm_user', JSON.stringify({name, email:u.email||'', picture:u.picture||''}));
+            .then(async r=>{
+              const u=await r.json().catch(()=>({}));
+              if(!r.ok) throw new Error(u?.error?.message||`HTTP ${r.status}`);
+              if(!u.name && !u.email) throw new Error('사용자 이름과 이메일이 응답에 없습니다');
+              return u;
+            }).then(u=>{
+              const name=resolveUserName(u);
+              localStorage.setItem('fcrm_user', JSON.stringify({name:u.name||'', email:u.email||'', picture:u.picture||''}));
               addLoginLog('login', name);
               updateUserUI(u);
+            }).catch(e=>{
+              console.warn('Google userinfo 조회 실패:',e.message);
+              const cachedUser=getCachedGoogleUser();
+              addLoginLog('login',resolveUserName(cachedUser));
+              updateUserUI(cachedUser);
             });
           bootApp();
         }
