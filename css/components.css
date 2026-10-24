@@ -16,6 +16,8 @@ th{background:var(--g2);padding:8px 10px;text-align:left;font-size:11px;font-wei
 td{padding:8px 10px;border-bottom:1px solid var(--g3);vertical-align:middle;font-size:13px;overflow:hidden}
 tr:last-child td{border-bottom:none}
 tr.click:hover td{background:#f8f9ff;cursor:pointer}
+.email-link{color:var(--blue);text-decoration:none}
+.email-link:hover{text-decoration:underline}
 .empty td{text-align:center;padding:40px;color:var(--text3);font-size:13px}
 .spin-row td{text-align:center;padding:40px}
 .spin{width:20px;height:20px;border:2px solid var(--g3);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}

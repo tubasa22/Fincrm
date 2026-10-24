@@ -52,6 +52,19 @@ function elapsed(s){if(!s)return null;const d=new Date(s);d.setHours(0,0,0,0);co
 function pb(p){return{'PDP':'bbl','MAPD':'bgr','MA':'bte','SNP':'bpu','C-SNP':'bpu','D-SNP':'bte','Medigap':'bam'}[p]||'bgy';}
 function dr(l,v){return `<div class="dr"><span class="dr-l">${l}</span><span class="dr-v">${v||'—'}</span></div>`;}
 function esc(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/\r?\n/g,'\\n');}
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[ch]);
+}
+function emailLinkHtml(email,opts={}){
+  const value=String(email??'').trim();
+  if(!value) return '—';
+  if(!/^[^\s@]+@[^\s@]+$/.test(value)) return escapeHtml(value);
+  const url='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(value);
+  const stop=opts.stopPropagation?' onclick="event.stopPropagation()"':'';
+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="email-link"${stop}>${escapeHtml(value)}</a>`;
+}
 const AVC=['#1a56db','#059669','#7c3aed','#0d9488','#b45309','#dc2626','#6366f1','#ec4899'];
 function ac(n){return AVC[(n||'A').charCodeAt(0)%AVC.length];}
 
