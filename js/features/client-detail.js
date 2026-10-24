@@ -21,7 +21,7 @@ function openDetail(rowIdx){
           (c.ref==='TRUE' ? ' <span class="badge bpu">리퍼</span>'+(c.agent?' <span style="font-size:12px;color:var(--text2)">'+c.agent+'</span>':'') : '') +
           (c.plan ? ' <span class="badge '+pb(c.plan)+'">'+c.plan+'</span>' : '') +
         '</h2>' +
-        '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+(c.email||'—')+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next?fmtDateUS(c.next):'없음')+' '+db+'</p>' +
+        '<p>📞 '+(c.phone||'—')+(c.phone2?' / '+c.phone2:'')+' &nbsp;|&nbsp; ✉️ '+emailLinkHtml(c.email)+' &nbsp;|&nbsp; 📅 마지막 연락: '+(c.next?fmtDateUS(c.next):'없음')+' '+db+'</p>' +
       '</div>' +
       '<div class="dh-right">' +
         (c.phone ? '<a href="tel:'+c.phone+'" class="btn sm grn" onclick="setTimeout(()=>updateLastContact('+c.rowIdx+',true),1000)">📞 전화</a>' : '') +
@@ -51,7 +51,7 @@ function openDetail(rowIdx){
         '<h4>기본 정보</h4>' +
         dr('연락처 1', c.phone) +
         (c.phone2 ? dr('연락처 2', c.phone2) : '') +
-        dr('이메일', c.email) +
+        dr('이메일', emailLinkHtml(c.email)) +
         (c.address1 ? dr('주소', c.address1+(c.city?', '+c.city:'')+(c.zip?' '+c.zip:'')) : '') +
         (c.state ? dr('State', c.state) : '') +
         (c.dob ? dr('생년월일', c.dob) : '') +

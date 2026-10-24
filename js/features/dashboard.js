@@ -47,7 +47,7 @@ function renderClients(list){
       </div></td>
       <td style="text-align:center;font-size:12px">${ageHtml}</td>
       <td style="font-size:12px">${c.phone||'—'}${c.phone2?`<div style='font-size:11px;color:var(--text3);margin-top:2px'>${c.phone2}</div>`:''}</td>
-      <td style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.email||'—'}</td>
+      <td style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${emailLinkHtml(c.email,{stopPropagation:true})}</td>
       <td style="text-align:center">${c.plan?`<span class="badge ${pb(c.plan)}">${c.plan}</span>`:'—'}</td>
       <td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.prod||'—'}${c.prodName?`<div style="font-size:11px;color:var(--text3)">${c.prodName}</div>`:''}</td>
       <td style="text-align:center;font-size:12px">${c.next?fmtDateUS(c.next):'—'}</td>
