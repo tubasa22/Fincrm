@@ -56,6 +56,9 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
+| SNP·레거시 플랜 약 목록 누락 데이터 확인 | 실제 PlanInfo 시트 | 하용훈 고객은 약 목록 재입력 필요. 과거 D-SNP/C-SNP/Supplement 고객도 입력값 유실 여부 확인 필요 |
+| 레거시 플랜 값·분류 확인 | 실제 메인 시트 및 목록 필터·배지 | 과거 수정으로 플랜 값이 빈 고객이 있는지 확인. DUAL PLAN·Supplement는 필터와 배지에서 별도 값으로 유지되며 데이터 정리 여부는 사용자 결정 |
+| SNP·레거시 PlanInfo 실사용 검증 | 고객 등록·수정 화면, PlanInfo 시트 | D-SNP 신규 저장 및 DUAL PLAN/Supplement 기존 고객 수정→저장→재열기 확인 필요 |
 | Gmail 이메일 작성 링크 실사용 검증 | 고객 목록·상세 화면 | 새 탭의 받는 사람 자동 입력과 계정 서명 적용 확인 필요. 다중 Google 계정에서는 기본 계정으로 열리며 필요 시 `authuser` 지정 검토 |
 | Google userinfo 프로필 범위 검토 | `js/config.js` OAuth `SCOPES` | 현재 profile/email 범위가 없어 이름을 받지 못할 수 있음. 수정 후에도 `사용자` 기록이 생기면 재동의를 수반하는 범위 추가 별도 검토 |
 | 기존 로그인 이력의 `사용자` 기록 | 브라우저 localStorage `fcrm_login_log` | 과거 기록은 수정하지 않으며 최근 20건 제한에 따라 자연 소멸. 실제 로그인→로그아웃 이름 확인 필요 |
@@ -76,6 +79,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-10-29 | D-SNP·C-SNP 및 레거시 DUAL PLAN·Supplement를 PlanInfo 저장·불러오기 대상으로 확장하고 수정 화면에서 기존 플랜 값을 임시 옵션으로 보존 | `js/features/client-management.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 하용훈 약 목록 재입력; 과거 누락·빈 플랜 데이터 확인; 실제 저장·재열기 검증 |
 | 2026-10-23 | 고객 목록과 상세 화면의 유효한 이메일을 Gmail 작성 링크로 변경하고 목록에서는 행 클릭 이벤트 전파를 차단 | `js/utils/ui-and-onboarding.js`, `js/features/dashboard.js`, `js/features/client-detail.js`, `css/components.css`, `README.md`, `AGENTS.md` | 실제 Gmail 새 탭의 받는 사람·서명 적용 확인; 다중 계정의 `authuser` 지정 필요 여부 검토 |
 | 2026-10-23 | 헤더·프로필·로그인·로그아웃 이력의 사용자 이름 출처를 온보딩 프로필 우선 규칙으로 통일하고 Google userinfo 오류 시 기존 캐시를 보존해 사용하도록 개선 | `js/config.js`, `js/auth.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 실제 로그인→로그아웃→최근 활동 이름 확인; 계속 `사용자`로 기록되면 OAuth profile/email 범위 추가 별도 검토 |
 | 2026-10-23 | MEDIGAP 고객도 PlanInfo와 복용 약 목록을 저장·불러오도록 플랜 판정을 통합하고 PlanInfo 저장 실패 경고가 성공 메시지로 덮이지 않도록 수정 | `js/features/client-management.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 박 명이 고객 약 목록 수동 재입력; 과거 MEDIGAP 누락 데이터 확인; 실제 신규 저장·재열기 검증 |
