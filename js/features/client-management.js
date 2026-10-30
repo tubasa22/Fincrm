@@ -76,13 +76,19 @@ async function uploadFiles(){
 // ══════════════════════════════════════
 // ★★★ saveClient — 핵심 수정 ★★★
 // ══════════════════════════════════════
+function normalizePlan(plan){
+  return String(plan||'').trim().toUpperCase().replace(/[\s-]+/g,'');
+}
 function hasPlanInfo(plan){
-  return ['MAPD','PDP','MEDIGAP'].includes(String(plan||'').toUpperCase());
+  return ['MAPD','PDP','MEDIGAP','CSNP','DSNP','DUALPLAN','SUPPLEMENT'].includes(normalizePlan(plan));
+}
+function clearLegacyPlanOption(select){
+  select.querySelectorAll('option[data-legacy-plan="true"]').forEach(option=>option.remove());
 }
 
 function togglePlanFields(){
   const plan = document.getElementById('f_plan').value;
-  document.getElementById('planExtraFields').style.display = 'block';
+  document.getElementById('planExtraFields').style.display = (!plan || hasPlanInfo(plan)) ? 'block' : 'none';
   const pdpWrap = document.getElementById('pdpProdWrap');
   if(pdpWrap) pdpWrap.style.display = (plan.toUpperCase()==='MEDIGAP') ? 'block' : 'none';
   updateProdSuggestions();
@@ -108,7 +114,9 @@ function openAddClient(){
   if(pdpEl) pdpEl.value = '';
   const pdpWrap = document.getElementById('pdpProdWrap');
   if(pdpWrap) pdpWrap.style.display = 'none';
-  document.getElementById('f_plan').value='';
+  const planSelect=document.getElementById('f_plan');
+  clearLegacyPlanOption(planSelect);
+  planSelect.value='';
   document.getElementById('f_ref').value='FALSE';
   document.getElementById('f_ref_chk').checked=false;
   document.getElementById('f_agent_wrap').style.display='none';
@@ -143,7 +151,16 @@ function openEditClient(rowIdx){
     ? String(parsedDob.d).padStart(2,'0')+'/'+String(parsedDob.m).padStart(2,'0')+'/'+parsedDob.y
     : (c.dob||'');
   document.getElementById('f_next').value=c.next||'';
-  document.getElementById('f_plan').value=c.plan;
+  const planSelect=document.getElementById('f_plan');
+  clearLegacyPlanOption(planSelect);
+  if(c.plan && !Array.from(planSelect.options).some(option=>option.value===c.plan)){
+    const legacyOption=document.createElement('option');
+    legacyOption.value=c.plan;
+    legacyOption.textContent=c.plan+' (기존 값)';
+    legacyOption.dataset.legacyPlan='true';
+    planSelect.appendChild(legacyOption);
+  }
+  planSelect.value=c.plan;
   togglePlanFields();
   setProdValue(c.prod||'');
   updateProdSuggestions();
@@ -281,7 +298,7 @@ async function saveClient(){
     document.getElementById('f_prod_name').value.trim(),              // U 상품명
   ]];
 
-  // MAPD/PDP/Medigap 추가정보 수집
+  // PlanInfo 대상 플랜 추가정보 수집
   let piVals=null;
   if(hasPlanInfo(plan)){
     piVals=[[
@@ -348,7 +365,7 @@ async function saveClient(){
         console.warn('DOB 날짜 서식 적용 오류:',formatErr.message);
       }
 
-      // ── 2. PlanInfo 시트 저장 (MAPD/PDP/Medigap) ──
+      // ── 2. PlanInfo 시트 저장 ──
       if(piVals){
         try{
           // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
