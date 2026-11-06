@@ -79,19 +79,50 @@ async function driveUpload(file, clientName, fileType) {
   return data;
 }
 
+function escapeDriveQueryValue(value){
+  return String(value||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+async function findDriveFolders(name,parentId=null){
+  const safeName=escapeDriveQueryValue(name);
+  const q=parentId
+    ? `name='${safeName}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
+    : `name='${safeName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+accessToken}});
+  if(!r.ok) throw new Error(`Drive 폴더 검색 실패 (HTTP ${r.status})`);
+  const data=await r.json();
+  return data.files||[];
+}
+
 async function findOrCreateFolder(name, parentId=null) {
-  const q = parentId
-    ? `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
-    : `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
-  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
-  const d = await r.json();
-  if(d.files && d.files.length>0) return d.files[0].id;
+  const folders=await findDriveFolders(name,parentId);
+  if(folders.length>0) return folders[0].id;
   const meta = {name, mimeType:'application/vnd.google-apps.folder',...(parentId?{parents:[parentId]}:{})};
   const cr = await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{
     method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(meta)
   });
   const cd = await cr.json();
   return cd.id;
+}
+
+async function renameClientDriveFolder(oldName,newName){
+  const rootFolders=await findDriveFolders('FinCRM_고객서류');
+  if(rootFolders.length===0) return;
+  if(rootFolders.length>1) throw new Error('FinCRM_고객서류 상위 폴더가 2개 이상입니다');
+  const rootId=rootFolders[0].id;
+  const oldFolders=await findDriveFolders(oldName,rootId);
+  if(oldFolders.length===0) return;
+  if(oldFolders.length>1) throw new Error(`기존 이름 폴더가 ${oldFolders.length}개입니다`);
+  const newFolders=await findDriveFolders(newName,rootId);
+  if(newFolders.length>0) throw new Error('새 이름의 폴더가 이미 존재합니다');
+  const r=await fetch(`https://www.googleapis.com/drive/v3/files/${oldFolders[0].id}?fields=id,name`,{
+    method:'PATCH',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+    body:JSON.stringify({name:newName})
+  });
+  if(!r.ok){
+    const e=await r.json().catch(()=>({}));
+    throw new Error(e?.error?.message||`Drive 폴더 이름 변경 실패 (HTTP ${r.status})`);
+  }
 }
 
 // ══════════════════════════════════════
