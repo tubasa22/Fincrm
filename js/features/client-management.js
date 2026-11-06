@@ -239,6 +239,36 @@ async function applyDobDateFormat(rowIdx){
   });
 }
 
+async function renamePlanInfoClient(oldName,newName){
+  const result=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A:A`);
+  const rows=result.values||[];
+  const oldRows=[];
+  const newRows=[];
+  rows.forEach((row,index)=>{
+    if(index===0) return;
+    const value=String(row[0]||'').trim();
+    if(value===oldName.trim()) oldRows.push(index+1);
+    if(value===newName.trim()) newRows.push(index+1);
+  });
+  if(newRows.length) throw new Error('새 이름의 PlanInfo 행이 이미 존재합니다');
+  if(oldRows.length===0) return;
+  if(oldRows.length>1) throw new Error(`기존 이름의 PlanInfo 행이 ${oldRows.length}개입니다`);
+  await sheetsReq('PUT',`${DETAIL_ID}/values/PlanInfo!A${oldRows[0]}?valueInputOption=USER_ENTERED`,{values:[[newName]]});
+}
+
+async function renameMemoClients(oldName,newName){
+  const result=await sheetsReq('GET',`${DETAIL_ID}/values/${encodeURIComponent('상담 이력!B:B')}`);
+  const rows=result.values||[];
+  const data=[];
+  rows.forEach((row,index)=>{
+    if(index>0 && String(row[0]||'').trim()===oldName.trim()){
+      data.push({range:`'상담 이력'!B${index+1}`,values:[[newName]]});
+    }
+  });
+  if(!data.length) return;
+  await sheetsReq('POST',`${DETAIL_ID}/values:batchUpdate`,{valueInputOption:'USER_ENTERED',data});
+}
+
 async function saveClient(){
   if(window.__savingClient) return;
   window.__savingClient = true;
@@ -256,10 +286,21 @@ async function saveClient(){
   const mnameClean = document.getElementById('f_mname').value.trim().replace(/[.\s]+$/, '').trim();
   
   const rowIdx=document.getElementById('eRow').value;
+  const existingClient=rowIdx ? clients.find(c=>c.rowIdx===Number(rowIdx)) : null;
+  const oldName=existingClient?.name||'';
   const plan=document.getElementById('f_plan').value;
   const mname=mnameClean;
   // 이름 조합: 성 이름 미들
   const name=[lnameClean,fnameClean,mname].filter(Boolean).join(' ');
+  const nameChanged=Boolean(rowIdx && oldName && oldName.trim()!==name.trim());
+  const oldNameHasOtherClient=nameChanged && clients.some(c=>
+    c.rowIdx!==Number(rowIdx) &&
+    String(c.no||'').trim()!==String(existingClient?.no||'').trim() &&
+    c.name.trim()===oldName.trim()
+  );
+  if(nameChanged && clients.some(c=>c.rowIdx!==Number(rowIdx) && c.name.trim()===name.trim())){
+    if(!confirm('같은 이름의 고객이 이미 있습니다. 서류와 약 정보가 서로 섞일 수 있습니다. 계속할까요?')) return;
+  }
 
   // No(A열) 자동 부여 — 수정 시 기존 번호 유지, 신규 시 최대값+1
   const existingNo=document.getElementById('eNo').value.trim();
@@ -293,7 +334,7 @@ async function saveClient(){
     document.getElementById('f_memo').value.trim(),                 // P
     document.getElementById('f_ref').value,                         // Q TRUE/FALSE
     document.getElementById('f_agent').value.trim(),                // R 에이전트이름
-    '',                                                             // S 상세URL
+    rowIdx ? (existingClient?.durl||'') : '',                         // S 상세URL
     document.getElementById('eActive')?.value || 'TRUE',             // T 활성상태
     document.getElementById('f_prod_name').value.trim(),              // U 상품명
   ]];
@@ -319,6 +360,9 @@ async function saveClient(){
     let dobFormatError=null;
     let planInfoSaveSucceeded=true;
     let planInfoError=null;
+    const renameFailures=[];
+    let planInfoRenameSucceeded=true;
+    const renameBlockedByOldNameDuplicate=oldNameHasOtherClient;
     if(isDemo){
       // 데모 모드: 메모리에만 저장
       const obj={
@@ -330,11 +374,18 @@ async function saveClient(){
         plan:vals[0][13], prod:vals[0][14],
         memo:vals[0][15], ref:vals[0][16],
         agent:vals[0][17]||'',
-        durl:'', active:vals[0][19]||'TRUE', prodName:vals[0][20]||'', biz:''
+        durl:vals[0][18]||'', active:vals[0][19]||'TRUE', prodName:vals[0][20]||'', biz:''
       };
       if(rowIdx){const i=clients.findIndex(c=>c.rowIdx===+rowIdx);if(i>=0)clients[i]=obj;}
       else clients.push(obj);
-      if(piVals){
+      if(renameBlockedByOldNameDuplicate){
+        planInfoRenameSucceeded=false;
+        console.warn('고객 이름 연동 건너뜀: 옛 이름의 다른 고객 존재',{oldName,newName:name});
+      }else if(nameChanged){
+        allPlanInfo.forEach(p=>{if(p.name.trim()===oldName.trim()) p.name=name;});
+        allMemos.forEach(m=>{if(m.name.trim()===oldName.trim()) m.name=name;});
+      }
+      if(piVals && planInfoRenameSucceeded){
         const pi={name,mbi:piVals[0][1],medical_no:piVals[0][2],pcp:piVals[0][3],
           pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
           meds:piVals[0][7],conditions:piVals[0][8]};
@@ -358,6 +409,27 @@ async function saveClient(){
         savedRowIdx=getAppendedRowIdx(appendResult);
       }
 
+      // 이름 기반 연결 정보는 메인 고객 행 저장이 성공한 뒤에만 갱신한다.
+      if(renameBlockedByOldNameDuplicate){
+        planInfoRenameSucceeded=false;
+        console.warn('고객 이름 연동 건너뜀: 옛 이름의 다른 고객 존재',{oldName,newName:name});
+      }else if(nameChanged){
+        const renameSteps=[
+          {label:'서류 폴더',run:()=>renameClientDriveFolder(oldName,name)},
+          {label:'약·PCP 정보',run:()=>renamePlanInfoClient(oldName,name)},
+          {label:'상담 이력',run:()=>renameMemoClients(oldName,name)},
+        ];
+        for(const step of renameSteps){
+          try{
+            await step.run();
+          }catch(renameErr){
+            renameFailures.push(step.label);
+            if(step.label==='약·PCP 정보') planInfoRenameSucceeded=false;
+            console.error('고객 이름 연동 실패',{oldName,newName:name,step:step.label,error:renameErr});
+          }
+        }
+      }
+
       try{
         await applyDobDateFormat(savedRowIdx);
       }catch(formatErr){
@@ -366,7 +438,7 @@ async function saveClient(){
       }
 
       // ── 2. PlanInfo 시트 저장 ──
-      if(piVals){
+      if(piVals && planInfoRenameSucceeded){
         try{
           // PlanInfo 탭 존재 여부 확인 → 없으면 자동 생성
           let planInfoExists = true;
@@ -411,13 +483,16 @@ async function saveClient(){
             pcp_phone:piVals[0][4],network:piVals[0][5],group_no:piVals[0][6],
             meds:piVals[0][7],conditions:piVals[0][8]};
           if(localIdx>=0) allPlanInfo[localIdx]=piObj; else allPlanInfo.push(piObj);
-          toast('✅ PlanInfo 저장 완료!');
+          if(!renameFailures.length) toast('✅ PlanInfo 저장 완료!');
 
         } catch(piErr){
           planInfoSaveSucceeded=false;
           planInfoError=piErr;
+          if(nameChanged && !renameFailures.includes('약·PCP 정보')) renameFailures.push('약·PCP 정보');
           console.warn('PlanInfo 저장 오류:', piErr.message);
         }
+      }else if(piVals && !planInfoRenameSucceeded){
+        planInfoSaveSucceeded=false;
       }
 
       // ── 3. 전체 리로드 ──
@@ -427,7 +502,11 @@ async function saveClient(){
     if(piVals && planInfoSaveSucceeded) setMedListState(piVals[0][7]);
     closeOv('clientModal');
     renderAll();
-    if(planInfoError){
+    if(renameBlockedByOldNameDuplicate){
+      toast('⚠️ 같은 이름의 다른 고객이 있어 서류·약 정보·상담 이력은 자동으로 옮기지 않았습니다. 수동으로 확인해 주세요',7000);
+    }else if(renameFailures.length){
+      toast(`⚠️ 고객 정보는 저장됐으나 ${renameFailures.join('/')} 이름 갱신에 실패했습니다. 관리자 확인이 필요합니다`,6000);
+    }else if(planInfoError){
       toast('⚠️ 고객 정보는 저장됐으나 약 목록 저장에 실패했습니다. 다시 확인해 주세요',5000);
     }else if(dobFormatError){
       toast('⚠️ 고객 정보는 저장됐지만 DOB 날짜 서식 적용 실패: '+dobFormatError.message,5000);

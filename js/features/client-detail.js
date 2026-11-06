@@ -123,11 +123,13 @@ async function loadClientDocs(clientName, rowIdx){
   }
   // 실제 모드
   try{
-    const fq=`name='${clientName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
-    const fr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(fq)}&fields=files(id)`,{headers:{Authorization:'Bearer '+accessToken}});
-    const fd=await fr.json();
-    if(!fd.files||fd.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
-    const folderId=fd.files[0].id;
+    const rootFolders=await findDriveFolders('FinCRM_고객서류');
+    if(rootFolders.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
+    if(rootFolders.length>1) throw new Error('FinCRM_고객서류 상위 폴더가 2개 이상입니다');
+    const clientFolders=await findDriveFolders(clientName,rootFolders[0].id);
+    if(clientFolders.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
+    if(clientFolders.length>1) throw new Error('같은 이름의 고객 서류 폴더가 2개 이상입니다');
+    const folderId=clientFolders[0].id;
     const lr=await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("'"+folderId+"' in parents and trashed=false")}&fields=files(id,name,webViewLink,createdTime)&orderBy=createdTime desc`,{headers:{Authorization:'Bearer '+accessToken}});
     const ld=await lr.json();
     if(!ld.files||ld.files.length===0){el.innerHTML=`<p style="color:var(--text3);font-size:13px;padding:8px 0">업로드된 서류 없음</p>`;return;}
