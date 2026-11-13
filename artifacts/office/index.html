@@ -52,12 +52,12 @@ button:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
 
 /* ── 사무실 ── */
 .scroller{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-.office{position:relative;min-width:780px;height:400px;overflow:hidden;
+.office{position:relative;min-width:880px;height:470px;overflow:hidden;
   background:linear-gradient(var(--wall-top) 0%,var(--wall) 62%)}
-.floorband{position:absolute;left:0;right:0;bottom:0;height:56%;
+.floorband{position:absolute;left:0;right:0;bottom:0;height:64%;
   background:linear-gradient(var(--floor),var(--floor-dark));border-top:1px solid var(--floor-dark)}
-.rug{position:absolute;left:1%;bottom:25%;width:70%;height:9%;background:var(--rug);opacity:.18;border-radius:3px}
-.baseline{position:absolute;left:0;right:0;bottom:56%;height:1px;background:rgba(0,0,0,.09)}
+.rug{position:absolute;left:1%;bottom:19%;width:70%;height:7%;background:var(--rug);opacity:.18;border-radius:3px}
+.baseline{position:absolute;left:0;right:0;bottom:64%;height:1px;background:rgba(0,0,0,.09)}
 
 .win{position:absolute;top:7%;width:9%;height:23%;background:var(--sky);border:2.5px solid var(--line);border-radius:3px;overflow:hidden}
 .win::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--line);margin-left:-1px}
@@ -69,13 +69,13 @@ button:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
 :root[data-theme="dark"] .win::before{opacity:.9}
 .clock{position:absolute;top:8%;width:30px;height:30px;border-radius:50%;background:var(--card);border:2.5px solid var(--line)}
 .clock i{position:absolute;left:50%;bottom:50%;width:2px;margin-left:-1px;background:var(--fg);transform-origin:bottom center;border-radius:1px}
-.plant{position:absolute;bottom:44%;width:26px;height:44px}
+.plant{position:absolute;bottom:52%;width:26px;height:44px}
 .plant b{position:absolute;bottom:0;left:4px;width:16px;height:14px;background:var(--floor-dark);border-radius:2px 2px 4px 4px;display:block}
 .plant i{position:absolute;bottom:12px;left:50%;width:7px;height:22px;background:var(--ok);border-radius:50% 50% 40% 40%;display:block;transform-origin:bottom center}
 
-.partition{position:absolute;bottom:9%;height:54%;width:3px;background:var(--line);border-radius:2px}
+.partition{position:absolute;bottom:7%;height:60%;width:3px;background:var(--line);border-radius:2px}
 .partition::after{content:"";position:absolute;top:-16px;left:-28px;width:58px;text-align:center;font-size:10px;color:var(--fg-dim)}
-.doorway{position:absolute;bottom:24%;width:3px;height:11%;background:var(--floor)}
+.doorway{position:absolute;bottom:18%;width:3px;height:9%;background:var(--floor)}
 
 /* 책상 */
 .desk{position:absolute;z-index:3}
@@ -85,17 +85,18 @@ button:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
 .desk .mon{position:absolute;bottom:7px;right:6%;width:34px;height:25px;border-radius:3px;background:var(--accent-soft);
   border:2px solid var(--line);display:grid;place-items:center}
 .desk .mon span{font-family:var(--f-num);font-weight:700;font-size:11.5px;color:var(--accent);font-variant-numeric:tabular-nums}
-.desk.back .top{height:5px}.desk.back .mon{width:25px;height:19px;bottom:5px}.desk.back .mon span{font-size:9.5px}
-.desk.back .lg{height:11px;bottom:-11px}
+.desk .mon span{letter-spacing:-.02em}
 
 .plate{position:absolute;z-index:6;font-family:var(--f-disp);font-weight:700;font-size:11px;background:var(--card);
-  color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap;transform:translateX(-50%)}
+  color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:2px 7px;white-space:nowrap;transform:translateX(-50%);
+  text-align:center;line-height:1.3}
+.plate i{display:block;font-style:normal;font-weight:400;font-size:9px;color:var(--fg-dim)}
 .plate.dim{color:var(--fg-dim);border-style:dashed;font-weight:500}
 
 /* 미니미 */
 .mini{position:absolute;z-index:4;width:46px;padding:0;border:0;background:none;cursor:pointer;
   transition:left .9s linear,bottom .55s ease-in-out,transform .3s;transform-origin:bottom center}
-.mini.back{width:32px;z-index:2}
+.mini.r0{width:46px;z-index:4}.mini.r1{width:38px;z-index:3}.mini.r2{width:30px;z-index:2}
 .mini.hall{z-index:7}
 .mini:hover{filter:brightness(1.06)}
 .mini svg{display:block;width:100%;height:auto;overflow:visible;pointer-events:none}
@@ -293,6 +294,15 @@ textarea.dft{width:100%;min-height:150px;font:inherit;font-size:13px;line-height
 .chk{display:flex;align-items:flex-start;gap:6px;margin-top:5px;font-size:12.5px;cursor:pointer;color:var(--fg)}
 .chk input{margin-top:3px;flex:none}
 .chk .ok{text-decoration:line-through;color:var(--fg-dim)}
+.mailacts{display:flex;flex-direction:column;gap:4px;flex:none}
+.dr.done{border-color:var(--line);color:var(--fg-dim)}
+.dr.armed,.mini-b.armed{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.rowacts{margin-top:9px;display:flex;gap:6px;align-items:center}
+.mini-b{font:inherit;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:5px;
+  border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.mini-b:disabled{opacity:.5;cursor:default}
+.didtag{font-size:11.5px;color:var(--ok);font-weight:700}
+.wb li.did{opacity:.45;text-decoration:line-through}
 </style>
 
 <div class="topbar"><div class="topbar-in">
@@ -386,64 +396,75 @@ function MINI(o){
     '</g></svg>';
 }
 
-var DAILY=[
- {id:'sec',name:'비서실',shirt:'#4a7c8c',sex:'f',hair:'long',acc:'scarf',act:'type',st:'warn',tag:'확인 3',mt:'일정 3 · 메일 3 · 할일 5',screen:'3',
-  bub:'일정 3건 · 메일 3건',src:'구글 캘린더 3개 · Gmail · Tasks',x:2,
-  sections:[{h:'오늘 일정',items:['10:00 상담 — 김순자 (90019)','13:00 세미나 답사 — 어덜트 데이케어','16:00 상담 — 박정호 (90006)']},
-    {h:'확인 필요 메일',items:['보험사 2건 — 승인 통보 1, 서류 요청 1','고객 문의 1건 — 치과 혜택']},
-    {h:'업무할일',items:['미완료 5건 · 오늘 마감 2건','세미나 스폰서 회신 대기 — 병원 1곳']}]},
- {id:'sales',name:'영업팀',shirt:'#2f6f52',sex:'m',hair:'parted',glasses:true,acc:'tie',act:'type',st:'ok',tag:'정상',mt:'누적 42 · 대기 7',screen:'42',
-  bub:'AEP 누적 42건',src:'고객 시트 — 신청 탭',x:16,
+/* row: 0 = 앞줄(사업부), 1 = 가운데(공통), 2 = 뒷줄(지원) */
+var BIZ=[
+ {id:'health',name:'Health',sub:'메디케어',shirt:'#2f6f52',sex:'f',hair:'bob',glasses:true,acc:'badge',
+  act:'write',st:'ok',tag:'AEP 42',mt:'누적 42 · 대기 7 · 검토 0',screen:'42',row:0,x:3,
+  bub:'AEP 누적 42건',src:'고객 시트 · 검토 기록',
   sections:[{h:'AEP 진행',items:['누적 42건 — 본인 31 / 사모님 11','어제 신규 2건','전주 대비 +9건']},
     {h:'단계별',items:['접수 4 · 심사대기 7 · 승인 28 · 거절·보류 3']},
-    {h:'플랜 분포',items:['MAPD 24 · C-SNP 9 · D-SNP 5 · PDP 4']}]},
- {id:'crm',name:'고객관리팀',shirt:'#7a5490',sex:'f',hair:'bun',glasses:true,acc:'badge',act:'write',st:'warn',tag:'즉시 4',mt:'서류미비 2 · 콜백 2',screen:'4',
-  bub:'즉시 처리 4건',src:'고객 시트 — 고객 탭',x:30,
+    {h:'플랜 분포',items:['MAPD 24 · C-SNP 9 · D-SNP 5 · PDP 4']},
+    {h:'약·플랜 검토',items:[
+      '약국 리퍼·고객 약 목록으로 C-SNP 해당 여부 판단',
+      'Medicare.gov 조회는 이 화면에서 못 합니다. Claude 세션에서 하고 결과만 기록됩니다']}]},
+ {id:'life',name:'Life & Annuity',sub:'생명·연금',shirt:'#7a5490',sex:'m',hair:'parted',acc:'tie',
+  act:'type',st:'ok',tag:'진행 3',mt:'설계 3 · 갱신 임박 1',screen:'3',row:0,x:25,
+  bub:'설계 3건',src:'고객 시트 — 생명·연금 탭',
+  sections:[{h:'진행 중',items:['설계 상담 3건','청약 대기 1건']},
+    {h:'갱신·점검',items:['갱신 임박 1건','기존 Medicare 고객 중 교차판매 후보 12명']},
+    {h:'방향',items:['연금·라이프 설계를 기본으로 두고 건강보험과 묶어 상담']}]},
+ {id:'pc',name:'P&C',sub:'자동차·주택·비즈니스',shirt:'#8c4a3c',sex:'m',hair:'buzz',acc:'tie',
+  act:'type',st:'ok',tag:'견적 2',mt:'견적 2 · 갱신 2',screen:'2',row:0,x:47,
+  bub:'견적 2건',src:'고객 시트 — P&C 탭',
+  sections:[{h:'진행 중',items:['견적 요청 2건 — 자동차 1, 주택 1']},
+    {h:'갱신',items:['자동차 갱신 임박 2건']},
+    {h:'파생 사업',items:['기존 고객 문의에서 들어오는 건이 대부분']}]}
+];
+
+var COMMON=[
+ {id:'sec',name:'비서실',sub:'일정·메일·할일',shirt:'#4a7c8c',sex:'f',hair:'long',acc:'scarf',
+  act:'type',st:'warn',tag:'확인 3',mt:'일정 3 · 메일 3 · 할일 5',screen:'3',row:1,x:5,
+  bub:'일정 3건 · 메일 3건',src:'구글 캘린더 3개 · Gmail · Tasks',
+  sections:[{h:'업무할일',items:['미완료 5건 · 오늘 마감 2건','세미나 스폰서 회신 대기 — 병원 1곳']}]},
+ {id:'crm',name:'고객관리팀',sub:'전 사업부 공통',shirt:'#4a5f8c',sex:'f',hair:'bun',glasses:true,acc:'badge',
+  act:'write',st:'warn',tag:'즉시 4',mt:'서류미비 2 · 콜백 2',screen:'4',row:1,x:27,
+  bub:'즉시 처리 4건',src:'고객 시트 — 고객 탭',
   sections:[{h:'즉시 처리',items:['서류미비 2건 — <em>이해숙</em> 소득증빙, <em>최미경</em> 주소증빙','콜백 2건 — 어제 부재중']},
     {h:'오늘 챙길 것',items:['생일 1명 — 김순자','Medicare 기념일 2명']},
     {h:'전체',items:['관리 고객 318명','연락처 누락 6명']}]},
- {id:'carrier',name:'보험사 대응팀',shirt:'#8c4a3c',sex:'m',hair:'short',acc:'tie',act:'call',st:'bad',tag:'지연 2',mt:'승인지연 2 · 클레임 1',screen:'2',
-  bub:'승인 지연 2건',src:'Gmail + 고객 시트 — 보험사 탭',x:44,
+ {id:'carrier',name:'보험사 대응팀',sub:'전 사업부 공통',shirt:'#9c6a2f',sex:'m',hair:'short',acc:'tie',
+  act:'call',st:'bad',tag:'지연 2',mt:'승인지연 2 · 클레임 1',screen:'2',row:1,x:49,
+  bub:'승인 지연 2건',src:'Gmail + 고객 시트 — 보험사 탭',
   sections:[{h:'승인 지연',items:['<em>Clever Care 2건 — 5일 경과</em>','통상 2~3일. 오늘 전화 권장']},
-    {h:'클레임',items:['진행 1건 — 서류 접수 확인','추가 자료 요청 없음']},
-    {h:'어제 처리',items:['승인 통보 3건 수신','거절 1건 — 사유 확인 필요']}]},
- {id:'plan',name:'플랜분석팀',shirt:'#4a5f8c',sex:'f',hair:'bob',glasses:true,acc:'badge',
-  act:'write',st:'ok',tag:'대기 0',mt:'검토 대기 없음',screen:'0',
-  bub:'플랜 검토',src:'검토 기록 (아티팩트 저장소)',x:58,
-  sections:[{h:'하는 일',items:[
-    '약국 리퍼·고객에게서 받은 약 목록을 정리',
-    '복용 약으로 만성질환을 유추해 C-SNP 해당 여부 판단',
-    'Medicare.gov에서 약 커버·티어·약국·의사 네트워크 확인',
-    '비교 리포트 작성']},
-   {h:'혼자 일하지 않습니다',items:[
-    'Medicare.gov는 이 화면에서 접근할 수 없습니다. 실제 조회는 Claude 세션에서 합니다',
-    '여기는 접수·진행·확인 필요 항목을 보는 창구입니다']}]}
+    {h:'클레임',items:['진행 1건 — 서류 접수 확인','추가 자료 요청 없음']}]}
 ];
-var BACK=[
- {id:'ref',name:'리퍼·제휴팀',shirt:'#4a7c8c',sex:'f',hair:'bob',hairColor:'brown',act:'type',st:'ok',tag:'주간',mt:'다음 보고 월요일',screen:'7',
-  src:'고객 시트 · Gmail',x:6,back:1,
+
+var SUPPORT=[
+ {id:'ref',name:'리퍼·제휴팀',shirt:'#4a7c8c',sex:'f',hair:'bob',hairColor:'brown',
+  act:'type',st:'ok',tag:'주간',mt:'다음 보고 월요일',screen:'7',row:2,x:6,
+  src:'고객 시트 · Gmail',
   sections:[{h:'담당',items:['약국 리퍼 유입 집계','세미나 스폰서 협의','양로원·어덜트 데이케어 컨택']},
     {h:'지난주',items:['약국 리퍼 7건','스폰서 협의 중 — 병원 1, IPA 1']}]},
- {id:'cnt',name:'콘텐츠팀',shirt:'#2f6f52',sex:'m',hair:'buzz',act:'write',st:'ok',tag:'주간',mt:'다음 보고 월요일',screen:'2',
-  src:'수동 입력 · 세미나 시트',x:22,back:1,
+ {id:'cnt',name:'콘텐츠팀',shirt:'#2f6f52',sex:'m',hair:'short',
+  act:'write',st:'ok',tag:'주간',mt:'다음 보고 월요일',screen:'2',row:2,x:25,
+  src:'수동 입력 · 세미나 시트',
   sections:[{h:'담당',items:['숏폼 제작·배포 현황','다음 세미나 준비 진행률']},
     {h:'지난주',items:['숏폼 2편 업로드','다음 세미나 D-18 · 준비율 40%']}]},
- {id:'fin',name:'재무팀',shirt:'#7a5490',sex:'m',hair:'short',glasses:true,acc:'tie',hairColor:'gray',act:'type',st:'ok',tag:'월간',mt:'다음 보고 12/1',screen:'3',
-  src:'FMO 엑셀 ↔ 보험사 커미션 페이지',x:38,back:1,
+ {id:'fin',name:'재무팀',shirt:'#7a5490',sex:'m',hair:'short',glasses:true,acc:'tie',hairColor:'gray',
+  act:'type',st:'ok',tag:'월간',mt:'다음 보고 12/1',screen:'3',row:2,x:44,
+  src:'FMO 엑셀 ↔ 보험사 커미션 페이지',
   sections:[{h:'담당',items:['커미션 입금 대조 — FMO 엑셀과 보험사 페이지 차이','1099 발행 대상 정리','법인 계좌 입금 확인']},
-    {h:'지난달',items:['불일치 3건 — 전부 해소','1099 대상 2명']}]},
- {id:'life',name:'생명·연금 / P&C',shirt:'#8c4a3c',sex:'f',hair:'pony',hairColor:'brown',act:'write',st:'ok',tag:'월간',mt:'다음 보고 12/1',screen:'4',
-  src:'고객 시트 — 교차판매 탭',x:54,back:1,
-  sections:[{h:'담당',items:['기존 고객 교차판매 기회','연금·라이프 설계 후보','비즈·자동차·주택 문의']},
-    {h:'지난달',items:['상담 전환 4건','갱신 임박 — 자동차 2건']}]}
+    {h:'지난달',items:['불일치 3건 — 전부 해소','1099 대상 2명']}]}
 ];
-var BOSS={id:'chief',name:'비서실장',shirt:'#2a3f49',sex:'f',hair:'bun',glasses:true,acc:'scarf',act:'write',st:'ok',tag:'종합',mt:'4개 부서 보고 종합',screen:'3',
-  src:'1층 4개 부서 보고',x:86,
+
+var BOSS={id:'chief',name:'비서실장',shirt:'#2a3f49',sex:'f',hair:'bun',glasses:true,acc:'scarf',
+  act:'write',st:'ok',tag:'종합',mt:'사업부·공통 보고 종합',screen:'3',row:0,x:86,
+  src:'사업부 3 + 공통 3 부서 보고',
   sections:[{h:'하는 일',items:['부서 보고를 전부 읽고 오늘 우선순위 3개 선별','실패한 부서는 표시만 하고 나머지는 발송','Claude 호출은 하루 1회']},
     {h:'오늘 우선 3가지',items:['Clever Care 승인 지연 2건 — 오늘 전화','서류미비 2건 — 이번 주 안에 수령','16:00 상담 전 박정호 약 커버 확인']}]};
 var PRIO=['Clever Care 지연 2건 — 오늘 전화','서류미비 2건 — 이번 주 수령','16:00 상담 전 약 커버 확인'];
-
-var ALL=DAILY.concat(BACK,[BOSS]);
+var DAILY=BIZ.concat(COMMON);
+var ALL=BIZ.concat(COMMON,SUPPORT,[BOSS]);
 var DAYS=['일','월','화','수','목','금','토'];
 var now=new Date();
 document.getElementById('today').textContent=(now.getMonth()+1)+'/'+now.getDate()+' ('+DAYS[now.getDay()]+')';
@@ -459,21 +480,23 @@ var H='';
 H+='<div class="floorband"></div><div class="rug"></div><div class="baseline"></div>';
 [8,30,52].forEach(function(l){H+='<div class="win" style="left:'+l+'%"></div>';});
 H+='<div class="clock" style="left:66%" id="clock"><i id="hh" style="height:9px"></i><i id="mm" style="height:12px;opacity:.6"></i></div>';
-H+='<div class="plant" style="left:66.5%"><b></b><i style="transform:rotate(-16deg)"></i><i style="transform:rotate(14deg)"></i></div>';
+H+='<div class="plant" style="left:63%"><b></b><i style="transform:rotate(-16deg)"></i><i style="transform:rotate(14deg)"></i></div>';
 H+='<div class="plant" style="left:1.5%"><b></b><i style="transform:rotate(-13deg)"></i><i style="transform:rotate(17deg)"></i></div>';
-H+='<div class="frame" style="left:19.5%;top:33%;width:5.2%;height:11%"><i></i><b></b></div>';
-H+='<div class="frame" style="left:42%;top:35%;width:4.4%;height:9%"><i></i><b></b></div>';
+H+='<div class="frame" style="left:19.5%;top:11%;width:5.2%;height:13%"><i></i><b></b></div>';
+H+='<div class="frame" style="left:42%;top:13%;width:4.4%;height:11%"><i></i><b></b></div>';
 H+='<div class="partition" style="left:72%"></div><div class="doorway" style="left:72%"></div>';
 H+='<div class="wb" style="left:78%;top:12%;width:19%"><h4>오늘 우선 3가지</h4><ol id="wbList">'+
    PRIO.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ol></div>';
 
 function deskHTML(o){
-  var w=o.back?60:84, bot=o.back?'45%':'12%';
+  var R=[{w:84,bot:'8%'},{w:70,bot:'31%'},{w:56,bot:'52%'}][o.row||0];
+  var w=R.w, bot=R.bot;
   return '<div class="desk'+(o.back?' back':'')+'" data-id="'+o.id+'" style="left:'+o.x+'%;bottom:'+bot+';width:'+w+'px">'+
     '<div class="top"></div><span class="lg a"></span><span class="lg b"></span>'+
-    (o.back?'':'<span class="mug"></span><span class="pile"></span>')+
+    ((o.row||0)===0?'<span class="mug"></span><span class="pile"></span>':'')+
     '<div class="mon"><span>'+o.screen+'</span></div></div>'+
-    '<span class="plate'+(o.back?' dim':'')+'" style="left:'+(o.x+(o.back?2.3:3.1))+'%;bottom:'+(o.back?'40%':'4%')+'">'+o.name+'</span>';
+    '<span class="plate'+(o.row===2?' dim':'')+'" style="left:'+(o.x+(o.row===2?2.2:o.row===1?2.6:3.1))+'%;bottom:'+
+      ['1%','24.5%','47%'][o.row||0]+'">'+o.name+(o.sub?'<i>'+o.sub+'</i>':'')+'</span>';
 }
 ALL.forEach(function(o){H+=deskHTML(o);});
 office.innerHTML=H;
@@ -487,10 +510,10 @@ office.innerHTML=H;
 var minis={};
 ALL.forEach(function(o,i){
   var b=document.createElement('button');
-  b.type='button'; b.className='mini'+(o.back?' back':'');
+  b.type='button'; b.className='mini r'+(o.row||0);
   b.dataset.act=o.act; b.dataset.st=o.st; b.dataset.id=o.id;
-  b.style.left=(o.x+(o.back?0.6:1.2))+'%';
-  b.style.bottom=o.back?'46%':'13%';
+  b.style.left=(o.x+[1.2,1.0,0.7][o.row||0])+'%';
+  b.style.bottom=['9%','32%','53%'][o.row||0];
   b.setAttribute('aria-label',o.name+' 보고 열기');
   b.innerHTML=MINI(o);
   b.querySelector('.body-g').style.animationDelay=(i*0.37)+'s';
@@ -559,7 +582,7 @@ function errand(m){
   m.busy=true;
   var targets=DAILY.filter(function(d){return d.id!==m.o.id});
   var t=targets[Math.floor(Math.random()*targets.length)];
-  walkTo(m,t.x+1.2,29,function(){
+  walkTo(m,t.x+1.2,21,function(){
     m.el.dataset.act='idle';
     say(m,['확인 부탁드립니다','이 건 같이 봐주세요','자료 넘겼습니다','승인 떨어졌습니다'][Math.floor(Math.random()*4)],1500);
     setTimeout(function(){ goHome(m); },1700);
@@ -590,7 +613,7 @@ runBtn.addEventListener('click',function(){
       return;
     }
     var m=minis[q[i].id]; m.busy=true; i++;
-    walkTo(m,79,29,function(){
+    walkTo(m,79,21,function(){
       m.el.dataset.act='report';
       say(m,m.o.bub,1500);
       setTimeout(function(){ goHome(m,next); },1600);
@@ -620,11 +643,19 @@ function openPanel(o){
   last=document.activeElement;
   document.getElementById('pTitle').textContent=o.name;
   document.getElementById('pSub').textContent = o.st==='slack' ? '조회 실패 — 최신 보고 없음'
-    : (o.back ? o.tag+' 보고 · '+o.mt : (o.id==='chief' ? '매일 아침 종합' : '매일 아침 보고'));
+    : (o.row===2 ? o.tag+' 보고 · '+o.mt : (o.id==='chief' ? '매일 아침 종합' : '매일 아침 보고'));
   var h='';
-  var live=(o.id==='sec'||o.id==='carrier'||o.id==='chief');
+  var live=(o.id==='sec'||o.id==='carrier'||o.id==='chief'||o.id==='health');
   o.sections.forEach(function(s){
     h+='<div class="sec"><h4>'+esc(s.h)+'</h4><ul>';
+    if(s.prio){
+      var dnx=prioDoneToday();
+      s.items.forEach(function(it,k){
+        h+='<li><label class="chk"><input type="checkbox" data-prio="'+k+'"'+(dnx.indexOf(k)>=0?' checked':'')+
+           '> <span'+(dnx.indexOf(k)>=0?' class="ok"':'')+'>'+it+'</span></label></li>';
+      });
+      h+='</ul></div>'; return;
+    }
     s.items.forEach(function(it){
       h+= live ? '<li>'+it+'</li>'
                : '<li class="row-x samp">'+it+'<span class="caret">▾</span>'+
@@ -634,11 +665,17 @@ function openPanel(o){
     h+='</ul></div>';
   });
   h+='<p class="src">출처 · '+o.src+'</p>';
-  document.getElementById('pBody').innerHTML=(o.id==='sec'?secUI():o.id==='chief'?lvlUI():o.id==='carrier'?carrierUI():o.id==='plan'?planUI():'')+h;
+  document.getElementById('pBody').innerHTML=(o.id==='sec'?secUI():o.id==='chief'?lvlUI():o.id==='carrier'?carrierUI():o.id==='health'?planUI():'')+h;
   document.getElementById('pBody').scrollTop=0;
   if(o.id==='sec') wireSec();
   if(o.id==='chief') wireLvl();
-  if(o.id==='plan') wirePlan();
+  if(o.id==='health') wirePlan();
+  Array.prototype.forEach.call(document.querySelectorAll('input[data-prio]'),function(cb){
+    cb.addEventListener('change',function(){
+      cb.nextElementSibling.className=cb.checked?'ok':'';
+      tickPrio(parseInt(cb.dataset.prio,10),cb);
+    });
+  });
   wireRows();
   panel.hidden=false; scrim.hidden=false;
   requestAnimationFrame(function(){panel.classList.add('open');scrim.classList.add('open');});
@@ -721,7 +758,8 @@ async function loadCal(){
       arrOf(res.payload,['events','items','data']).forEach(function(ev){
         var st=ev.startTime||(ev.start&&(ev.start.dateTime||ev.start.date))||'';
         var en=ev.endTime||(ev.end&&(ev.end.dateTime||ev.end.date))||'';
-        evs.push({t:st, e:en, allDay:!!(ev.allDay||(ev.start&&ev.start.date&&!ev.start.dateTime)),
+        evs.push({t:st, e:en, id:String(ev.id||''), calId:CAL.cals[i].id,
+                  allDay:!!(ev.allDay||(ev.start&&ev.start.date&&!ev.start.dateTime)),
                   n:ev.summary||ev.title||'(제목 없음)', c:CAL.cals[i].name,
                   loc:ev.location||'', desc:(ev.description||'').slice(0,400),
                   link:ev.htmlLink||''});
@@ -748,7 +786,7 @@ function paint(){
   if(mon) mon.textContent=String(n);
   var card=document.querySelector('.dcard[data-id="sec"] .mt');
   if(card) card.textContent='오늘 일정 '+n+'건 · 실시간';
-  DAILY[0].mt='오늘 일정 '+n+'건 · 실시간';
+  COMMON[0].mt='오늘 일정 '+n+'건 · 실시간';
 }
 
 function fmtTime(iso,allDay){
@@ -1020,7 +1058,7 @@ async function loadCalAndRefresh(){
 
 
 /* ─────────── 권한 단계 + 결정 기록 ─────────── */
-var DB=null, PEND_CAL=null, PEND_MAIL=null, PEND_REPLY=null, STATS={}, LEVELS={cal_create:1, mail_draft:1};
+var DB=null, PEND_CAL=null, PEND_MAIL=null, PEND_REPLY=null, STATS={}, LEVELS={cal_create:1, mail_draft:1, mail_done:1, cal_done:1};
 /* 'loading' | 'ready' | 'failed' — 불러오기 전과 실패 시에는 쓰기를 막는다 */
 var LEVELS_STATE='loading';
 function canWrite(k){ return LEVELS_STATE==='ready' && (LEVELS[k]||1)>=2; }
@@ -1030,7 +1068,9 @@ function blockMsg(){
        : '지금은 "보고만" 단계입니다. 비서실장 화면에서 권한을 올려 주세요.';
 }
 var LVLNAME=['','보고만','확인 후 실행','자동 실행'];
-var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'메일 답장 초안',who:'비서실'}];
+var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'메일 초안',who:'비서실'},
+          {k:'mail_done',n:'메일 완료 처리 (받은편지함에서 보관)',who:'비서실'},
+          {k:'cal_done',n:'일정 완료 표시 (제목에 ✓)',who:'비서실'}];
 
 (async function bootDB(){
   if(!(window.claude&&claude.use)) return;
@@ -1040,12 +1080,13 @@ var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'
     var snap=await DB.doc('settings/levels').get();
     var d=(snap.exists&&snap.data())||{};
     /* 저장된 값이 없으면 확인 후 실행(2단계)로 시작한다 */
-    LEVELS.cal_create = (d.cal_create===1||d.cal_create===2||d.cal_create===3) ? d.cal_create : 2;
-    LEVELS.mail_draft = (d.mail_draft===1||d.mail_draft===2||d.mail_draft===3) ? d.mail_draft : 2;
+    ['cal_create','mail_draft','mail_done','cal_done'].forEach(function(k){
+      LEVELS[k] = (d[k]===1||d[k]===2||d[k]===3) ? d[k] : 2;
+    });
     LEVELS_STATE='ready';
   }catch(e){ LEVELS_STATE='failed'; }
   loadStats();
-  loadBriefing();
+  loadPrioDone().then(loadBriefing);
   loadReviews().then(paintPlan);
 })();
 
@@ -1067,7 +1108,7 @@ var FIELDS=['날짜','시작시간','종료시간','캘린더','받는이','제�
 function cleanDecision(rec){
   rec=rec||{};
   var out={
-    type:   oneOf(rec.type,['cal_create','mail_draft']) || 'other',
+    type:   oneOf(rec.type,['cal_create','mail_draft','mail_done','cal_done']) || 'other',
     action: oneOf(rec.action,['approved','edited','rejected']) || 'other',
     changed:(Array.isArray(rec.changed)?rec.changed:[]).slice(0,6)
               .map(function(x){ return oneOf(x,FIELDS); }).filter(Boolean)
@@ -1147,7 +1188,8 @@ function wireLvl(){
       LEVELS[b.dataset.act]=parseInt(b.dataset.lv,10);
       var failed=false;
       if(DB){ try{ await DB.doc('settings/levels').set({
-        cal_create:LEVELS.cal_create, mail_draft:LEVELS.mail_draft, at:new Date().toISOString()}); }
+        cal_create:LEVELS.cal_create, mail_draft:LEVELS.mail_draft,
+        mail_done:LEVELS.mail_done, cal_done:LEVELS.cal_done, at:new Date().toISOString()}); }
         catch(e){ LEVELS[b.dataset.act]=prev; failed=true; } }
       var cur=ALL.filter(function(o){return o.id==='chief';})[0];
       if(cur) openPanel(cur);
@@ -1239,7 +1281,8 @@ function mailUI(){
            (m.act?'<div class="act">→ '+esc(m.act)+'</div>':'')+
            (m.flag?'<div class="flagbox">⚠ 메일 안에 AI에게 지시하는 듯한 문장이 있습니다. 직접 확인해 주세요.</div>':'')+
            '<div class="det" id="mld'+i+'" hidden></div>'+
-           '</div><button class="dr" data-mi="'+i+'">초안</button></div>';
+           '</div><div class="mailacts"><button class="dr" data-mi="'+i+'">초안</button>'+
+           '<button class="dr done" data-md="'+i+'">완료</button></div></div>';
       });
     }
     h+='<div class="counts"><span>참고 '+MAIL.counts.info+'</span><span>자동알림 '+MAIL.counts.auto+'</span></div>';
@@ -1266,8 +1309,12 @@ function mailErr(){
   }
 }
 function wireMail(){
-  Array.prototype.forEach.call(document.querySelectorAll('.mailrow .dr'),function(b){
-    b.addEventListener('click',function(){ makeDraft(parseInt(b.dataset.mi,10),b); });
+  Array.prototype.forEach.call(document.querySelectorAll('.mailrow .dr[data-mi]'),function(b){
+    b.addEventListener('click',function(e){ e.stopPropagation(); makeDraft(parseInt(b.dataset.mi,10),b); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.mailrow .dr[data-md]'),function(b){
+    b.addEventListener('click',function(e){ e.stopPropagation();
+      arm(b,'받은편지함에서 보관 — 한 번 더',function(bb){ mailDone(parseInt(b.dataset.md,10),bb); }); });
   });
 }
 
@@ -1402,10 +1449,14 @@ function wirePlan(){
           h+='<label class="chk"><input type="checkbox" data-rv="'+r.id+'" data-ti="'+k+'"'+(t.ok?' checked':'')+'> <span'+(t.ok?' class="ok"':'')+'>'+esc(t.t)+'</span></label>';
         });
       }
+      h+='<div class="rowacts"><button class="mini-b" data-rvdone="'+r.id+'">검토 완료</button></div>';
       d.innerHTML=h; d.dataset.done='1';
       Array.prototype.forEach.call(d.querySelectorAll('input[type=checkbox]'),function(cb){
         cb.addEventListener('change',function(){ tickTodo(cb); });
       });
+      var rb=d.querySelector('[data-rvdone]');
+      if(rb) rb.addEventListener('click',function(ev){ ev.stopPropagation();
+        arm(rb,'완료로 옮깁니다 — 한 번 더',function(bb){ revDone(rb.dataset.rvdone,bb); }); });
     });
   });
 }
@@ -1424,12 +1475,12 @@ function paintPlan(){
   if(REV.state!=='ok') return;
   var op=openRev(), n=op.length;
   var left=0; op.forEach(function(r){ left+=r.todo.filter(function(t){return !t.ok;}).length; });
-  var mon=document.querySelector('.desk[data-id="plan"] .mon span'); if(mon) mon.textContent=String(n);
-  var card=document.querySelector('.dcard[data-id="plan"] .mt');
-  if(card) card.textContent = n ? ('검토 '+n+'건'+(left?' · 확인 필요 '+left:'')) : '검토 대기 없음';
-  var tag=document.querySelector('.dcard[data-id="plan"] .tag');
-  if(tag){ tag.textContent = n? ('대기 '+n) : '없음'; tag.className='tag t-'+(left?'warn':'ok'); }
-  var mini=document.querySelector('.mini[data-id="plan"]'); if(mini) mini.dataset.st=left?'warn':'ok';
+  var mon=document.querySelector('.desk[data-id="health"] .mon span'); if(mon&&n) mon.textContent=String(n);
+  var card=document.querySelector('.dcard[data-id="health"] .mt');
+  if(card) card.textContent = '누적 42 · 대기 7 · 검토 '+n+(left?' (확인 '+left+')':'');
+  var tag=document.querySelector('.dcard[data-id="health"] .tag');
+  if(tag){ tag.textContent = n? ('검토 '+n) : 'AEP 42'; tag.className='tag t-'+(left?'warn':'ok'); }
+  var mini=document.querySelector('.mini[data-id="health"]'); if(mini) mini.dataset.st=left?'warn':'ok';
 }
 
 /* ─────────── 보험사 대응팀 — 메일 쪽 실시간 ─────────── */
@@ -1486,13 +1537,14 @@ async function loadBriefing(){
   var dt=ymd(d.date);
   var fresh=(dt===key);
   var ol=document.getElementById('wbList');
-  if(ol) ol.innerHTML=list.map(function(t){ return '<li>'+t+'</li>'; }).join('');
+  var dn=prioDoneToday();
+  if(ol) ol.innerHTML=list.map(function(t,j){ return '<li'+(dn.indexOf(j)>=0?' class="did"':'')+'>'+t+'</li>'; }).join('');
   var hd=document.querySelector('.wb h4');
   if(hd) hd.textContent = fresh? '오늘 우선 3가지' : (dt? '지난 보고 '+dt : '지난 보고');
   BRIEF={list:list, date:dt, fresh:fresh};
   var chief=ALL.filter(function(o){return o.id==='chief';})[0];
   if(chief){
-    chief.sections[1]={h: fresh?'오늘 우선 3가지':('마지막 보고 '+dt), items:list.slice(0,3)};
+    chief.sections[1]={h: fresh?'오늘 우선 3가지':('마지막 보고 '+dt), items:list.slice(0,3), prio:fresh};
     if(!panel.hidden && document.getElementById('pTitle').textContent==='비서실장') openPanel(chief);
   }
 }
@@ -1524,7 +1576,13 @@ function fillEvent(el,d){
   if(e.loc)  h+='\n<span class="k">장소</span>'+esc(e.loc);
   h+='\n<span class="k">캘린더</span>'+esc(e.c);
   if(e.desc) h+='\n\n'+esc(e.desc);
+  var ok=/^✓/.test(e.n);
+  h+='<div class="rowacts">'+(ok?'<span class="didtag">완료 표시됨</span>'
+      :'<button class="mini-b" data-evdone="'+el.dataset.ev+'">완료 표시</button>')+'</div>';
   d.innerHTML=h; d.dataset.done='1';
+  var b=d.querySelector('[data-evdone]');
+  if(b) b.addEventListener('click',function(ev){ ev.stopPropagation();
+    arm(b,'캘린더 제목에 ✓ — 한 번 더',function(bb){ evDone(parseInt(b.dataset.evdone,10),bb); }); });
 }
 async function toggleMail(el){
   var i=parseInt(el.dataset.mail,10), m=MAIL.items[i];
@@ -1551,6 +1609,99 @@ async function toggleMail(el){
   if(!body.trim()){ d.textContent='본문이 비어 있습니다.'; d.dataset.done='1'; return; }
   d.textContent=body.length>2500 ? body.slice(0,2500)+'\n\n… (이후 생략 — Gmail에서 전체 보기)' : body;
   d.dataset.done='1';
+}
+
+
+/* ─────────── 완료 처리 ─────────── */
+/* 한 번 누르면 묻고, 한 번 더 눌러야 실행한다. 모달 없이 되돌릴 수 있는 동작에만 쓴다. */
+function arm(btn, askText, run){
+  if(btn.dataset.armed==='1'){
+    btn.dataset.armed='0'; btn.disabled=true; btn.textContent='처리 중…';
+    run(btn); return;
+  }
+  var was=btn.textContent;
+  btn.dataset.armed='1'; btn.textContent=askText; btn.classList.add('armed');
+  setTimeout(function(){
+    if(btn.dataset.armed==='1'){ btn.dataset.armed='0'; btn.textContent=was; btn.classList.remove('armed'); }
+  },4000);
+}
+function fail(btn,txt,err){
+  var c=errCode(err);
+  btn.disabled=false; btn.classList.remove('armed');
+  btn.textContent = c==='approval_required' ? '승인 필요'
+    : c==='needs_reauth' ? '재연결 필요'
+    : (c==='server_unavailable'||c==='upstream_error') ? '응답 없음 — 앱에서 확인'
+    : '실패';
+  btn.title = txt;
+}
+
+/* 메일 완료 = 받은편지함에서 보관 + 읽음. Gmail 에서 되돌릴 수 있다. */
+async function mailDone(i, btn){
+  var m=MAIL.items[i]; if(!m) return;
+  if(!canWrite('mail_done')){ btn.textContent='권한 없음'; btn.title=blockMsg(); return; }
+  try{
+    await CAL.mcp.callTool(GM,'unlabel_thread',{threadId:m.id, labelIds:['INBOX','UNREAD']});
+  }catch(e){ fail(btn,'보관하지 못했습니다',e); return; }
+  logDecision({type:'mail_done',action:'approved',changed:[]});
+  MAIL.items.splice(i,1);
+  MAIL.carrier=MAIL.carrier.filter(function(x){ return x.id!==m.id; });
+  try{ await CAL.mcp.invalidate(GM,'search_threads'); }catch(e){}
+  var sec=ALL.filter(function(o){return o.id==='sec';})[0];
+  if(sec && !panel.hidden) openPanel(sec);
+  paintCarrier();
+}
+
+/* 일정 완료 = 제목 앞에 ✓. 구글 캘린더에 완료 기능이 없어서 쓰는 표시 방식이다. */
+async function evDone(i, btn){
+  var e=todayEvents()[i]; if(!e||!e.id) { btn.textContent='표시 불가'; btn.title='이 일정은 수정할 수 없습니다'; return; }
+  if(!canWrite('cal_done')){ btn.textContent='권한 없음'; btn.title=blockMsg(); return; }
+  var title='✓ '+e.n;
+  try{
+    await CAL.mcp.callTool(SRV,'update_event',{calendarId:e.calId, eventId:e.id, summary:title});
+  }catch(err){ fail(btn,'일정을 바꾸지 못했습니다',err); return; }
+  logDecision({type:'cal_done',action:'approved',changed:[]});
+  e.n=title;
+  try{ await CAL.mcp.invalidate(SRV,'list_events'); }catch(err){}
+  var sec=ALL.filter(function(o){return o.id==='sec';})[0];
+  if(sec && !panel.hidden) openPanel(sec);
+}
+
+/* 검토 건 완료 — 저장소 안에서만 */
+async function revDone(id, btn){
+  if(!DB) return;
+  try{ await DB.doc('reviews/'+id).update({done:true}); }
+  catch(e){ btn.disabled=false; btn.textContent='실패'; return; }
+  var r=REV.items.filter(function(x){return x.id===id;})[0]; if(r) r.done=true;
+  var plan=ALL.filter(function(o){return o.id==='health';})[0];
+  if(plan && !panel.hidden) openPanel(plan);
+  paintPlan();
+}
+
+/* 아침 보고 우선순위 체크 — 날짜별로 따로 저장해 아침 작업이 덮어쓰지 않게 한다 */
+var PRIO_DONE={date:'',idx:[]};
+async function loadPrioDone(){
+  if(!DB) return;
+  try{
+    var sn=await DB.doc('briefing/done').get();
+    var d=(sn.exists&&sn.data())||{};
+    PRIO_DONE={date:ymd(d.date), idx:(Array.isArray(d.idx)?d.idx:[]).filter(function(n){return n===0||n===1||n===2;})};
+  }catch(e){}
+}
+function prioDoneToday(){
+  var n=new Date(), key=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+  return PRIO_DONE.date===key ? PRIO_DONE.idx : [];
+}
+async function tickPrio(k, cb){
+  if(!DB){ cb.checked=!cb.checked; return; }
+  var n=new Date(), key=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+  var idx=prioDoneToday().slice();
+  if(cb.checked){ if(idx.indexOf(k)<0) idx.push(k); }
+  else idx=idx.filter(function(x){return x!==k;});
+  try{ await DB.doc('briefing/done').set({date:key, idx:idx, at:new Date().toISOString()}); }
+  catch(e){ cb.checked=!cb.checked; return; }
+  PRIO_DONE={date:key, idx:idx};
+  var ol=document.getElementById('wbList');
+  if(ol) Array.prototype.forEach.call(ol.children,function(li,j){ li.classList.toggle('did', idx.indexOf(j)>=0); });
 }
 
 </script>
