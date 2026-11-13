@@ -601,7 +601,7 @@ function openPanel(o){
   var h='';
   var live=(o.id==='sec'||o.id==='carrier'||o.id==='chief');
   o.sections.forEach(function(s){
-    h+='<div class="sec"><h4>'+s.h+'</h4><ul>';
+    h+='<div class="sec"><h4>'+esc(s.h)+'</h4><ul>';
     s.items.forEach(function(it){
       h+= live ? '<li>'+it+'</li>'
                : '<li class="row-x samp">'+it+'<span class="caret">▾</span>'+
@@ -641,6 +641,18 @@ function arrOf(v,keys){
   if(Array.isArray(v)) return v;
   if(v&&typeof v==='object'){ for(var i=0;i<keys.length;i++){ if(Array.isArray(v[keys[i]])) return v[keys[i]]; } }
   return [];
+}
+/* 모델로 보내기 전에 인용된 과거 대화, 서명, 전체 주소를 덜어낸다 */
+function scrub(t){
+  return String(t||'')
+    .split('\n')
+    .filter(function(L){ return !/^\s*[>|]/.test(L); })
+    .join(' ')
+    .replace(/(On .{0,60}wrote:|\-{2,}\s*Original Message|보낸사람\s*:|From:\s)[\s\S]*$/i,'')
+    .replace(/[\w.+-]+@[\w.-]+\.\w+/g, function(a){ return '('+(a.split('@')[1]||'')+')'; })
+    .replace(/\s+/g,' ')
+    .trim()
+    .slice(0,300);
 }
 function isHoliday(c){
   var n=(c.name||'')+' '+(c.id||'');
@@ -820,8 +832,8 @@ async function parseCmd(text){
     out.innerHTML='<p class="msg m-bad">'+(c==='not_granted'?'해석 권한이 없습니다.':c==='rate_limited'?'잠시 후 다시 시도해 주세요.':'지시를 해석하지 못했습니다.')+'</p>';
     return;
   }
-  go.disabled=false;
   if(!v||v.kind==='none'||(!v.kind&&v.ok===false)){
+    go.disabled=false;
     out.innerHTML='<p class="msg m-bad">읽지 못했습니다. '+esc((v&&v.why)||'일정이면 날짜와 내용을, 메일이면 받는 사람과 용건을 넣어 다시 말씀해 주세요.')+'</p>';
     return;
   }
@@ -834,10 +846,12 @@ async function parseCmd(text){
     }
     PEND_MAIL={subject:v.subject||'', body:v.body||'', to:addr};
     showMailConfirm(v, addr, guessed, out);
+    go.disabled=false;
     return;
   }
   PEND_CAL={date:v.date||'',start:v.start||'',end:v.end||'',hint:v.calendarHint||''};
   showConfirm(v,out);
+  go.disabled=false;
 }
 
 async function findAddress(name){
@@ -860,9 +874,8 @@ async function findAddress(name){
 }
 
 function showMailConfirm(v, addr, guessed, out){
-  if((LEVELS.mail_draft||2)<2){
-    out.innerHTML='<div class="conf"><h5>보고만 단계입니다</h5>'+
-      '<p class="msg m-dim">비서실장 화면에서 메일 초안 권한을 "확인 후 실행"으로 올리면 초안을 저장할 수 있습니다.</p></div>';
+  if(!canWrite('mail_draft')){
+    out.innerHTML='<div class="conf"><h5>지금은 저장할 수 없습니다</h5><p class="msg m-dim">'+blockMsg()+'</p></div>';
     PEND_MAIL=null; return;
   }
   out.innerHTML='<div class="conf"><h5>메일 초안'+(v.toName?' — '+esc(v.toName):'')+'</h5>'+
@@ -888,6 +901,7 @@ async function saveNewDraft(){
   var bd=document.getElementById('mBd').value;
   if(!to||to.indexOf('@')<1){ msg.innerHTML='<p class="msg m-bad">받는이 주소를 확인해 주세요.</p>'; return; }
   if(!bd.trim()){ msg.innerHTML='<p class="msg m-bad">본문이 비어 있습니다.</p>'; return; }
+  if(!canWrite('mail_draft')){ msg.innerHTML='<p class="msg m-bad">'+blockMsg()+'</p>'; return; }
   btn.disabled=true; msg.innerHTML='<p class="msg m-dim">저장하는 중…</p>';
   try{
     await CAL.mcp.callTool(GM,'create_draft',{to:[to], subject:sj, body:bd});
@@ -918,9 +932,8 @@ function showConfirm(v,out){
     var hit=(v.calendarHint&&c.name.indexOf(v.calendarHint)>=0);
     return '<option value="'+esc(c.id)+'"'+(hit?' selected':'')+'>'+esc(c.name)+'</option>';
   }).join('');
-  if((LEVELS.cal_create||2)<2){
-    out.innerHTML='<div class="conf"><h5>보고만 단계입니다</h5>'+
-      '<p class="msg m-dim">비서실장 화면에서 일정 등록 권한을 "확인 후 실행"으로 올리면 등록할 수 있습니다.</p></div>';
+  if(!canWrite('cal_create')){
+    out.innerHTML='<div class="conf"><h5>지금은 등록할 수 없습니다</h5><p class="msg m-dim">'+blockMsg()+'</p></div>';
     PEND_CAL=null; return;
   }
   out.innerHTML='<div class="conf"><h5>이렇게 등록할까요?</h5>'+
@@ -945,6 +958,7 @@ async function createEv(){
   var cid=document.getElementById('cC').value;
   if(!t||!d||!s||!e){ msg.innerHTML='<p class="msg m-bad">제목, 날짜, 시간을 모두 채워 주세요.</p>'; return; }
   if(e<=s){ msg.innerHTML='<p class="msg m-bad">끝나는 시간이 시작보다 빨라요.</p>'; return; }
+  if(!canWrite('cal_create')){ msg.innerHTML='<p class="msg m-bad">'+blockMsg()+'</p>'; return; }
   btn.disabled=true; msg.innerHTML='<p class="msg m-dim">등록하는 중…</p>';
   try{
     await CAL.mcp.callTool(SRV,'create_event',{
@@ -982,20 +996,30 @@ async function loadCalAndRefresh(){
 
 
 /* ─────────── 권한 단계 + 결정 기록 ─────────── */
-var DB=null, PEND_CAL=null, PEND_MAIL=null, PEND_REPLY=null, STATS={}, LEVELS={cal_create:2, mail_draft:2};
+var DB=null, PEND_CAL=null, PEND_MAIL=null, PEND_REPLY=null, STATS={}, LEVELS={cal_create:1, mail_draft:1};
+/* 'loading' | 'ready' | 'failed' — 불러오기 전과 실패 시에는 쓰기를 막는다 */
+var LEVELS_STATE='loading';
+function canWrite(k){ return LEVELS_STATE==='ready' && (LEVELS[k]||1)>=2; }
+function blockMsg(){
+  return LEVELS_STATE==='loading' ? '권한을 아직 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.'
+       : LEVELS_STATE==='failed'  ? '권한 설정을 불러오지 못해 쓰기를 막았습니다. claude.ai에서 이 페이지를 열어 주세요.'
+       : '지금은 "보고만" 단계입니다. 비서실장 화면에서 권한을 올려 주세요.';
+}
 var LVLNAME=['','보고만','확인 후 실행','자동 실행'];
 var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'메일 답장 초안',who:'비서실'}];
 
 (async function bootDB(){
   if(!(window.claude&&claude.use)) return;
   try{ DB=await claude.use('db'); }catch(e){}
-  if(!DB) return;
+  if(!DB){ LEVELS_STATE='failed'; return; }
   try{
     var snap=await DB.doc('settings/levels').get();
-    if(snap.exists){ var d=snap.data()||{};
-      if(d.cal_create) LEVELS.cal_create=d.cal_create;
-      if(d.mail_draft) LEVELS.mail_draft=d.mail_draft; }
-  }catch(e){}
+    var d=(snap.exists&&snap.data())||{};
+    /* 저장된 값이 없으면 확인 후 실행(2단계)로 시작한다 */
+    LEVELS.cal_create = (d.cal_create===1||d.cal_create===2||d.cal_create===3) ? d.cal_create : 2;
+    LEVELS.mail_draft = (d.mail_draft===1||d.mail_draft===2||d.mail_draft===3) ? d.mail_draft : 2;
+    LEVELS_STATE='ready';
+  }catch(e){ LEVELS_STATE='failed'; }
   loadStats();
   loadBriefing();
 })();
@@ -1003,19 +1027,30 @@ var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'
 var HHMM=/^\d{2}:\d{2}$/, YMD=/^\d{4}-\d{2}-\d{2}$/;
 function tm(v){ return HHMM.test(String(v))?String(v):''; }
 function ymd(v){ return YMD.test(String(v))?String(v):''; }
-function nm(v){ return String(v||'').replace(/[^가-힣A-Za-z ]/g,'').slice(0,12); }
+/* 배열 비교만 쓴다. 객체 조회는 constructor 같은 상속 속성이 통과한다 */
+function oneOf(v,list){ var x=String(v==null?'':v); return list.indexOf(x)>=0 ? x : ''; }
+var CALKIND=['고객상담','비즈니스','개인일정'];
+/* 캘린더 이름은 그대로 두지 않고 고정 분류값으로 바꾼다 */
+function calKind(v){
+  var x=String(v==null?'':v);
+  for(var i=0;i<CALKIND.length;i++){ if(x.indexOf(CALKIND[i])>=0) return CALKIND[i]; }
+  return x ? '기타' : '';
+}
+var FIELDS=['날짜','시작시간','종료시간','캘린더','받는이','제목','본문'];
 
 /* 기록에는 구조화된 값만 넣는다. 자유 문자열(제목·본문·주소·추정 사유)은 절대 넣지 않는다. */
 function cleanDecision(rec){
+  rec=rec||{};
   var out={
-    type:   ({cal_create:1,mail_draft:1})[rec.type] ? rec.type : 'other',
-    action: ({approved:1,edited:1,rejected:1})[rec.action] ? rec.action : 'other',
-    changed:(Array.isArray(rec.changed)?rec.changed:[]).slice(0,6).map(nm).filter(Boolean)
+    type:   oneOf(rec.type,['cal_create','mail_draft']) || 'other',
+    action: oneOf(rec.action,['approved','edited','rejected']) || 'other',
+    changed:(Array.isArray(rec.changed)?rec.changed:[]).slice(0,6)
+              .map(function(x){ return oneOf(x,FIELDS); }).filter(Boolean)
   };
   if(rec.cal){
     out.cal={
-      date:ymd(rec.cal.date), start:tm(rec.cal.start), end:tm(rec.cal.end), cal:nm(rec.cal.cal),
-      fDate:ymd(rec.cal.fDate), fStart:tm(rec.cal.fStart), fEnd:tm(rec.cal.fEnd), fCal:nm(rec.cal.fCal)
+      date:ymd(rec.cal.date), start:tm(rec.cal.start), end:tm(rec.cal.end), cal:calKind(rec.cal.cal),
+      fDate:ymd(rec.cal.fDate), fStart:tm(rec.cal.fStart), fEnd:tm(rec.cal.fEnd), fCal:calKind(rec.cal.fCal)
     };
   }
   return out;
@@ -1056,8 +1091,8 @@ async function recentDecisions(type,n){
 
 function lvlUI(){
   var h='<div class="sec"><h4>부서 권한</h4>';
-  if(!DB){
-    h+='<p class="msg m-dim">claude.ai에서 이 페이지를 열면 권한 설정과 결정 기록이 저장됩니다.</p></div>';
+  if(!DB||LEVELS_STATE!=='ready'){
+    h+='<p class="msg m-bad">'+(LEVELS_STATE==='loading'?'권한을 불러오는 중입니다.':'권한 설정을 불러오지 못했습니다. 그 동안 일정 등록과 메일 초안 저장은 막혀 있습니다.')+'</p></div>';
     return h;
   }
   ACTS.forEach(function(a){
@@ -1117,7 +1152,8 @@ async function loadMail(){
     var nm='';
     (m.addressDisplayNames||[]).forEach(function(a){ if(a.emailAddress===m.sender) nm=a.displayName||''; });
     return {id:t.id, msgId:m.id, from:m.sender||'', who:(nm||m.sender||'').replace(/^'|'$/g,''),
-            subject:m.subject||'(제목 없음)', snippet:(m.snippet||'').slice(0,300)};
+            dom:(String(m.sender||'').split('@')[1]||''),
+            subject:m.subject||'(제목 없음)', snippet:scrub(m.snippet||'')};
   }).filter(function(x){ return x.msgId; });
 
   if(!raw.length){ MAIL.items=[]; MAIL.all=[]; MAIL.carrier=[]; MAIL.counts={info:0,auto:0}; MAIL.state='ok'; return; }
@@ -1139,22 +1175,21 @@ async function loadMail(){
     '- 요약에 Medicare 번호, 계좌번호, 인증 코드, 질환명, 약 이름을 쓰지 마세요.\n'+
     '- 사람 이름은 실제 이름 그대로 씁니다. 줄이거나 이니셜로 바꾸지 마세요.\n'+
     'JSON 외에는 아무것도 출력하지 마세요.\n\n메일:\n'+
-    raw.map(function(r,i){ return i+'. 보낸사람: '+r.who+' <'+r.from+'>\n   제목: '+r.subject+'\n   미리보기: '+r.snippet; }).join('\n');
+    raw.map(function(r,i){ return i+'. 보낸사람: '+r.who+' ('+r.dom+')\n   제목: '+r.subject+'\n   미리보기: '+r.snippet; }).join('\n');
 
   var cls=null, clsFail=false;
   try{ cls=await CAL.sample.json(prompt,{modelTier:'quick'}); }catch(e){ clsFail=true; }
   if(!Array.isArray(cls)) clsFail=true;
   var map={};
   if(Array.isArray(cls)) cls.forEach(function(c){ if(typeof c.i==='number') map[c.i]=c; });
-  var CLS={reply:1,info:1,auto:1}, CK={'승인':1,'거절':1,'지연':1,'서류요청':1,'클레임':1};
   raw.forEach(function(r,i){ var c=map[i]||{};
     /* 모델 출력은 외부 메일 내용의 영향을 받을 수 있으므로 허용값만 받고 길이를 자른다 */
-    r.cls = CLS[c.cls] ? c.cls : 'reply';
+    r.cls = oneOf(c.cls,['reply','info','auto']) || 'reply';
     r.sum = String(c.sum||'').slice(0,160);
     r.act = String(c.act||'').slice(0,100);
     r.flag = c.flag===true;
     r.carrier = c.carrier===true;
-    r.ckind = CK[c.ckind] ? c.ckind : '';
+    r.ckind = oneOf(c.ckind,['승인','거절','지연','서류요청','클레임']);
   });
 
   MAIL.all=raw;
@@ -1215,9 +1250,7 @@ async function makeDraft(i,btn){
   var m=MAIL.items[i], out=document.getElementById('dftOut');
   if(!m||!out) return;
   if(!CAL.sample){ out.innerHTML='<p class="msg m-bad">초안 기능을 쓸 수 없습니다.</p>'; return; }
-  if((LEVELS.mail_draft||2)<2){
-    out.innerHTML='<p class="msg m-dim">메일 초안이 "보고만" 단계입니다. 비서실장 화면에서 권한을 올려 주세요.</p>'; return;
-  }
+  if(!canWrite('mail_draft')){ out.innerHTML='<p class="msg m-dim">'+blockMsg()+'</p>'; return; }
   btn.disabled=true; out.innerHTML='<p class="msg m-dim">초안을 쓰는 중…</p>';
   var past=await recentDecisions('mail_draft',3);
   var prompt='당신은 보험 에이전트 Jaden Lee의 비서입니다. 아래 메일에 대한 답장 초안을 쓰세요.\n'+
@@ -1252,6 +1285,7 @@ async function saveDraft(m){
   var btn=document.getElementById('dOk'), msg=document.getElementById('dMsg');
   var body=document.getElementById('dftT').value;
   if(!body.trim()){ msg.innerHTML='<p class="msg m-bad">내용이 비어 있습니다.</p>'; return; }
+  if(!canWrite('mail_draft')){ msg.innerHTML='<p class="msg m-bad">'+blockMsg()+'</p>'; return; }
   btn.disabled=true; msg.innerHTML='<p class="msg m-dim">저장하는 중…</p>';
   try{
     await CAL.mcp.callTool(GM,'create_draft',{
@@ -1327,15 +1361,16 @@ async function loadBriefing(){
     .filter(function(x){return typeof x==='string'&&x.trim();})
     .slice(0,3).map(function(x){ return esc(x.slice(0,160)); });
   if(!list.length) return;
-  var fresh=(d.date===key);
+  var dt=ymd(d.date);
+  var fresh=(dt===key);
   var ol=document.getElementById('wbList');
   if(ol) ol.innerHTML=list.map(function(t){ return '<li>'+t+'</li>'; }).join('');
   var hd=document.querySelector('.wb h4');
-  if(hd) hd.textContent = fresh? '오늘 우선 3가지' : '지난 보고 '+esc(d.date||'');
-  BRIEF={list:list, date:d.date||'', fresh:fresh};
+  if(hd) hd.textContent = fresh? '오늘 우선 3가지' : (dt? '지난 보고 '+dt : '지난 보고');
+  BRIEF={list:list, date:dt, fresh:fresh};
   var chief=ALL.filter(function(o){return o.id==='chief';})[0];
   if(chief){
-    chief.sections[1]={h: fresh?'오늘 우선 3가지':('마지막 보고 '+(d.date||'')), items:list.slice(0,3)};
+    chief.sections[1]={h: fresh?'오늘 우선 3가지':('마지막 보고 '+dt), items:list.slice(0,3)};
     if(!panel.hidden && document.getElementById('pTitle').textContent==='비서실장') openPanel(chief);
   }
 }
