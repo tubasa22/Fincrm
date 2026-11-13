@@ -281,6 +281,18 @@ textarea.dft{width:100%;min-height:150px;font:inherit;font-size:13px;line-height
 .evs li.samp{padding-left:0}
 .sec li.row-x{padding-right:14px}
 .mailrow .mid.row-x{border-radius:5px;padding:2px 4px;margin:-2px -4px}
+.rev{border:1px solid var(--line);border-radius:8px;padding:9px 10px;margin-bottom:8px;background:var(--card)}
+.rev-h{font-size:13.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rev-h b{font-weight:700}
+.zp{font-family:var(--f-num);font-size:11px;color:var(--fg-dim)}
+.bar{display:flex;gap:3px;margin-top:7px;flex-wrap:wrap}
+.bar .st{flex:1;min-width:46px;text-align:center;font-size:10px;padding:3px 2px;border-radius:4px;
+  background:var(--line-soft);color:var(--fg-dim)}
+.bar .st.past{background:var(--ok-bg);color:var(--ok)}
+.bar .st.now{background:var(--accent);color:var(--card);font-weight:700}
+.chk{display:flex;align-items:flex-start;gap:6px;margin-top:5px;font-size:12.5px;cursor:pointer;color:var(--fg)}
+.chk input{margin-top:3px;flex:none}
+.chk .ok{text-decoration:line-through;color:var(--fg-dim)}
 </style>
 
 <div class="topbar"><div class="topbar-in">
@@ -376,25 +388,36 @@ function MINI(o){
 
 var DAILY=[
  {id:'sec',name:'비서실',shirt:'#4a7c8c',sex:'f',hair:'long',acc:'scarf',act:'type',st:'warn',tag:'확인 3',mt:'일정 3 · 메일 3 · 할일 5',screen:'3',
-  bub:'일정 3건 · 메일 3건',src:'구글 캘린더 3개 · Gmail · Tasks',x:4,
+  bub:'일정 3건 · 메일 3건',src:'구글 캘린더 3개 · Gmail · Tasks',x:2,
   sections:[{h:'오늘 일정',items:['10:00 상담 — 김순자 (90019)','13:00 세미나 답사 — 어덜트 데이케어','16:00 상담 — 박정호 (90006)']},
     {h:'확인 필요 메일',items:['보험사 2건 — 승인 통보 1, 서류 요청 1','고객 문의 1건 — 치과 혜택']},
     {h:'업무할일',items:['미완료 5건 · 오늘 마감 2건','세미나 스폰서 회신 대기 — 병원 1곳']}]},
  {id:'sales',name:'영업팀',shirt:'#2f6f52',sex:'m',hair:'parted',glasses:true,acc:'tie',act:'type',st:'ok',tag:'정상',mt:'누적 42 · 대기 7',screen:'42',
-  bub:'AEP 누적 42건',src:'고객 시트 — 신청 탭',x:21,
+  bub:'AEP 누적 42건',src:'고객 시트 — 신청 탭',x:16,
   sections:[{h:'AEP 진행',items:['누적 42건 — 본인 31 / 사모님 11','어제 신규 2건','전주 대비 +9건']},
     {h:'단계별',items:['접수 4 · 심사대기 7 · 승인 28 · 거절·보류 3']},
     {h:'플랜 분포',items:['MAPD 24 · C-SNP 9 · D-SNP 5 · PDP 4']}]},
  {id:'crm',name:'고객관리팀',shirt:'#7a5490',sex:'f',hair:'bun',glasses:true,acc:'badge',act:'write',st:'warn',tag:'즉시 4',mt:'서류미비 2 · 콜백 2',screen:'4',
-  bub:'즉시 처리 4건',src:'고객 시트 — 고객 탭',x:38,
+  bub:'즉시 처리 4건',src:'고객 시트 — 고객 탭',x:30,
   sections:[{h:'즉시 처리',items:['서류미비 2건 — <em>이해숙</em> 소득증빙, <em>최미경</em> 주소증빙','콜백 2건 — 어제 부재중']},
     {h:'오늘 챙길 것',items:['생일 1명 — 김순자','Medicare 기념일 2명']},
     {h:'전체',items:['관리 고객 318명','연락처 누락 6명']}]},
  {id:'carrier',name:'보험사 대응팀',shirt:'#8c4a3c',sex:'m',hair:'short',acc:'tie',act:'call',st:'bad',tag:'지연 2',mt:'승인지연 2 · 클레임 1',screen:'2',
-  bub:'승인 지연 2건',src:'Gmail + 고객 시트 — 보험사 탭',x:55,
+  bub:'승인 지연 2건',src:'Gmail + 고객 시트 — 보험사 탭',x:44,
   sections:[{h:'승인 지연',items:['<em>Clever Care 2건 — 5일 경과</em>','통상 2~3일. 오늘 전화 권장']},
     {h:'클레임',items:['진행 1건 — 서류 접수 확인','추가 자료 요청 없음']},
-    {h:'어제 처리',items:['승인 통보 3건 수신','거절 1건 — 사유 확인 필요']}]}
+    {h:'어제 처리',items:['승인 통보 3건 수신','거절 1건 — 사유 확인 필요']}]},
+ {id:'plan',name:'플랜분석팀',shirt:'#4a5f8c',sex:'f',hair:'bob',glasses:true,acc:'badge',
+  act:'write',st:'ok',tag:'대기 0',mt:'검토 대기 없음',screen:'0',
+  bub:'플랜 검토',src:'검토 기록 (아티팩트 저장소)',x:58,
+  sections:[{h:'하는 일',items:[
+    '약국 리퍼·고객에게서 받은 약 목록을 정리',
+    '복용 약으로 만성질환을 유추해 C-SNP 해당 여부 판단',
+    'Medicare.gov에서 약 커버·티어·약국·의사 네트워크 확인',
+    '비교 리포트 작성']},
+   {h:'혼자 일하지 않습니다',items:[
+    'Medicare.gov는 이 화면에서 접근할 수 없습니다. 실제 조회는 Claude 세션에서 합니다',
+    '여기는 접수·진행·확인 필요 항목을 보는 창구입니다']}]}
 ];
 var BACK=[
  {id:'ref',name:'리퍼·제휴팀',shirt:'#4a7c8c',sex:'f',hair:'bob',hairColor:'brown',act:'type',st:'ok',tag:'주간',mt:'다음 보고 월요일',screen:'7',
@@ -611,10 +634,11 @@ function openPanel(o){
     h+='</ul></div>';
   });
   h+='<p class="src">출처 · '+o.src+'</p>';
-  document.getElementById('pBody').innerHTML=(o.id==='sec'?secUI():o.id==='chief'?lvlUI():o.id==='carrier'?carrierUI():'')+h;
+  document.getElementById('pBody').innerHTML=(o.id==='sec'?secUI():o.id==='chief'?lvlUI():o.id==='carrier'?carrierUI():o.id==='plan'?planUI():'')+h;
   document.getElementById('pBody').scrollTop=0;
   if(o.id==='sec') wireSec();
   if(o.id==='chief') wireLvl();
+  if(o.id==='plan') wirePlan();
   wireRows();
   panel.hidden=false; scrim.hidden=false;
   requestAnimationFrame(function(){panel.classList.add('open');scrim.classList.add('open');});
@@ -1022,6 +1046,7 @@ var ACTS=[{k:'cal_create',n:'일정 등록',who:'비서실'},{k:'mail_draft',n:'
   }catch(e){ LEVELS_STATE='failed'; }
   loadStats();
   loadBriefing();
+  loadReviews().then(paintPlan);
 })();
 
 var HHMM=/^\d{2}:\d{2}$/, YMD=/^\d{4}-\d{2}-\d{2}$/;
@@ -1309,6 +1334,103 @@ async function saveDraft(m){
   }
 }
 
+
+/* ─────────── 플랜분석팀 — 검토 기록 ─────────── */
+var REV={state:'boot', items:[]};
+var STAGES=['접수','약 정리','질환 판단','플랜 비교','리포트'];
+
+async function loadReviews(){
+  if(!DB){ REV.state='off'; return; }
+  try{
+    var q=await DB.collection('reviews').orderBy('at','desc').limit(40).get();
+    REV.items=q.docs.map(function(d){
+      var v=d.data()||{};
+      return {id:d.id, nm:String(v.name||''),
+        zip:String(v.zip||''), stage:String(v.stage||'접수'), source:String(v.source||''),
+        csnp:String(v.csnp||''), plans:String(v.plans||''), note:String(v.note||''),
+        todo:(Array.isArray(v.todo)?v.todo:[]).map(function(t){
+          return (t&&typeof t==='object') ? {t:String(t.t||''),ok:t.ok===true} : {t:String(t||''),ok:false};
+        }),
+        done:v.done===true, at:String(v.at||'')};
+    });
+    REV.state='ok';
+  }catch(e){ REV.state=errCode(e); }
+}
+function openRev(){ return REV.items.filter(function(r){return !r.done;}); }
+
+function planUI(){
+  var h='<div class="sec"><h4>진행 중인 검토</h4>';
+  if(REV.state==='ok'){
+    var op=openRev();
+    if(!op.length){
+      h+='<p class="msg m-dim">진행 중인 검토가 없습니다. 약 목록을 Claude에게 주시면 여기에 올라옵니다.</p>';
+    } else {
+      op.forEach(function(r,i){
+        var si=STAGES.indexOf(r.stage); if(si<0) si=0;
+        var left=r.todo.filter(function(t){return !t.ok;}).length;
+        h+='<div class="rev"><div class="rev-h row-x" data-rev="'+i+'">'+
+             '<b>'+esc(r.nm||'(이름 없음)')+'</b>'+(r.zip?' <span class="zp">'+esc(r.zip)+'</span>':'')+
+             (left?' <span class="badge b-warn">확인 '+left+'</span>':'')+
+             '<span class="caret">▾</span></div>'+
+           '<div class="bar">'+STAGES.map(function(st,k){
+               return '<span class="st'+(k<si?' past':k===si?' now':'')+'">'+esc(st)+'</span>'; }).join('')+'</div>'+
+           '<div class="det" id="rvd'+i+'" hidden></div></div>';
+      });
+    }
+    var dn=REV.items.filter(function(r){return r.done;}).length;
+    if(dn) h+='<p class="src">완료 '+dn+'건</p>';
+  } else if(REV.state==='boot'){ h+='<p class="msg m-dim">검토 기록을 불러오는 중…</p>'; }
+  else if(REV.state==='off'){ h+='<p class="msg m-dim">claude.ai에서 열면 검토 기록이 표시됩니다.</p>'; }
+  else { h+='<p class="msg m-bad">검토 기록을 불러오지 못했습니다.</p>'; }
+  return h+'</div>';
+}
+function wirePlan(){
+  Array.prototype.forEach.call(document.querySelectorAll('.rev-h[data-rev]'),function(el){
+    el.addEventListener('click',function(){
+      var i=parseInt(el.dataset.rev,10), d=document.getElementById('rvd'+i), r=openRev()[i];
+      if(!d||!r) return;
+      var open=!d.hidden; d.hidden=open; el.classList.toggle('open',!open);
+      if(open||d.dataset.done) return;
+      var h='';
+      if(r.source) h+='<span class="k">출처</span>'+esc(r.source)+'<br>';
+      if(r.csnp)   h+='<span class="k">C-SNP</span>'+esc(r.csnp)+'<br>';
+      if(r.plans)  h+='<span class="k">플랜</span>'+esc(r.plans)+'<br>';
+      if(r.note)   h+='<br>'+esc(r.note)+'<br>';
+      if(r.todo.length){
+        h+='<br><b>확인 필요</b>';
+        r.todo.forEach(function(t,k){
+          h+='<label class="chk"><input type="checkbox" data-rv="'+r.id+'" data-ti="'+k+'"'+(t.ok?' checked':'')+'> <span'+(t.ok?' class="ok"':'')+'>'+esc(t.t)+'</span></label>';
+        });
+      }
+      d.innerHTML=h; d.dataset.done='1';
+      Array.prototype.forEach.call(d.querySelectorAll('input[type=checkbox]'),function(cb){
+        cb.addEventListener('change',function(){ tickTodo(cb); });
+      });
+    });
+  });
+}
+async function tickTodo(cb){
+  if(!DB) return;
+  var id=cb.dataset.rv, ti=parseInt(cb.dataset.ti,10);
+  var r=REV.items.filter(function(x){return x.id===id;})[0]; if(!r) return;
+  r.todo[ti].ok=cb.checked;
+  cb.nextElementSibling.className = cb.checked?'ok':'';
+  try{ await DB.doc('reviews/'+id).update({todo:r.todo.map(function(t){return {t:t.t,ok:t.ok};})}); }
+  catch(e){ cb.checked=!cb.checked; r.todo[ti].ok=cb.checked;
+    cb.nextElementSibling.className=cb.checked?'ok':''; }
+  paintPlan();
+}
+function paintPlan(){
+  if(REV.state!=='ok') return;
+  var op=openRev(), n=op.length;
+  var left=0; op.forEach(function(r){ left+=r.todo.filter(function(t){return !t.ok;}).length; });
+  var mon=document.querySelector('.desk[data-id="plan"] .mon span'); if(mon) mon.textContent=String(n);
+  var card=document.querySelector('.dcard[data-id="plan"] .mt');
+  if(card) card.textContent = n ? ('검토 '+n+'건'+(left?' · 확인 필요 '+left:'')) : '검토 대기 없음';
+  var tag=document.querySelector('.dcard[data-id="plan"] .tag');
+  if(tag){ tag.textContent = n? ('대기 '+n) : '없음'; tag.className='tag t-'+(left?'warn':'ok'); }
+  var mini=document.querySelector('.mini[data-id="plan"]'); if(mini) mini.dataset.st=left?'warn':'ok';
+}
 
 /* ─────────── 보험사 대응팀 — 메일 쪽 실시간 ─────────── */
 var CKCLS={'지연':'bad','거절':'bad','서류요청':'warn','클레임':'warn','승인':'ok'};

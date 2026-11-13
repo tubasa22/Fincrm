@@ -29,6 +29,26 @@ Codex가 여기서 수정하면, 사용자가 Claude에게 "오피스 반영해�
 | 캘린더 | `mcp` capability — list_calendars / list_events / create_event |
 | Gmail | `mcp` capability — search_threads / create_draft |
 | 지시 해석 | `sample` capability — 자연어 → 일정 또는 메일 초안 |
+| 플랜분석팀 | `db` collection `reviews` — 약 목록 검토 건의 단계와 확인 필요 항목 |
+
+## 플랜분석팀 (reviews)
+
+약국 리퍼·고객에게 받은 약 목록으로 플랜을 검토하는 업무의 **창구**입니다.
+실제 Medicare.gov 조회는 이 화면에서 할 수 없습니다 (외부 사이트 접근 불가).
+Claude 세션에서 검토하고 그 결과를 `reviews` 에 기록하면 여기에 나타납니다.
+
+문서 형태:
+
+```
+{ name, zip, stage, source, csnp, plans, note,
+  todo: [{t, ok}], done, at }
+```
+
+- `stage` 는 접수 / 약 정리 / 질환 판단 / 플랜 비교 / 리포트
+- `todo` 는 화면에서 체크할 수 있고, 체크하면 그 문서만 갱신됩니다
+- **이 컬렉션에는 고객 실제 이름이 들어갑니다** (2026-11-13 사용자 지시).
+  `decisions` 와 달리 정화를 거치지 않으므로, 화면에 표시할 때
+  반드시 `esc()` 를 통과시켜야 합니다
 
 ## 지켜야 할 것
 
