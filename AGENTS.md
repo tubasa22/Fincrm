@@ -56,6 +56,9 @@
 
 | 이슈 | 위치 | 비고 |
 |---|---|---|
+| 기존 DD/MM DOB 데이터 복구 | 실제 메인 시트 J열 | 일/월/연 글자 DOB 약 33건은 별도 수식으로 복구 필요 |
+| 모호한 DOB 실데이터 확인 | 실제 메인 시트 J열 및 신분증 | 월·일이 모두 12 이하인 고객은 실제 생일을 신분증과 대조해야 함 |
+| DOB 저장 흐름 실사용 검증 | 고객 수정 화면·메인 시트 J열 | 수정 화면 열기 → 건드리지 않고 저장 → 시트 날짜 의미 유지 확인 필요 |
 | 이름 변경 전 기존 연결 수동 복구 | 실제 Drive·PlanInfo·상담 이력 | 이번 수정 전에 이름을 바꾼 고객은 기존 이름 폴더·행을 수동으로 새 이름에 맞춰야 함 |
 | 기존 상세URL 유실 여부 확인 | 메인 시트 S열 | 이번 수정 전에 수정 저장된 고객은 S열 상세URL이 빈 값으로 덮였을 수 있으므로 확인 필요 |
 | 이름 기반 고객 연결 구조 | Drive·PlanInfo·상담 이력 | 이름 변경 연동은 추가했으나 고객번호(No) 기반 전환은 별도 작업으로 검토 |
@@ -83,6 +86,7 @@
 
 | 날짜 | 작업 내용 | 변경된 파일 | 후속 작업 |
 |---|---|---|---|
+| 2026-11-10 | DOB 해석 기본을 MM/DD/YYYY로 통일하고 첫 숫자가 12를 초과하는 레거시 DD/MM 값만 예외 처리, 실제 달력 날짜 검증과 수정·상세 화면 정규화 추가 | `js/features/client-management.js`, `js/features/client-detail.js`, `js/utils/ui-and-onboarding.js`, `README.md`, `AGENTS.md` | 기존 DD/MM 글자 데이터 복구; 모호한 날짜 신분증 대조; 실제 수정·저장 흐름 검증 |
 | 2026-11-06 | 고객 이름 변경 시 Drive 서류 폴더·PlanInfo·상담 이력 이름을 함께 갱신하고, 옛 이름의 다른 고객번호 고객이 남아 있으면 자동 이동을 중단하며, Drive 조회 범위 제한과 S열 상세URL 보존 적용 | `js/main.js`, `js/features/client-management.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 기존 연결·S열 유실 데이터 수동 확인; 이름 기반 연결의 고객번호 전환 검토; 실제 이름 변경 흐름 검증 |
 | 2026-10-29 | D-SNP·C-SNP 및 레거시 DUAL PLAN·Supplement를 PlanInfo 저장·불러오기 대상으로 확장하고 수정 화면에서 기존 플랜 값을 임시 옵션으로 보존 | `js/features/client-management.js`, `js/features/client-detail.js`, `README.md`, `AGENTS.md` | 하용훈 약 목록 재입력; 과거 누락·빈 플랜 데이터 확인; 실제 저장·재열기 검증 |
 | 2026-10-23 | 고객 목록과 상세 화면의 유효한 이메일을 Gmail 작성 링크로 변경하고 목록에서는 행 클릭 이벤트 전파를 차단 | `js/utils/ui-and-onboarding.js`, `js/features/dashboard.js`, `js/features/client-detail.js`, `css/components.css`, `README.md`, `AGENTS.md` | 실제 Gmail 새 탭의 받는 사람·서명 적용 확인; 다중 계정의 `authuser` 지정 필요 여부 검토 |

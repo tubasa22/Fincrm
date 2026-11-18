@@ -122,7 +122,7 @@ function titleCaseInput(el){
   try{ el.setSelectionRange(pos,pos); }catch(e){}
 }
 
-// DOB: DD/MM/YYYY 자동 슬래시
+// DOB: MM/DD/YYYY 자동 슬래시
 function fmtDob(el){
   let v = el.value.replace(/\D/g,'').slice(0,8);
   let out = '';
