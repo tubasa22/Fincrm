@@ -1,6 +1,8 @@
 function openDetail(rowIdx){
   const c=clients.find(x=>x.rowIdx===rowIdx);
   if(!c){ alert('고객 정보를 찾을 수 없습니다.'); return; }
+  const parsedDob=parseDob(c.dob);
+  const displayDob=parsedDob ? formatDobUS(parsedDob) : c.dob;
 
   // #app 숨기고 #detailPg 표시
   document.getElementById('app').style.display = 'none';
@@ -54,7 +56,7 @@ function openDetail(rowIdx){
         dr('이메일', emailLinkHtml(c.email)) +
         (c.address1 ? dr('주소', c.address1+(c.city?', '+c.city:'')+(c.zip?' '+c.zip:'')) : '') +
         (c.state ? dr('State', c.state) : '') +
-        (c.dob ? dr('생년월일', c.dob) : '') +
+        (c.dob ? dr('생년월일', displayDob) : '') +
         dr('플랜', c.plan ? '<span class="badge '+pb(c.plan)+'">'+c.plan+'</span>' : '—') +
         dr('가입상품', c.prod||'—') +
         dr('리퍼', c.ref==='TRUE' ? '<span class="badge bpu">리퍼 ✓</span>'+(c.agent?' <strong>'+c.agent+'</strong>':'') : '없음') +

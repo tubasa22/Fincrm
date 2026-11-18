@@ -145,10 +145,10 @@ function openEditClient(rowIdx){
   document.getElementById('f_phone2').value=c.phone2||'';
   document.getElementById('f_email').value=c.email;
   document.getElementById('f_state').value=c.state||'';
-  // dob → DD/MM/YYYY 변환해서 표시
+  // dob → MM/DD/YYYY 변환해서 표시
   const parsedDob = parseDob(c.dob);
   document.getElementById('f_dob').value = parsedDob
-    ? String(parsedDob.d).padStart(2,'0')+'/'+String(parsedDob.m).padStart(2,'0')+'/'+parsedDob.y
+    ? formatDobUS(parsedDob)
     : (c.dob||'');
   document.getElementById('f_next').value=c.next||'';
   const planSelect=document.getElementById('f_plan');
@@ -278,6 +278,11 @@ async function saveClient(){
   const fname=document.getElementById('f_fname').value.trim();
   const lname=document.getElementById('f_lname').value.trim();
   if(!fname||!lname){alert('First Name과 Last Name은 필수입니다');return;}
+  const dobValue=document.getElementById('f_dob').value.trim();
+  if(dobValue && !isValidDobInput(dobValue)){
+    alert('생년월일을 MM/DD/YYYY 형식으로 확인해 주세요');
+    return;
+  }
 
   // 🔧 오류 수정: 클라이언트 이름에서 특수문자 정규화
   // PAK ANNE... 처럼 마침표 등이 포함되면 저장 실패하는 문제 해결
@@ -325,7 +330,7 @@ async function saveClient(){
     document.getElementById('f_city').value.trim(),                 // G
     document.getElementById('f_zip').value.trim(),                  // H
     document.getElementById('f_state').value.trim().toUpperCase(),  // I
-    document.getElementById('f_dob').value.trim(),                  // J
+    dobValue,                                                       // J
     document.getElementById('f_next').value.trim(),                 // K
     document.getElementById('f_phone').value.trim(),                // L Phone1
     document.getElementById('f_phone2').value.trim(),               // M Phone2
@@ -604,52 +609,57 @@ function parseDob(raw) {
   if (!raw) return null;
   const s = String(raw).trim();
   if (!s) return null;
-  
-  // DD/MM/YYYY (새 입력 형식 — 최우선, 엄격한 검증)
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
-    const [dd, mm, yyyy] = s.split('/').map(Number);
-    // 첫 번째가 31을 초과하거나 두 번째가 12를 초과하면 명확한 DD/MM
-    // 그 외에는 엄격하게 DD/MM으로 해석 (일반적인 입력 순서)
-    if (dd>=1&&dd<=31&&mm>=1&&mm<=12) return {m:mm, d:dd, y:yyyy};
-    // 오류 데이터면 스왑 시도
-    if (mm>=1&&mm<=31&&dd>=1&&dd<=12) return {m:dd, d:mm, y:yyyy};
-  }
-  
-  // MM/DD/YYYY (구 형식 호환 — 더 이상 사용 금지하지만 호환성 유지)
+
+  // 표준은 MM/DD/YYYY. 첫 숫자만 12를 초과하면 레거시 DD/MM/YYYY로 해석한다.
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
-    const parts = s.split('/').map(Number);
-    const [a, b, yyyy] = parts;
-    if (a > 12) return {m:b, d:a, y:yyyy}; // DD/MM
-    if (b > 12) return {m:a, d:b, y:yyyy}; // MM/DD (역함수)
-    // 둘 다 12 이하면 DD/MM으로 해석 (새 기본값)
-    return {m:b, d:a, y:yyyy}; 
+    const [a, b, yyyy] = s.split('/').map(Number);
+    const m = a>12 && b<=12 ? b : a;
+    const d = a>12 && b<=12 ? a : b;
+    return isValidDobDate(m,d,yyyy) ? {m,d,y:yyyy} : null;
   }
-  
+
   // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const [yyyy, mm, dd] = s.split('-').map(Number);
-    if (mm>=1&&mm<=12&&dd>=1&&dd<=31) return {m:mm, d:dd, y:yyyy};
+    return isValidDobDate(mm,dd,yyyy) ? {m:mm,d:dd,y:yyyy} : null;
   }
-  
+
   // 2자리 연도 처리
   if (/^\d{1,2}\/\d{1,2}\/\d{2}$/.test(s)) {
     const [a, b, yy] = s.split('/').map(Number);
     const yyyy = yy > 30 ? 1900+yy : 2000+yy;
-    if (a > 12) return {m:b, d:a, y:yyyy};
-    if (b > 12) return {m:a, d:b, y:yyyy};
-    return {m:b, d:a, y:yyyy}; // 기본값 DD/MM
+    const m = a>12 && b<=12 ? b : a;
+    const d = a>12 && b<=12 ? a : b;
+    return isValidDobDate(m,d,yyyy) ? {m,d,y:yyyy} : null;
   }
-  
+
   // 엑셀 시리얼
   if (/^\d+$/.test(s)) {
     const serial = parseInt(s);
     if (serial > 1000 && serial < 80000) {
-      const base = new Date(1899, 11, 30);
-      const date = new Date(base.getTime() + serial * 86400000);
-      return {m:date.getMonth()+1, d:date.getDate(), y:date.getFullYear()};
+      const date = new Date(Date.UTC(1899,11,30) + serial*86400000);
+      const result={m:date.getUTCMonth()+1,d:date.getUTCDate(),y:date.getUTCFullYear()};
+      return isValidDobDate(result.m,result.d,result.y) ? result : null;
     }
   }
   return null;
+}
+
+function isValidDobDate(m,d,y){
+  if(!Number.isInteger(m)||!Number.isInteger(d)||!Number.isInteger(y)||y<1||m<1||m>12||d<1) return false;
+  const leap=(y%4===0&&y%100!==0)||y%400===0;
+  const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return d<=days[m-1];
+}
+
+function isValidDobInput(raw){
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) return false;
+  const [m,d,y]=raw.split('/').map(Number);
+  return isValidDobDate(m,d,y);
+}
+
+function formatDobUS(parsed){
+  return String(parsed.m).padStart(2,'0')+'/'+String(parsed.d).padStart(2,'0')+'/'+String(parsed.y).padStart(4,'0');
 }
 function getBirthdays() {
   return clients.map(c => {
