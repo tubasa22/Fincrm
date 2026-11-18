@@ -471,10 +471,21 @@ async function saveClient(){
               `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
               {values:piVals});
           } else {
-            // 신규 행 추가
-            await sheetsReq('POST',
-              `${DETAIL_ID}/values/PlanInfo!A%3AI:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+            // 신규 행은 append의 논리 표 감지를 피하고 A열 마지막 데이터 다음 행에 직접 기록
+            let lastDataRow=1;
+            rows.forEach((r,i)=>{
+              if(i>0 && String(r[0]||'').trim()) lastDataRow=i+1;
+            });
+            const sheetRow=lastDataRow+1;
+            await sheetsReq('PUT',
+              `${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}?valueInputOption=USER_ENTERED`,
               {values:piVals});
+
+            const savedRow=await sheetsReq('GET',`${DETAIL_ID}/values/PlanInfo!A${sheetRow}:I${sheetRow}`);
+            const savedName=String(savedRow.values?.[0]?.[0]||'').trim();
+            if(savedName!==name.trim()){
+              throw new Error(`PlanInfo 신규 행 검증 실패 (행 ${sheetRow})`);
+            }
           }
 
           // 로컬 allPlanInfo 즉시 반영
@@ -507,7 +518,7 @@ async function saveClient(){
     }else if(renameFailures.length){
       toast(`⚠️ 고객 정보는 저장됐으나 ${renameFailures.join('/')} 이름 갱신에 실패했습니다. 관리자 확인이 필요합니다`,6000);
     }else if(planInfoError){
-      toast('⚠️ 고객 정보는 저장됐으나 약 목록 저장에 실패했습니다. 다시 확인해 주세요',5000);
+      toast('⚠️ 고객 정보는 저장됐으나 PlanInfo 저장에 실패했습니다: '+planInfoError.message,6000);
     }else if(dobFormatError){
       toast('⚠️ 고객 정보는 저장됐지만 DOB 날짜 서식 적용 실패: '+dobFormatError.message,5000);
     }else{
